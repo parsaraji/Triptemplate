@@ -1,6 +1,7 @@
 <?php
 /**
  * Theme Functions and Bootstrapping
+ * Now with optimized taxonomy query handling using pre_get_posts filter to eliminate query_posts() overhead.
  *
  * @package Premium_Persian_Tourism
  */
@@ -18,12 +19,10 @@ define( 'PPT_THEME_URI', get_template_directory_uri() );
  * Autoload theme classes.
  */
 spl_autoload_register( function ( $class_name ) {
-	// Only load our theme classes.
 	if ( false === strpos( $class_name, 'PPT_' ) ) {
 		return;
 	}
 
-	// Class map/naming convention: PPT_Theme_Setup -> inc/class-theme-setup.php
 	$class_file = str_replace( 'PPT_', 'class-', $class_name );
 	$class_file = str_replace( '_', '-', strtolower( $class_file ) ) . '.php';
 	$filepath   = PPT_THEME_DIR . '/inc/' . $class_file;
@@ -37,47 +36,38 @@ spl_autoload_register( function ( $class_name ) {
  * Initialize theme modules.
  */
 function ppt_initialize_theme() {
-	// Database Migration.
 	if ( class_exists( 'PPT_Db_Migration' ) ) {
 		PPT_Db_Migration::get_instance();
 	}
 
-	// Theme Setup and activation procedures.
 	if ( class_exists( 'PPT_Theme_Setup' ) ) {
 		PPT_Theme_Setup::get_instance();
 	}
 
-	// Custom Post Types and Taxonomies.
 	if ( class_exists( 'PPT_Post_Types' ) ) {
 		PPT_Post_Types::get_instance();
 	}
 
-	// Meta Boxes for non-Gutenberg fields.
 	if ( class_exists( 'PPT_Meta_Boxes' ) ) {
 		PPT_Meta_Boxes::get_instance();
 	}
 
-	// Custom Admin Settings Panel.
 	if ( class_exists( 'PPT_Admin_Panel' ) ) {
 		PPT_Admin_Panel::get_instance();
 	}
 
-	// Ad Manager Subsystem.
 	if ( class_exists( 'PPT_Ad_Manager' ) ) {
 		PPT_Ad_Manager::get_instance();
 	}
 
-	// Map System Subsystem.
 	if ( class_exists( 'PPT_Map_System' ) ) {
 		PPT_Map_System::get_instance();
 	}
 
-	// SEO & Schema Subsystem.
 	if ( class_exists( 'PPT_Seo_Schema' ) ) {
 		PPT_Seo_Schema::get_instance();
 	}
 
-	// Theme Updater Subsystem.
 	if ( class_exists( 'PPT_Theme_Updater' ) ) {
 		PPT_Theme_Updater::get_instance();
 	}
@@ -88,13 +78,9 @@ add_action( 'after_setup_theme', 'ppt_initialize_theme', 5 );
  * Register and enqueue styles and scripts.
  */
 function ppt_enqueue_scripts() {
-	// Font styling.
 	wp_enqueue_style( 'ppt-shabnam-font', PPT_THEME_URI . '/assets/css/main.css', array(), PPT_THEME_VERSION );
-
-	// Enqueue main script.
 	wp_enqueue_script( 'ppt-main-script', PPT_THEME_URI . '/assets/js/main.js', array(), PPT_THEME_VERSION, true );
 
-	// Localize main script for Leaflet / Aparat.
 	$map_settings = get_option( 'ppt_map_settings', array() );
 	$is_map_enabled = ! empty( $map_settings['enable_maps'] ) && '1' === $map_settings['enable_maps'];
 
@@ -119,6 +105,33 @@ function ppt_enqueue_admin_scripts( $hook ) {
 	wp_enqueue_script( 'ppt-admin-script', PPT_THEME_URI . '/assets/js/admin.js', array( 'jquery' ), PPT_THEME_VERSION, true );
 }
 add_action( 'admin_enqueue_scripts', 'ppt_enqueue_admin_scripts' );
+
+/**
+ * Hook into pre_get_posts to optimize and filter taxonomy queries cleanly
+ * instead of query_posts() overhead on destination archive pages.
+ */
+function ppt_filter_destination_archives( $query ) {
+	if ( is_admin() || ! $query->is_main_query() ) {
+		return;
+	}
+
+	if ( is_post_type_archive( 'destination' ) ) {
+		if ( isset( $_GET['province'] ) && ! empty( $_GET['province'] ) ) {
+			$province_slug = sanitize_text_field( $_GET['province'] );
+
+			$tax_query = array(
+				array(
+					'taxonomy' => 'province',
+					'field'    => 'slug',
+					'terms'    => $province_slug,
+				),
+			);
+
+			$query->set( 'tax_query', $tax_query );
+		}
+	}
+}
+add_action( 'pre_get_posts', 'ppt_filter_destination_archives' );
 
 /**
  * Helper to get settings.

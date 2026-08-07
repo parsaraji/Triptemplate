@@ -1,6 +1,7 @@
 <?php
 /**
- * Custom Tabbed WordPress Admin Settings Panel
+ * Custom Tabbed WordPress Admin Settings Panel & Extensive Documentation
+ * Now with Customizer, Contact information, Social Networks, and Diataxis Guides.
  *
  * @package Premium_Persian_Tourism
  */
@@ -57,6 +58,9 @@ class PPT_Admin_Panel {
 		register_setting( 'ppt_ad_group', 'ppt_ad_slots' );
 		register_setting( 'ppt_map_group', 'ppt_map_settings' );
 		register_setting( 'ppt_updater_group', 'ppt_updater_settings' );
+
+		// New Customize and Brand configuration settings
+		register_setting( 'ppt_brand_group', 'ppt_brand_settings' );
 	}
 
 	/**
@@ -71,10 +75,11 @@ class PPT_Admin_Panel {
 
 			<h2 class="nav-tab-wrapper">
 				<a href="?page=ppt-settings&tab=homepage_sections" class="nav-tab <?php echo 'homepage_sections' === $active_tab ? 'nav-tab-active' : ''; ?>">مدیریت صفحه نخست</a>
+				<a href="?page=ppt-settings&tab=brand_settings" class="nav-tab <?php echo 'brand_settings' === $active_tab ? 'nav-tab-active' : ''; ?>">تنظیمات برند و سفارشی‌سازی</a>
 				<a href="?page=ppt-settings&tab=ad_slots" class="nav-tab <?php echo 'ad_slots' === $active_tab ? 'nav-tab-active' : ''; ?>">مدیریت جایگاه‌های تبلیغاتی</a>
 				<a href="?page=ppt-settings&tab=map_settings" class="nav-tab <?php echo 'map_settings' === $active_tab ? 'nav-tab-active' : ''; ?>">تنظیمات نقشه</a>
 				<a href="?page=ppt-settings&tab=theme_updater" class="nav-tab <?php echo 'theme_updater' === $active_tab ? 'nav-tab-active' : ''; ?>">بروزرسانی پوسته</a>
-				<a href="?page=ppt-settings&tab=documentation" class="nav-tab <?php echo 'documentation' === $active_tab ? 'nav-tab-active' : ''; ?>">راهنما و مستندات</a>
+				<a href="?page=ppt-settings&tab=documentation" class="nav-tab <?php echo 'documentation' === $active_tab ? 'nav-tab-active' : ''; ?>">راهنما و مستندات تخصصی</a>
 			</h2>
 
 			<form method="post" action="options.php" style="margin-top:20px;">
@@ -82,6 +87,9 @@ class PPT_Admin_Panel {
 				if ( 'homepage_sections' === $active_tab ) {
 					settings_fields( 'ppt_homepage_group' );
 					$this->render_homepage_tab();
+				} elseif ( 'brand_settings' === $active_tab ) {
+					settings_fields( 'ppt_brand_group' );
+					$this->render_brand_tab();
 				} elseif ( 'ad_slots' === $active_tab ) {
 					settings_fields( 'ppt_ad_group' );
 					$this->render_ad_tab();
@@ -168,6 +176,79 @@ class PPT_Admin_Panel {
 						</tr>
 					<?php endforeach; ?>
 				</tbody>
+			</table>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Tab 1.5: Branding, Color, and Contact customization settings.
+	 */
+	private function render_brand_tab() {
+		$brand = get_option( 'ppt_brand_settings', array() );
+		$primary_color = isset( $brand['primary_color'] ) ? $brand['primary_color'] : '#3182CE';
+		$logo_tips     = isset( $brand['logo_tips'] ) ? $brand['logo_tips'] : '';
+		$phone         = isset( $brand['contact_phone'] ) ? $brand['contact_phone'] : '۰۲۱-۸۸۸۸۸۸۸۸';
+		$email         = isset( $brand['contact_email'] ) ? $brand['contact_email'] : 'info@safarnama.ir';
+		$instagram     = isset( $brand['social_instagram'] ) ? $brand['social_instagram'] : '';
+		$telegram      = isset( $brand['social_telegram'] ) ? $brand['social_telegram'] : '';
+		$aparat        = isset( $brand['social_aparat'] ) ? $brand['social_aparat'] : '';
+		$footer_text   = isset( $brand['footer_text'] ) ? $brand['footer_text'] : 'تمامی حقوق این وب‌سایت محفوظ و متعلق به رادیو سفر می‌باشد.';
+		?>
+		<div class="card-box ppt-admin-card">
+			<h3>تنظیمات هویت بصری برند، تماس و شبکه‌های اجتماعی</h3>
+			<p class="description">از این قسمت می‌توانید تم رنگی، شماره تماس، ایمیل و آدرس شبکه‌های اجتماعی رادیو سفر را سفارشی‌سازی کنید.</p>
+
+			<table class="form-table" style="margin-top:15px;">
+				<tr>
+					<th scope="row">رنگ سازمانی اصلی (Primary Theme Color)</th>
+					<td>
+						<input type="color" name="ppt_brand_settings[primary_color]" value="<?php echo esc_attr( $primary_color ); ?>" style="height:40px; width:80px; padding:0; cursor:pointer;" />
+						<p class="description">رنگ دکمه‌ها، لینک‌ها و جزئیات گرافیکی برجسته در سراسر سایت.</p>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">توضیحات یا راهنمای بارگذاری لوگو</th>
+					<td>
+						<textarea name="ppt_brand_settings[logo_tips]" class="large-text" rows="2" placeholder="توصیه می‌شود لوگو در پس‌زمینه شفاف (PNG) و در ابعاد حداکثر ۸۰ در ۲۴۰ پیکسل بارگذاری شود."><?php echo esc_textarea( $logo_tips ); ?></textarea>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">شماره تلفن تماس</th>
+					<td>
+						<input type="text" name="ppt_brand_settings[contact_phone]" value="<?php echo esc_attr( $phone ); ?>" class="regular-text" />
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">پست الکترونیکی تماس (ایمیل)</th>
+					<td>
+						<input type="email" name="ppt_brand_settings[contact_email]" value="<?php echo esc_attr( $email ); ?>" class="regular-text" />
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">آدرس اینستاگرام</th>
+					<td>
+						<input type="url" name="ppt_brand_settings[social_instagram]" value="<?php echo esc_url( $instagram ); ?>" class="regular-text" placeholder="https://instagram.com/safarnama" />
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">آدرس کانال تلگرام</th>
+					<td>
+						<input type="url" name="ppt_brand_settings[social_telegram]" value="<?php echo esc_url( $telegram ); ?>" class="regular-text" placeholder="https://t.me/safarnama" />
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">آدرس کانال آپارات</th>
+					<td>
+						<input type="url" name="ppt_brand_settings[social_aparat]" value="<?php echo esc_url( $aparat ); ?>" class="regular-text" placeholder="https://aparat.com/safarnama" />
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">متن کپی‌رایت فوتر</th>
+					<td>
+						<textarea name="ppt_brand_settings[footer_text]" class="large-text" rows="3"><?php echo esc_textarea( $footer_text ); ?></textarea>
+					</td>
+				</tr>
 			</table>
 		</div>
 		<?php
@@ -290,31 +371,63 @@ class PPT_Admin_Panel {
 	}
 
 	/**
-	 * Tab 5: Admin & Dev documentation.
+	 * Tab 5: Professional Diataxis Documentation
 	 */
 	private function render_documentation_tab() {
 		?>
-		<div class="card-box ppt-admin-card" style="line-height: 1.8;">
-			<h2>مستندات مدیریت و راهنمای توسعه‌دهندگان پوسته جامع رادیو سفر</h2>
-			<hr>
+		<div class="card-box ppt-admin-card" style="line-height: 1.8; direction:rtl; text-align:right;">
+			<h2>مستندات مرجع و راهنمای جامع پوسته رادیو سفر (ساختار Diataxis)</h2>
+			<hr style="margin:20px 0;">
 
-			<h3>۱. نحوه استفاده از کدهای کوتاه و ماژول‌ها</h3>
-			<p>این پوسته به گونه‌ای برنامه‌نویسی شده است که نیازی به افزونه‌های سنگینی چون المنتور، المنتور پرو یا ACF ندارد. تمامی ماژول‌های صفحه نخست از تب "مدیریت صفحه نخست" قابل ترتیب‌دهی، نام‌گذاری و مدیریت هستند.</p>
+			<!-- 1. TUTORIALS -->
+			<div style="margin-bottom:30px;">
+				<h3 style="color:#2B6CB0; border-bottom:1px solid #E2E8F0; padding-bottom:5px;">۱. آموزش‌های راه‌اندازی مقدماتی (Tutorials)</h3>
+				<p><strong>چگونه سایت گردشگری رادیو سفر را در کمتر از ۵ دقیقه راه‌اندازی کنیم؟</strong></p>
+				<ol>
+					<li>پوسته را روی یک وردپرس تازه نصب شده فعال کنید.</li>
+					<li>با فعال‌سازی پوسته، داده‌های دمو صوتی و متنی (شیراز، اصفهان، جزیره قشم و چاهکوه) همراه با نقشه‌ها به طور خودکار تولید می‌شوند.</li>
+					<li>به مسیر <strong>نمایش &rarr; فهرست‌ها</strong> رفته و منوی اصلی (Primary RTL) را به دلخواه تنظیم کنید.</li>
+					<li>از تب "مدیریت صفحه نخست" چیدمان ایده‌آل لایوها و ماژول‌ها را اولویت‌بندی کرده و دکمه ذخیره را بزنید.</li>
+				</ol>
+			</div>
 
-			<h3>۲. سیستم آپارات تنبل (Lazy-Load Video Embed)</h3>
-			<p>برای بارگذاری ویدیو بدون کاهش سرعت صفحه، در متا باکس ویدیوها، صرفاً شناسه ویدیو آپارات (به عنوان مثال <code>f1234</code>) را وارد نمایید. قالب به صورت خودکار عکس ویدیوی آپارات را نشان داده و با کلیک کاربر، فایل را لود می‌کند تا PageSpeed وب‌سایت در رتبه عالی باقی بماند.</p>
+			<!-- 2. HOW-TO GUIDES -->
+			<div style="margin-bottom:30px;">
+				<h3 style="color:#2B6CB0; border-bottom:1px solid #E2E8F0; padding-bottom:5px;">۲. دستورالعمل‌های گام‌به‌گام (How-To Guides)</h3>
 
-			<h3>۳. رادیو سفر (سیستم صوتی صمیمانه)</h3>
-			<p>پادکست‌های خود را با فرمت صوتی مستقیم (MP3) در متا باکس مربوطه ثبت نمایید. یک پلیر کاملا بهینه‌شده و سازگار با سیستم‌های صوتی در صفحات آرشیو و سینگل نمایش داده می‌شود.</p>
+				<p><strong>چگونه یک پادکست جدید در رادیو سفر اضافه کنیم؟</strong></p>
+				<ol>
+					<li>به منوی <strong>پادکست‌ها &rarr; افزودن پادکست جدید</strong> مراجعه کنید.</li>
+					<li>عنوان اپیزود و توضیحات متنی آن را به صورت معمول وارد کنید.</li>
+					<li>در فیلد تصویر شاخص، کاور جذاب پادکست را آپلود کنید.</li>
+					<li>در انتهای صفحه و در بخش "تنظیمات فایل صوتی پادکست"، آدرس مستقیم فایل صوتی با فرمت <code>MP3</code> را الصاق کنید و دکمه انتشار را بفشارید.</li>
+				</ol>
 
-			<h3>۴. تنظیمات سئو و نشانه‌گذاری اسکیما (Local SEO / JSON-LD Schema)</h3>
-			<p>پوسته به طور خودکار اسکیمای غنی از نوع <code>BreadcrumbList</code> برای کل سایت و ساختارهای اختصاصی <code>TouristDestination</code>، <code>TouristAttraction</code> و <code>FAQPage</code> تولید می‌کند. این امکان رتبه‌گیری در گوگل را بدون نیاز به افزونه‌های سئو بهینه‌تر خواهد کرد.</p>
+				<p><strong>چگونه ویدیوهای آپارات را بدون افت سرعت بارگذاری کنیم؟</strong></p>
+				<ul>
+					<li>به بخش <strong>ویدیوها &rarr; افزودن ویدیو جدید</strong> بروید.</li>
+					<li>شناسه کوتاه ویدیو آپارات (مثلاً <code>fXgHe</code>) را کپی کرده و در بخش فیلد شناسه آپارات قرار دهید.</li>
+					<li>پوسته به طور کاملا خودکار تصویر و دکمه پخش تنبل را لود کرده و از افت فاحش رتبه جی‌تی‌متریکس شما جلوگیری می‌کند.</li>
+				</ul>
+			</div>
 
-			<h3>۵. متغیرها و کدهای میانبر توسعه‌دهنده</h3>
-			<ul>
-				<li>آدرس فایل‌های فونت شبنم محلی: <code>assets/fonts/Shabnam.woff2</code></li>
-				<li>تابع دریافت تنظیمات پوسته: <code>ppt_get_setting('ppt_ad_slots', 'slots')</code></li>
-			</ul>
+			<!-- 3. REFERENCE CODES -->
+			<div style="margin-bottom:30px;">
+				<h3 style="color:#2B6CB0; border-bottom:1px solid #E2E8F0; padding-bottom:5px;">۳. اطلاعات مرجع و توابع فنی (Reference)</h3>
+				<p><strong>توابع کمکی و داده‌های مرجع توسعه‌دهنده:</strong></p>
+				<ul>
+					<li><code>ppt_get_setting( 'ppt_brand_settings', 'primary_color', '#3182CE' )</code>: دریافت تم رنگی پویای تعریف شده در تنظیمات برند.</li>
+					<li><code>PPT_Ad_Manager::render_ad_slot( 'sidebar_ad' )</code>: رندر بنر ضد Cumulative Layout Shift سایدبار.</li>
+					<li>کتابخانه نقشه‌ها: <strong>Leaflet JS v1.9.4</strong> با قابلیت لود تنبل تعاملی.</li>
+				</ul>
+			</div>
+
+			<!-- 4. EXPLANATION -->
+			<div>
+				<h3 style="color:#2B6CB0; border-bottom:1px solid #E2E8F0; padding-bottom:5px;">۴. مفاهیم عمیق و منطق طراحی (Explanation)</h3>
+				<p><strong>چرا عدم استفاده از افزونه‌های سنگین اهمیت دارد؟</strong></p>
+				<p class="text-justify">استفاده مکرر از فریم‌ورک‌های سنگین مانند المنتور و ویژوال کامپوزر با تزریق استایل‌های تکراری و کدهای CSS/JS غیرضروری، سرعت موبایل کاربران را به شدت کاهش داده و بر سئوی محلی تاثیر منفی می‌گذارد. معماری سبک، پاک و برون‌سازمانی این پوسته تضمین می‌کند که سایت شما بر روی ضعیف‌ترین شبکه‌های موبایلی (3G) در مناطق کوهستانی یا جزایر دوردست ایران، در کمترین زمان ممکن لود گردد.</p>
+			</div>
 		</div>
 		<?php
 	}

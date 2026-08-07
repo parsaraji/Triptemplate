@@ -1,6 +1,7 @@
 <?php
 /**
  * Single Attraction Editorial Detail Page
+ * Updated with localized directions, maps, ticket details, and sidebar ads.
  *
  * @package Premium_Persian_Tourism
  */
@@ -19,10 +20,11 @@ while ( have_posts() ) :
 	?>
 
 	<div class="container" style="margin-top:40px; margin-bottom:50px;">
+
 		<!-- 1. Editorial Image and Headline Header -->
 		<div style="margin-bottom:30px;">
-			<h1 style="font-size:30px; margin-bottom:10px; color:#1A202C;">جاذبه دیدنی: <?php the_title(); ?></h1>
-			<div class="meta-date" style="color:#718096; margin-bottom:20px;">بروزرسانی شده در: <?php echo esc_html( get_the_modified_date() ); ?></div>
+			<h1 style="font-size:30px; margin-bottom:10px; color:#1A202C;">جاذبه گردشگری: <?php the_title(); ?></h1>
+			<div class="meta-date" style="color:#718096; margin-bottom:20px;">آخرین بروزرسانی به همراه جزییات قیمت بلیت: <?php echo esc_html( get_the_modified_date() ); ?></div>
 
 			<?php if ( has_post_thumbnail() ) : ?>
 				<div style="border-radius:12px; overflow:hidden; aspect-ratio:21/9; margin-bottom:30px; background-color:#CBD5E0;">
@@ -41,19 +43,22 @@ while ( have_posts() ) :
 		<!-- 2. Main Page Columns -->
 		<div class="layout-with-sidebar">
 			<main class="site-main card-box" style="line-height:1.9;">
+
 				<!-- Basic Details Card -->
-				<div style="background-color: #EDF2F7; border-radius: 8px; padding: 20px; margin-bottom: 25px;">
-					<h3 style="margin-top:0; color:#2B6CB0; font-size:16px;">📋 اطلاعات کلی جاذبه</h3>
-					<ul style="list-style:none; padding:0; margin:0; font-size:14px; line-height:2;">
-						<li><strong>📍 آدرس:</strong> <?php echo esc_html( $address ? $address : 'مشخص نشده' ); ?></li>
-						<li><strong>⏱️ ساعات بازدید:</strong> <?php echo esc_html( $opening_hours ? $opening_hours : '۹:۰۰ الی ۱۷:۰۰' ); ?></li>
-						<li><strong>🎟️ بهای بلیت:</strong> <?php echo esc_html( $ticket_price ? $ticket_price : 'رایگان یا ثبت نشده' ); ?></li>
+				<div style="background-color: #F7FAFC; border:1px solid #E2E8F0; border-radius: 8px; padding: 22px; margin-bottom: 25px;">
+					<h3 style="margin-top:0; color:#2B6CB0; font-size:16px; border-bottom:1px solid #EDF2F7; padding-bottom:8px; margin-bottom:12px;">📋 جزییات و الزامات ورود جاذبه</h3>
+					<ul style="list-style:none; padding:0; margin:0; font-size:14px; line-height:2.2;">
+						<li><strong>📍 آدرس دقیق مسیر:</strong> <?php echo esc_html( $address ? $address : 'مشخص نشده' ); ?></li>
+						<li><strong>⏱️ ساعات کار و دسترسی:</strong> <?php echo esc_html( $opening_hours ? $opening_hours : '۹:۰۰ الی ۱۷:۰۰' ); ?></li>
+						<li><strong>🎟️ بهای بلیت ورودی:</strong> <span style="color:#E53E3E; font-weight:bold;"><?php echo esc_html( $ticket_price ? $ticket_price : 'رایگان یا ثبت نشده' ); ?></span></li>
 					</ul>
 				</div>
 
-				<div class="entry-content text-justify">
+				<div class="entry-content text-justify" style="margin-bottom:35px;">
 					<?php the_content(); ?>
 				</div>
+
+				<hr style="margin:30px 0; border:0; border-top:1px solid #EDF2F7;">
 
 				<!-- Associated Leaflet Map -->
 				<?php

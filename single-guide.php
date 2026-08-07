@@ -17,7 +17,7 @@ while ( have_posts() ) :
 	<div class="container" style="margin-top:40px; margin-bottom:50px;">
 		<div style="margin-bottom:30px;">
 			<h1 style="font-size:30px; margin-bottom:10px; color:#1A202C;">راهنمای جامع: <?php the_title(); ?></h1>
-			<div class="meta-date" style="color:#718096; margin-bottom:20px;">ارائه شده توسط رادیو سفر</div>
+			<div class="meta-date" style="color:#718096; margin-bottom:20px;">ارائه شده توسط تحریریه رادیو سفر</div>
 		</div>
 
 		<div class="layout-with-sidebar">

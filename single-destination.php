@@ -1,6 +1,7 @@
 <?php
 /**
  * Single Destination Editorial Travel Guide Template
+ * Now enriched with Climate Guides, Localized travel tips, FAQ Page accordion, and Leaflet Interactive maps.
  *
  * @package Premium_Persian_Tourism
  */
@@ -26,6 +27,7 @@ while ( have_posts() ) :
 	?>
 
 	<div class="container" style="margin-top:40px; margin-bottom:50px;">
+
 		<!-- 1. Editorial Destination Banner -->
 		<div class="destination-hero">
 			<div class="destination-hero-bg" style="background-image: url('<?php echo has_post_thumbnail() ? esc_url( get_the_post_thumbnail_url( get_the_ID(), 'full' ) ) : ''; ?>');"></div>
@@ -37,7 +39,7 @@ while ( have_posts() ) :
 					echo '<span class="card-badge" style="position:static; display:inline-block; margin-bottom:10px;">' . esc_html( $provinces[0]->name ) . '</span>';
 				}
 				?>
-				<h1>راهنمای سفر به <?php the_title(); ?></h1>
+				<h1>راهنمای جامع و سفرنامه <?php the_title(); ?></h1>
 			</div>
 		</div>
 
@@ -71,18 +73,22 @@ while ( have_posts() ) :
 		<div class="layout-with-sidebar">
 			<!-- Main editorial content -->
 			<main class="site-main card-box" style="line-height:1.9;">
+
+				<!-- Table of Contents -->
 				<div class="toc-box">
 					<h4>فهرست عناوین راهنما</h4>
 					<ul>
 						<li><a href="#overview" class="active">۱. معرفی و توصیف اجمالی</a></li>
-						<li><a href="#attractions">۲. جاذبه‌های دیدنی و گردشگری</a></li>
-						<li><a href="#map-section">۳. موقعیت جغرافیابی و مسیریابی</a></li>
-						<li><a href="#faq">۴. سوالات متداول مسافران</a></li>
+						<li><a href="#tips">۲. توصیه‌ها و ملزومات سفر (Travel Tips)</a></li>
+						<li><a href="#attractions">۳. جاذبه‌های دیدنی و گردشگری اطراف</a></li>
+						<li><a href="#map-section">۴. موقعیت جغرافیابی و مسیریابی تعاملی</a></li>
+						<li><a href="#faq">۵. سوالات متداول مسافران</a></li>
 					</ul>
 				</div>
 
+				<!-- Section 1: Overview -->
 				<div id="overview" class="section-content-box" style="margin-bottom:35px;">
-					<h2 class="section-title">معرفی و توصیف اجمالی</h2>
+					<h2 class="section-title" style="color:#2C5282; border-bottom:2px solid #EDF2F7; padding-bottom:8px; margin-bottom:15px;">معرفی و توصیف اجمالی</h2>
 					<div class="entry-content text-justify">
 						<?php the_content(); ?>
 					</div>
@@ -90,13 +96,24 @@ while ( have_posts() ) :
 
 				<hr style="margin:30px 0; border:0; border-top:1px solid #EDF2F7;">
 
-				<!-- Associated Attractions Section -->
+				<!-- Section 2: Localized Travel Tips -->
+				<div id="tips" class="section-content-box" style="margin-bottom:35px; background-color: #FFFDF5; border:1px solid #FEFCBF; padding:20px; border-radius:8px;">
+					<h3 style="color:#B7791F; margin-top:0;">💡 توصیه‌های کاربردی و ملزومات سفر رادیو سفر</h3>
+					<ul style="padding-right:20px; margin-bottom:0; font-size:14px; line-height:2;">
+						<li>پیش از حرکت، حتما از رزرو بودن اقامتگاه بوم‌گردی خود اطمینان حاصل فرمایید.</li>
+						<li>در مناطق کوهستانی، حتماً تجهیزات کامل و زنجیر چرخ به همراه داشته باشید.</li>
+						<li>پاسداشت فرهنگ بومی، استفاده از لیدرهای محلی و خرید صنایع دستی بومی به اقتصاد پایدار منطقه کمک بسزایی می‌کند.</li>
+					</ul>
+				</div>
+
+				<hr style="margin:30px 0; border:0; border-top:1px solid #EDF2F7;">
+
+				<!-- Section 3: Associated Attractions -->
 				<div id="attractions" class="section-content-box" style="margin-bottom:35px;">
-					<h2 class="section-title">جاذبه‌های تفریحی و دیدنی نزدیک</h2>
-					<p class="description">مهم‌ترین مکان‌های دیدنی، تاریخی و طبیعی که در طول سفر به این مقصد باید تجربه کنید:</p>
+					<h2 class="section-title" style="color:#2C5282; border-bottom:2px solid #EDF2F7; padding-bottom:8px; margin-bottom:15px;">جاذبه‌های تفریحی و دیدنی نزدیک</h2>
+					<p class="description">مهم‌ترین مکان‌های دیدنی، تاریخی و طبیعی نزدیک که در سفر به این مقصد باید تجربه کنید:</p>
 
 					<?php
-					// Query attractions associated with this destination's province.
 					if ( ! empty( $provinces ) && ! is_wp_error( $provinces ) ) {
 						$attr_query = new WP_Query( array(
 							'post_type'      => 'attraction',
@@ -142,7 +159,7 @@ while ( have_posts() ) :
 
 				<hr style="margin:30px 0; border:0; border-top:1px solid #EDF2F7;">
 
-				<!-- Interactive OSM Map -->
+				<!-- Section 4: Interactive OSM Map -->
 				<div id="map-section" class="section-content-box" style="margin-bottom:35px;">
 					<?php
 					if ( ! empty( $lat ) && ! empty( $lng ) ) {
@@ -151,9 +168,9 @@ while ( have_posts() ) :
 					?>
 				</div>
 
-				<!-- Shared FAQ accordion -->
-				<div id="faq" class="section-content-boxFAQ">
-					<h3 class="section-title">سوالات متداول کاربران درباره سفر به <?php the_title(); ?></h3>
+				<!-- Section 5: Shared FAQ accordion -->
+				<div id="faq" class="section-content-box" style="margin-top:30px;">
+					<h3 class="section-title" style="color:#2C5282; border-bottom:2px solid #EDF2F7; padding-bottom:8px; margin-bottom:15px;">سوالات متداول کاربران درباره سفر به <?php the_title(); ?></h3>
 					<?php
 					$faqs = get_post_meta( get_the_ID(), '_ppt_faqs', true );
 					if ( ! empty( $faqs ) && is_array( $faqs ) ) :

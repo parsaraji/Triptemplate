@@ -1,6 +1,7 @@
 <?php
 /**
  * Destinations Archive landing page
+ * Leveraging clean WP_Query and functions.php pre_get_posts filter logic.
  *
  * @package Premium_Persian_Tourism
  */
@@ -32,21 +33,7 @@ get_header(); ?>
 		</form>
 	</div>
 
-	<?php
-	// Custom Tax Filter Check
-	if ( isset( $_GET['province'] ) && ! empty( $_GET['province'] ) ) {
-		global $wp_query;
-		$tax_query = array(
-			array(
-				'taxonomy' => 'province',
-				'field'    => 'slug',
-				'terms'    => sanitize_text_field( $_GET['province'] ),
-			),
-		);
-		query_posts( array_merge( $wp_query->query, array( 'tax_query' => $tax_query ) ) );
-	}
-
-	if ( have_posts() ) : ?>
+	<?php if ( have_posts() ) : ?>
 		<div class="editorial-grid">
 			<?php
 			while ( have_posts() ) :
