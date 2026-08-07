@@ -93,8 +93,8 @@ foreach ( $sections as $section ) {
 
 // 3. Static Call-to-Action Promo Section for Brand Engagement
 ?>
-<section class="cta-banner-section" style="background: linear-gradient(135deg, #2B6CB0 0%, #1A365D 100%); color:#FFF; padding:60px 20px; text-align:center; margin-top:60px; border-radius:16px;" class="container">
-	<div class="container" style="max-width:800px; margin: 0 auto;">
+<section class="cta-banner-section container" style="background: linear-gradient(135deg, #2B6CB0 0%, #1A365D 100%); color:#FFF; padding:60px 20px; text-align:center; margin-top:60px; border-radius:16px;">
+	<div style="max-width:800px; margin: 0 auto;">
 		<span style="font-size:32px; display:block; margin-bottom:15px;">🎙️</span>
 		<h2 style="color:#FFF; font-size:28px; margin-bottom:15px; font-weight:800;">به جمع همسفران صوتی رادیو سفر بپیوندید</h2>
 		<p style="font-size:16px; line-height:1.8; color:#E2E8F0; margin-bottom:30px;">اپیزودهای صوتی شنیدنی از شگفتی‌های ناشناخته، کویرهای لوت، جنگل‌های هیرکانی و داستان‌های شیرین مردمان بومی ایران با صدای بهترین گویندگان.</p>

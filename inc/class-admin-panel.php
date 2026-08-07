@@ -1,7 +1,7 @@
 <?php
 /**
  * Custom Tabbed WordPress Admin Settings Panel & Extensive Documentation
- * Now with Customizer, Contact information, Social Networks, and Diataxis Guides.
+ * Includes brand settings, layout choices, and sticky mobile footer toggles.
  *
  * @package Premium_Persian_Tourism
  */
@@ -58,8 +58,6 @@ class PPT_Admin_Panel {
 		register_setting( 'ppt_ad_group', 'ppt_ad_slots' );
 		register_setting( 'ppt_map_group', 'ppt_map_settings' );
 		register_setting( 'ppt_updater_group', 'ppt_updater_settings' );
-
-		// New Customize and Brand configuration settings
 		register_setting( 'ppt_brand_group', 'ppt_brand_settings' );
 	}
 
@@ -186,20 +184,42 @@ class PPT_Admin_Panel {
 	 */
 	private function render_brand_tab() {
 		$brand = get_option( 'ppt_brand_settings', array() );
-		$primary_color = isset( $brand['primary_color'] ) ? $brand['primary_color'] : '#3182CE';
-		$logo_tips     = isset( $brand['logo_tips'] ) ? $brand['logo_tips'] : '';
-		$phone         = isset( $brand['contact_phone'] ) ? $brand['contact_phone'] : '۰۲۱-۸۸۸۸۸۸۸۸';
-		$email         = isset( $brand['contact_email'] ) ? $brand['contact_email'] : 'info@safarnama.ir';
-		$instagram     = isset( $brand['social_instagram'] ) ? $brand['social_instagram'] : '';
-		$telegram      = isset( $brand['social_telegram'] ) ? $brand['social_telegram'] : '';
-		$aparat        = isset( $brand['social_aparat'] ) ? $brand['social_aparat'] : '';
-		$footer_text   = isset( $brand['footer_text'] ) ? $brand['footer_text'] : 'تمامی حقوق این وب‌سایت محفوظ و متعلق به رادیو سفر می‌باشد.';
+		$primary_color     = isset( $brand['primary_color'] ) ? $brand['primary_color'] : '#3182CE';
+		$logo_tips         = isset( $brand['logo_tips'] ) ? $brand['logo_tips'] : '';
+		$phone             = isset( $brand['contact_phone'] ) ? $brand['contact_phone'] : '۰۲۱-۸۸۸۸۸۸۸۸';
+		$email             = isset( $brand['contact_email'] ) ? $brand['contact_email'] : 'info@safarnama.ir';
+		$instagram         = isset( $brand['social_instagram'] ) ? $brand['social_instagram'] : '';
+		$telegram          = isset( $brand['social_telegram'] ) ? $brand['social_telegram'] : '';
+		$aparat            = isset( $brand['social_aparat'] ) ? $brand['social_aparat'] : '';
+		$footer_text       = isset( $brand['footer_text'] ) ? $brand['footer_text'] : 'تمامی حقوق این وب‌سایت محفوظ و متعلق به رادیو سفر می‌باشد.';
+
+		// Expanded settings fields
+		$enable_sticky_bar = isset( $brand['enable_sticky_bar'] ) ? $brand['enable_sticky_bar'] : '1';
+		$header_style      = isset( $brand['header_style'] ) ? $brand['header_style'] : 'premium';
 		?>
 		<div class="card-box ppt-admin-card">
-			<h3>تنظیمات هویت بصری برند، تماس و شبکه‌های اجتماعی</h3>
-			<p class="description">از این قسمت می‌توانید تم رنگی، شماره تماس، ایمیل و آدرس شبکه‌های اجتماعی رادیو سفر را سفارشی‌سازی کنید.</p>
+			<h3>تنظیمات هویت بصری برند، تماس، شبکه‌های اجتماعی و ناوبری موبایل</h3>
+			<p class="description">از این قسمت می‌توانید تم رنگی، شماره تماس، ایمیل، آدرس شبکه‌های اجتماعی و رفتار نوارهای ناوبری رادیو سفر را سفارشی‌سازی کنید.</p>
 
 			<table class="form-table" style="margin-top:15px;">
+				<tr>
+					<th scope="row">استایل سربرگ (Header Style)</th>
+					<td>
+						<select name="ppt_brand_settings[header_style]">
+							<option value="premium" <?php selected( $header_style, 'premium' ); ?>>سربرگ مدرن و ادیتوریال رادیو سفر</option>
+							<option value="classic" <?php selected( $header_style, 'classic' ); ?>>سربرگ مینیمال سنتی</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">فعال‌سازی نوار ناوبری چسبان پایین موبایل (Sticky Mobile Bar)</th>
+					<td>
+						<label>
+							<input type="checkbox" name="ppt_brand_settings[enable_sticky_bar]" value="1" <?php checked( '1', $enable_sticky_bar ); ?> />
+							نمایش نوار ناوبری اپلیکیشنی پایین صفحه در رزولوشن‌های موبایل (خانه، مقاصد، رادیو سفر، مستندها).
+						</label>
+					</td>
+				</tr>
 				<tr>
 					<th scope="row">رنگ سازمانی اصلی (Primary Theme Color)</th>
 					<td>
