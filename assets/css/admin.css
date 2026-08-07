@@ -1,0 +1,128 @@
+/**
+ * Custom WordPress Settings Panel Styling for PPT Theme
+ */
+
+.ppt-admin-wrap {
+  margin: 20px 20px 0 0;
+  max-width: 1200px;
+  font-family: 'Shabnam', 'Tahoma', sans-serif !important;
+}
+
+.ppt-admin-wrap h1 {
+  font-size: 24px;
+  font-weight: bold;
+  color: #1A202C;
+}
+
+.ppt-admin-wrap .nav-tab-wrapper {
+  margin-bottom: 25px;
+  border-bottom: 2px solid #CBD5E0;
+}
+
+.ppt-admin-wrap .nav-tab {
+  font-size: 14px;
+  font-weight: bold;
+  padding: 8px 16px;
+  border-bottom: none;
+  background-color: #E2E8F0;
+  border: 1px solid #CBD5E0;
+  border-bottom: none;
+  margin-left: 4px;
+}
+
+.ppt-admin-wrap .nav-tab-active,
+.ppt-admin-wrap .nav-tab:hover {
+  background-color: #FFF;
+  border-bottom: 2px solid #FFF;
+  color: #2B6CB0;
+  margin-bottom: -2px;
+}
+
+/* Card layout inside admin settings */
+.card-box.ppt-admin-card {
+  background-color: #FFFFFF;
+  border-radius: 8px;
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+  padding: 30px;
+  margin-bottom: 25px;
+}
+
+.card-box.ppt-admin-card h3 {
+  font-size: 18px;
+  color: #2D3748;
+  margin-top: 0;
+  border-bottom: 1px solid #EDF2F7;
+  padding-bottom: 12px;
+  margin-bottom: 15px;
+}
+
+/* Drag handle styling for sortable homepage sections */
+.ppt-drag-handle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+}
+
+.ppt-section-row:hover {
+  background-color: #F7FAFC;
+}
+
+/* Success notice and labels */
+.text-success {
+  color: #38A169 !important;
+}
+
+.text-danger {
+  color: #E53E3E !important;
+}
+
+/* Form fields customization */
+.ppt-admin-wrap input[type="text"],
+.ppt-admin-wrap input[type="number"],
+.ppt-admin-wrap select,
+.ppt-admin-wrap textarea {
+  border: 1px solid #CBD5E0;
+  border-radius: 4px;
+  padding: 6px 10px;
+  font-family: inherit;
+  font-size: 13px;
+  outline: none;
+}
+
+.ppt-admin-wrap input[type="text"]:focus,
+.ppt-admin-wrap input[type="number"]:focus,
+.ppt-admin-wrap select:focus,
+.ppt-admin-wrap textarea:focus {
+  border-color: #3182CE;
+  box-shadow: 0 0 0 1px #3182CE;
+}
+
+/* Meta Boxes specific formatting */
+.ppt-meta-field-group {
+  margin-bottom: 15px;
+}
+
+.ppt-meta-field-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 600;
+  color: #2d3748;
+}
+
+.ppt-meta-section h3 {
+  font-size: 15px;
+  color: #1a202c;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 8px;
+  margin-bottom: 15px;
+}
+
+.ppt-repeater-item {
+  border: 1px solid #cbd5e0;
+  border-radius: 6px;
+  background-color: #f7fafc;
+  padding: 15px;
+  margin-bottom: 15px;
+}
