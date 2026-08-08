@@ -39,21 +39,77 @@
 			</div>
 		</div>
 
-		<!-- Middle: Desktop Navigation Menu -->
+		<!-- Middle: Desktop Navigation Menu with built-in Megamenu (Priority 4) -->
 		<nav class="desktop-nav" aria-label="منوی اصلی دسکتاپ">
-			<?php
-			wp_nav_menu( array(
-				'theme_location' => 'primary',
-				'menu_id'        => 'primary-menu',
-				'container'      => false,
-				'fallback_cb'    => false,
-			) );
-			?>
+			<ul id="primary-menu-list">
+				<li><a href="<?php echo esc_url( home_url( '/' ) ); ?>">خانه</a></li>
+
+				<!-- Mega Menu Item (Hover to view Provinces Megamenu) -->
+				<li class="ppt-megamenu-trigger">
+					<a href="<?php echo esc_url( get_post_type_archive_link( 'destination' ) ); ?>" class="megamenu-title-link">مقاصد گردشگری 👇</a>
+
+					<!-- Built-in dynamic megamenu drop -->
+					<div class="ppt-megamenu-dropdown">
+						<div class="megamenu-columns-grid">
+
+							<!-- Megamenu Col 1: Province Quick Links -->
+							<div class="megamenu-col">
+								<h4>📍 استان‌های دیدنی ایران</h4>
+								<ul>
+									<?php
+									$provinces = get_terms( array( 'taxonomy' => 'province', 'number' => 5, 'hide_empty' => false ) );
+									if ( ! empty( $provinces ) && ! is_wp_error( $provinces ) ) {
+										foreach ( $provinces as $prov ) {
+											echo '<li><a href="' . esc_url( get_term_link( $prov ) ) . '">سفر به استان ' . esc_html( $prov->name ) . '</a></li>';
+										}
+									}
+									?>
+								</ul>
+							</div>
+
+							<!-- Megamenu Col 2: Media links -->
+							<div class="megamenu-col">
+								<h4>🎧 رادیو صوتی و مستندها</h4>
+								<ul>
+									<li><a href="<?php echo esc_url( get_post_type_archive_link( 'podcast' ) ); ?>">شنیدن اپیزودهای رادیو سفر</a></li>
+									<li><a href="<?php echo esc_url( get_post_type_archive_link( 'video' ) ); ?>">تماشای آنلاین مستندهای ویدیویی</a></li>
+									<li><a href="<?php echo esc_url( get_post_type_archive_link( 'guide' ) ); ?>">مطالعه راهنماهای صفر تا صد سفر</a></li>
+								</ul>
+							</div>
+
+							<!-- Megamenu Col 3: Featured visual promotion -->
+							<div class="megamenu-col promo-col" style="background-color:#F7FAFC; padding:15px; border-radius:6px; text-align:center;">
+								<span style="font-size:32px;">📻</span>
+								<h5>اپلیکیشن رادیو سفر</h5>
+								<p style="font-size:11px; color:#718096; margin-bottom:10px;">همسفر صوتی شما در جاده‌های ایران زمین</p>
+								<a href="<?php echo esc_url( get_post_type_archive_link( 'podcast' ) ); ?>" class="button btn-small btn-secondary" style="font-size:11px;">شروع شنیدن</a>
+							</div>
+
+						</div>
+					</div>
+				</li>
+
+				<li><a href="<?php echo esc_url( get_post_type_archive_link( 'podcast' ) ); ?>">رادیو سفر (پادکست)</a></li>
+				<li><a href="<?php echo esc_url( get_post_type_archive_link( 'guide' ) ); ?>">راهنماها</a></li>
+				<li><a href="<?php echo esc_url( home_url( '/advertising/' ) ); ?>">تبلیغات و رزرو جایگاه</a></li>
+			</ul>
 		</nav>
 
-		<!-- Left Side: Quick Contact & Active Search trigger -->
+		<!-- Left Side: Refined Desktop Search form to avoid random pages overflow (Search Bug Fix) -->
 		<div class="header-left">
-			<a href="<?php echo esc_url( home_url( '/?s=' ) ); ?>" class="header-search-trigger" aria-label="جستجوی سریع">🔍</a>
+			<!-- Expandable Header Search trigger -->
+			<div class="ppt-header-search-container">
+				<form role="search" method="get" action="<?php echo esc_url( home_url( '/' ) ); ?>" class="ppt-header-search-form">
+					<input type="text" placeholder="جستجو در مقاصد..." name="s" required />
+					<!-- Strict restriction to ensure only relevant content type is returned, fixing the search overflow bug -->
+					<input type="hidden" name="post_type[]" value="destination" />
+					<input type="hidden" name="post_type[]" value="attraction" />
+					<input type="hidden" name="post_type[]" value="podcast" />
+					<input type="hidden" name="post_type[]" value="video" />
+					<input type="hidden" name="post_type[]" value="guide" />
+					<button type="submit" class="header-search-submit">🔍</button>
+				</form>
+			</div>
 			<a href="<?php echo esc_url( get_post_type_archive_link( 'podcast' ) ); ?>" class="header-cta-btn">🎙️ رادیو سفر</a>
 		</div>
 
@@ -67,24 +123,27 @@
 		<button class="drawer-close-btn" aria-label="بستن منو">&times;</button>
 	</div>
 
-	<!-- Quick Search inside Mobile Drawer -->
+	<!-- Quick Search inside Mobile Drawer targeting only main post types -->
 	<div class="drawer-search-box">
 		<form role="search" method="get" action="<?php echo esc_url( home_url( '/' ) ); ?>">
 			<input type="text" placeholder="جستجو در مقاصد و پادکست‌ها..." name="s" required />
+			<input type="hidden" name="post_type[]" value="destination" />
+			<input type="hidden" name="post_type[]" value="attraction" />
+			<input type="hidden" name="post_type[]" value="podcast" />
 			<button type="submit">🔍</button>
 		</form>
 	</div>
 
 	<!-- Mobile Nav List -->
 	<nav class="drawer-nav" aria-label="منوی اصلی موبایل">
-		<?php
-		wp_nav_menu( array(
-			'theme_location' => 'primary',
-			'menu_class'     => 'mobile-nav-menu',
-			'container'      => false,
-			'fallback_cb'    => false,
-		) );
-		?>
+		<ul class="mobile-nav-menu">
+			<li><a href="<?php echo esc_url( home_url( '/' ) ); ?>">خانه</a></li>
+			<li><a href="<?php echo esc_url( get_post_type_archive_link( 'destination' ) ); ?>">مقاصد گردشگری</a></li>
+			<li><a href="<?php echo esc_url( get_post_type_archive_link( 'podcast' ) ); ?>">رادیو صوتی پادکست</a></li>
+			<li><a href="<?php echo esc_url( get_post_type_archive_link( 'video' ) ); ?>">مستندهای تصویری</a></li>
+			<li><a href="<?php echo esc_url( get_post_type_archive_link( 'guide' ) ); ?>">راهنماهای مکتوب</a></li>
+			<li><a href="<?php echo esc_url( home_url( '/advertising/' ) ); ?>">تبلیغات و رزرو جایگاه</a></li>
+		</ul>
 	</nav>
 
 	<!-- Quick Contacts and Social Networks in Mobile Drawer Footer -->

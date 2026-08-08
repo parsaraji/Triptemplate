@@ -1,6 +1,6 @@
 /**
  * Premium Persian Tourism - Core JavaScript Interactions
- * Completely upgraded with dynamic AJAX-based search & filter system (Priority 2).
+ * Completely upgraded with Megamenu triggers, ARIA overlays, and AJAX filters.
  */
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -233,6 +233,30 @@ document.addEventListener('DOMContentLoaded', function () {
           clearTimeout(window.ppt_filter_timer);
           window.ppt_filter_timer = setTimeout(performFilter, 300);
         });
+      }
+    });
+  }
+
+  // 7. Megamenu Hover delay interaction
+  var megaTrigger = document.querySelector('.ppt-megamenu-trigger');
+  if (megaTrigger) {
+    var megaDropdown = megaTrigger.querySelector('.ppt-megamenu-dropdown');
+    megaTrigger.addEventListener('mouseenter', function () {
+      if (megaDropdown) {
+        megaDropdown.style.display = 'block';
+        setTimeout(function() {
+          megaDropdown.style.opacity = '1';
+          megaDropdown.style.transform = 'translateY(0)';
+        }, 10);
+      }
+    });
+    megaTrigger.addEventListener('mouseleave', function () {
+      if (megaDropdown) {
+        megaDropdown.style.opacity = '0';
+        megaDropdown.style.transform = 'translateY(10px)';
+        setTimeout(function() {
+          megaDropdown.style.display = 'none';
+        }, 200);
       }
     });
   }

@@ -1,6 +1,7 @@
 <?php
 /**
  * Elegant Desktop Footer and App-like Sticky Bottom Bar for Mobile Devices
+ * Upgraded with mobile visibility toggles and backcountry partner backlinks (Priority 4).
  *
  * @package Premium_Persian_Tourism
  */
@@ -12,16 +13,23 @@ if ( class_exists( 'PPT_Ad_Manager' ) ) {
 	PPT_Ad_Manager::render_ad_slot( 'content_ad_bottom' );
 }
 
-$brand_settings = get_option( 'ppt_brand_settings', array() );
-$phone          = isset( $brand_settings['contact_phone'] ) ? $brand_settings['contact_phone'] : '۰۲۱-۸۸۸۸۸۸۸۸';
-$email          = isset( $brand_settings['contact_email'] ) ? $brand_settings['contact_email'] : 'info@safarnama.ir';
-$instagram      = isset( $brand_settings['social_instagram'] ) ? $brand_settings['social_instagram'] : '';
-$telegram       = isset( $brand_settings['social_telegram'] ) ? $brand_settings['social_telegram'] : '';
-$aparat         = isset( $brand_settings['social_aparat'] ) ? $brand_settings['social_aparat'] : '';
-$footer_text    = isset( $brand_settings['footer_text'] ) ? $brand_settings['footer_text'] : 'تمامی حقوق این وب‌سایت محفوظ و متعلق به رادیو سفر می‌باشد.';
+$brand_settings     = get_option( 'ppt_brand_settings', array() );
+$phone              = isset( $brand_settings['contact_phone'] ) ? $brand_settings['contact_phone'] : '۰۲۱-۸۸۸۸۸۸۸۸';
+$email              = isset( $brand_settings['contact_email'] ) ? $brand_settings['contact_email'] : 'info@safarnama.ir';
+$instagram          = isset( $brand_settings['social_instagram'] ) ? $brand_settings['social_instagram'] : '';
+$telegram           = isset( $brand_settings['social_telegram'] ) ? $brand_settings['social_telegram'] : '';
+$aparat             = isset( $brand_settings['social_aparat'] ) ? $brand_settings['social_aparat'] : '';
+$footer_text        = isset( $brand_settings['footer_text'] ) ? $brand_settings['footer_text'] : 'تمامی حقوق این وب‌سایت محفوظ و متعلق به رادیو سفر می‌باشد.';
+$hide_footer_mobile = isset( $brand_settings['hide_footer_mobile'] ) && '1' === $brand_settings['hide_footer_mobile'];
+
+// Construct conditional CSS class for mobile footer visibility
+$footer_class = 'site-footer premium-footer';
+if ( $hide_footer_mobile ) {
+	$footer_class .= ' hide-footer-on-mobile';
+}
 ?>
 
-<footer class="site-footer premium-footer">
+<footer class="<?php echo esc_attr( $footer_class ); ?>">
 	<div class="container">
 		<div class="footer-grid">
 

@@ -60,6 +60,19 @@ class PPT_Seo_Schema {
 				echo "\n" . '<script type="application/ld+json">' . wp_json_encode( $schema, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE ) . '</script>' . "\n";
 			}
 		}
+
+		// Inject Manual SEO Schema override if specified by Admin
+		if ( is_singular() ) {
+			global $post;
+			if ( $post ) {
+				$manual_schema = get_post_meta( $post->ID, '_ppt_manual_schema', true );
+				if ( ! empty( $manual_schema ) ) {
+					echo "\n<!-- Manual Customizer Schema Injector (Priority 4) -->\n";
+					echo trim( $manual_schema ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+					echo "\n";
+				}
+			}
+		}
 	}
 
 	/**

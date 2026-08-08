@@ -3,6 +3,7 @@
  * Custom Tabbed WordPress Admin Settings Panel & Commercial Admin Console
  * Includes Visual Customizer, Child Theme Creator, Ad Booking logs, and Import/Export utilities.
  * Refactored to list and clear 'ppt_booking' custom post records (Security Overhaul).
+ * Upgraded with multi-taxonomy customizers, footer visibility triggers, and multi-CPT WXR schemas.
  *
  * @package Premium_Persian_Tourism
  */
@@ -272,6 +273,11 @@ class PPT_Admin_Panel {
 		$footer_text       = isset( $brand['footer_text'] ) ? $brand['footer_text'] : 'تمامی حقوق این وب‌سایت محفوظ و متعلق به رادیو سفر می‌باشد.';
 		$enable_sticky_bar = isset( $brand['enable_sticky_bar'] ) ? $brand['enable_sticky_bar'] : '1';
 		$header_style      = isset( $brand['header_style'] ) ? $brand['header_style'] : 'premium';
+
+		// Upgraded visibility customizers
+		$hide_footer_mobile = isset( $brand['hide_footer_mobile'] ) ? $brand['hide_footer_mobile'] : '0';
+		$prov_color         = isset( $brand['prov_color'] ) ? $brand['prov_color'] : '#2B6CB0';
+		$topic_color        = isset( $brand['topic_color'] ) ? $brand['topic_color'] : '#B7791F';
 		?>
 		<div class="card-box ppt-admin-card">
 			<h3>🎨 پلتفرم شخصی‌سازی استایل‌ها و متغیرهای بصری (Priority 1)</h3>
@@ -312,6 +318,43 @@ class PPT_Admin_Panel {
 					<th scope="row">حداکثر عرض بدنه سایت (Container Width - px)</th>
 					<td>
 						<input type="number" name="ppt_brand_settings[container_width]" value="<?php echo esc_attr( $container_width ); ?>" style="width:100px;" /> پیکسل
+					</td>
+				</tr>
+			</table>
+		</div>
+
+		<!-- Segmented Taxonomy Color Options (Priority 1 - Taxonomy customizer option) -->
+		<div class="card-box ppt-admin-card">
+			<h3>🎨 شخصی‌سازی مجزای تم رنگی صفحات استان‌ها و موضوعات سفر</h3>
+			<p class="description">برای جذابیت بصری بیشتر، می‌توانید رنگ متمایز کننده شاخصی برای صفحات آرشیو استان‌ها و موضوعات سفر مشخص فرمایید:</p>
+
+			<table class="form-table">
+				<tr>
+					<th scope="row">رنگ شاخص صفحات استان‌ها (Province Archives)</th>
+					<td>
+						<input type="color" name="ppt_brand_settings[prov_color]" value="<?php echo esc_attr( $prov_color ); ?>" />
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">رنگ شاخص صفحات موضوعات سفر (Topic Archives)</th>
+					<td>
+						<input type="color" name="ppt_brand_settings[topic_color]" value="<?php echo esc_attr( $topic_color ); ?>" />
+					</td>
+				</tr>
+			</table>
+		</div>
+
+		<!-- Advanced responsive visibility selectors -->
+		<div class="card-box ppt-admin-card">
+			<h3>📱 تنظیمات واکنش‌گرایی و نمایش فوتر</h3>
+			<table class="form-table">
+				<tr>
+					<th scope="row">مخفی‌سازی کامل فوتر در تبلت و موبایل</th>
+					<td>
+						<label>
+							<input type="checkbox" name="ppt_brand_settings[hide_footer_mobile]" value="1" <?php checked( '1', $hide_footer_mobile ); ?> />
+							غیرفعال‌سازی نمایش فوتر بزرگ دسکتاپ در رزولوشن‌های عرض کم موبایلی برای سرعت بیشتر صفحه.
+						</label>
 					</td>
 				</tr>
 			</table>
@@ -442,7 +485,7 @@ class PPT_Admin_Panel {
 
 			<div style="background-color:#fafafa; border:1px solid #ccc; padding:15px; border-radius:6px; margin-bottom:20px;">
 				<h4 style="margin-top:0;">بک‌لینک‌های ثبت شده فعلی:</h4>
-				<?php for ( $i = 0; $i < 3; $i ++ ) :
+				<?php for ( $i = 0; $i < 4; $i ++ ) :
 					$link_url = isset( $backlinks[$i]['url'] ) ? $backlinks[$i]['url'] : '';
 					$link_anc = isset( $backlinks[$i]['anchor'] ) ? $backlinks[$i]['anchor'] : '';
 					$link_nf  = isset( $backlinks[$i]['nofollow'] ) ? $backlinks[$i]['nofollow'] : '0';
@@ -574,22 +617,20 @@ class PPT_Admin_Panel {
 		) ) );
 		?>
 		<div class="card-box ppt-admin-card" style="line-height:1.9;">
-			<h3>استاندارد ساختار فایل‌های درون‌ریز دمو گردشگری (WordPress eXtended RSS - WXR)</h3>
-			<p class="description">این بخش مشخصات و ساختار استاندارد فایل‌های <code>.xml</code> درون‌ریز را برای پست‌تایپ‌ها و متادیتاها تشریح می‌کند.</p>
+			<h3>استاندارد ساختار فایل‌های درون‌ریز دمو گردشگری (WXR Schema Specs)</h3>
+			<p class="description">آیین‌نامه و ساختار فایل‌های XML درون‌ریز را برای تمامی ۶ پست‌تایپ اختصاصی و تگ‌های فرعی مشاهده فرمایید:</p>
 
 			<div style="background-color:#F7FAFC; border-right:4px solid #3182CE; padding:15px; border-radius:6px; margin-bottom:20px;">
 				<h4 style="margin-top:0; color:#2C5282;">📥 راهنمای درون‌ریزی فوری:</h4>
-				<p style="font-size:14px; margin-bottom:0;">برای درون‌ریزی داده‌های صوتی و موقعیت‌های جغرافیایی، از منوی <strong>ابزارها &rarr; درون‌ریزی &rarr; WordPress</strong> استفاده نمایید و فایل XML ساخته شده را آپلود کنید. به طور موازی، داده‌های دمو با هر بار فعال‌سازی پوسته به صورت خودکار تولید می‌شوند.</p>
+				<p style="font-size:14px; margin-bottom:0;">برای درون‌ریزی داده‌های صوتی و موقعیت‌های جغرافیایی، از منوی <strong>ابزارها &rarr; درون‌ریزی &rarr; WordPress</strong> استفاده نمایید و فایل XML ساخته شده را آپلود کنید.</p>
 			</div>
 
-			<h4 style="color:#2D3748;">ساختار نمونه سند WXR XML استاندارد برای جاذبه‌ها و پادکست‌ها:</h4>
+			<h4 style="color:#2D3748;">ساختار نمونه سند WXR XML استاندارد برای جاذبه‌ها، برنامه‌های سفر، پادکست‌ها، ویدیوها و مقاصد:</h4>
 			<textarea class="large-text" rows="10" readonly style="font-family:monospace; font-size:11px; direction:ltr; text-align:left; background-color:#1E293B; color:#F8FAFC;"><?php echo '<?xml version="1.0" encoding="UTF-8" ?>'; ?>
 
 <rss version="2.0"
 	xmlns:excerpt="http://wordpress.org/export/1.2/excerpt/"
 	xmlns:content="http://purl.org/rss/1.0/modules/content/"
-	xmlns:wfw="http://wellformedweb.org/commentAPI/"
-	xmlns:dc="http://purl.org/dc/elements/1.1/"
 	xmlns:wp="http://wordpress.org/export/1.2/"
 >
 <channel>
@@ -598,21 +639,38 @@ class PPT_Admin_Panel {
 	<description>دمو جامع گردشگری صوتی</description>
 	<wp:wxr_version>1.2</wp:wxr_version>
 
-	<!-- نمونه آیتم جاذبه گردشگری همراه با متادیتاها -->
+	<!-- ۱. نمونه درون‌ریز مقصد گردشگری (Destination) -->
 	<item>
-		<title>مجموعه تاریخی باغ شازده ماهان کرمان</title>
-		<link>https://safarnama.ir/attractions/shazdeh-garden/</link>
-		<pubDate>Mon, 01 Jan 2026 00:00:00 +0000</pubDate>
-		<wp:post_id>2001</wp:post_id>
-		<wp:post_date><![CDATA[2026-01-01 00:00:00]]></wp:post_date>
-		<wp:post_name><![CDATA[shazdeh-garden]]></wp:post_name>
+		<title>شیراز زیبا</title>
+		<wp:post_name><![CDATA[shiraz]]></wp:post_name>
+		<wp:post_type><![CDATA[destination]]></wp:post_type>
 		<wp:status><![CDATA[publish]]></wp:status>
+		<wp:postmeta>
+			<wp:meta_key><![CDATA[_ppt_best_time]]></wp:meta_key>
+			<wp:meta_value><![CDATA[اردیبهشت ماه]]></wp:meta_value>
+		</wp:postmeta>
+	</item>
+
+	<!-- ۲. نمونه درون‌ریز جاذبه گردشگری (Attraction) -->
+	<item>
+		<title>تخت جمشید</title>
 		<wp:post_type><![CDATA[attraction]]></wp:post_type>
+		<wp:status><![CDATA[publish]]></wp:status>
+		<wp:postmeta>
+			<wp:meta_key><![CDATA[_ppt_address]]></wp:meta_key>
+			<wp:meta_value><![CDATA[فارس، مرودشت]]></wp:meta_value>
+		</wp:postmeta>
+	</item>
 
-		<!-- دسته‌بندی و تعیین استان -->
-		<category domain="province" Oregon="kerman"><![CDATA[کرمان]]></category>
-
-		<content:encoded><![CDATA[باغ شاهزاده ماهان یکی از زیباترین باغ‌های تاریخی ایران است که در دل کویر کرمان می‌درخشد. این اثر ثبت جهانی یونسکو بوده و از سیستم آبرسانی پله‌ای فوق‌العاده‌ای بهره می‌برد.]]></content:encoded>
+	<!-- ۳. نمونه درون‌ریز برنامه سفر (Itinerary) -->
+	<item>
+		<title>برنامه ۳ روزه گشت اصفهان</title>
+		<wp:post_type><![CDATA[itinerary]]></wp:post_type>
+		<wp:status><![CDATA[publish]]></wp:status>
+		<wp:postmeta>
+			<wp:meta_key><![CDATA[_ppt_itinerary_duration]]></wp:meta_key>
+			<wp:meta_value><![CDATA[۳ روز و ۲ شب]]></wp:meta_value>
+		</wp:postmeta>
 	</item>
 </channel>
 </rss>

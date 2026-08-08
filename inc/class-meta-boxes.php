@@ -1,6 +1,7 @@
 <?php
 /**
  * Non-Gutenberg Custom Meta Boxes
+ * Upgraded with detailed Itinerary (برنامه سفر) meta settings and manual SEO Schema injectors on all posts.
  *
  * @package Premium_Persian_Tourism
  */
@@ -38,7 +39,9 @@ class PPT_Meta_Boxes {
 	 * Register Custom Meta Boxes.
 	 */
 	public function register_meta_boxes() {
-		// Destination meta box
+		$all_post_types = array( 'post', 'page', 'destination', 'attraction', 'itinerary', 'guide', 'podcast', 'video' );
+
+		// 1. Destination meta box
 		add_meta_box(
 			'ppt_destination_details',
 			'اطلاعات و ویژگی‌های مقصد گردشگری',
@@ -48,7 +51,7 @@ class PPT_Meta_Boxes {
 			'high'
 		);
 
-		// Attraction meta box
+		// 2. Attraction meta box
 		add_meta_box(
 			'ppt_attraction_details',
 			'اطلاعات و ویژگی‌های جاذبه گردشگری',
@@ -58,7 +61,17 @@ class PPT_Meta_Boxes {
 			'high'
 		);
 
-		// Guide meta box (repeatable budget list & FAQ)
+		// 3. Itinerary (برنامه سفر) meta box
+		add_meta_box(
+			'ppt_itinerary_details',
+			'جزییات و برنامه‌ریزی روزانه سفر (Itinerary)',
+			array( $this, 'render_itinerary_meta_box' ),
+			'itinerary',
+			'normal',
+			'high'
+		);
+
+		// 4. Guide meta box (repeatable budget list & FAQ)
 		add_meta_box(
 			'ppt_guide_details',
 			'اطلاعات راهنما و جداول هزینه‌ها',
@@ -68,7 +81,7 @@ class PPT_Meta_Boxes {
 			'high'
 		);
 
-		// Podcast meta box
+		// 5. Podcast meta box
 		add_meta_box(
 			'ppt_podcast_details',
 			'تنظیمات فایل صوتی پادکست',
@@ -78,7 +91,7 @@ class PPT_Meta_Boxes {
 			'high'
 		);
 
-		// Video meta box
+		// 6. Video meta box
 		add_meta_box(
 			'ppt_video_details',
 			'کد یا لینک آپارات ویدیو',
@@ -87,6 +100,18 @@ class PPT_Meta_Boxes {
 			'normal',
 			'high'
 		);
+
+		// 7. Manual SEO JSON-LD Schema Injector on ALL post types
+		foreach ( $all_post_types as $pt ) {
+			add_meta_box(
+				'ppt_manual_schema_injector',
+				'نشانه‌گذاری اسکیما اختصاصی (Manual JSON-LD Schema)',
+				array( $this, 'render_manual_schema_meta_box' ),
+				$pt,
+				'normal',
+				'low'
+			);
+		}
 	}
 
 	/**
@@ -162,6 +187,74 @@ class PPT_Meta_Boxes {
 			<div>
 				<label for="ppt_lng"><strong>طول جغرافیایی (Longitude):</strong></label><br>
 				<input type="text" id="ppt_lng" name="ppt_lng" value="<?php echo esc_attr( $lng ); ?>" placeholder="مثلاً: 51.4100" />
+			</div>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Render Itinerary Meta Box (برنامه سفر).
+	 */
+	public function render_itinerary_meta_box( $post ) {
+		wp_nonce_field( 'ppt_save_meta_nonce', 'ppt_meta_nonce' );
+
+		$duration   = get_post_meta( $post->ID, '_ppt_itinerary_duration', true );
+		$difficulty = get_post_meta( $post->ID, '_ppt_itinerary_difficulty', true );
+		$start_pt   = get_post_meta( $post->ID, '_ppt_itinerary_start_point', true );
+		$season     = get_post_meta( $post->ID, '_ppt_itinerary_season', true );
+		$days_plan  = get_post_meta( $post->ID, '_ppt_itinerary_days', true );
+
+		if ( ! is_array( $days_plan ) ) {
+			$days_plan = array();
+		}
+		?>
+		<div class="ppt-meta-field-group" style="display:flex; gap:15px; margin-bottom:15px;">
+			<div style="flex:1;">
+				<label><strong>مدت زمان برنامه (روز):</strong></label>
+				<input type="text" name="ppt_itinerary_duration" value="<?php echo esc_attr( $duration ); ?>" placeholder="مثلاً: ۳ روز و ۲ شب" style="width:100%;" />
+			</div>
+			<div style="flex:1;">
+				<label><strong>درجه سختی مسیر:</strong></label>
+				<select name="ppt_itinerary_difficulty" style="width:100%;">
+					<option value="easy" <?php selected( $difficulty, 'easy' ); ?>>آسان (خانوادگی)</option>
+					<option value="medium" <?php selected( $difficulty, 'medium' ); ?>>متوسط</option>
+					<option value="hard" <?php selected( $difficulty, 'hard' ); ?>>سخت (طبیعت‌گردی حرفه‌ای)</option>
+				</select>
+			</div>
+		</div>
+		<div class="ppt-meta-field-group" style="display:flex; gap:15px; margin-bottom:15px;">
+			<div style="flex:1;">
+				<label><strong>مبداء شروع سفر:</strong></label>
+				<input type="text" name="ppt_itinerary_start_point" value="<?php echo esc_attr( $start_pt ); ?>" placeholder="مثلاً: تهران یا اصفهان" style="width:100%;" />
+			</div>
+			<div style="flex:1;">
+				<label><strong>بهترین فصل اجرای برنامه:</strong></label>
+				<input type="text" name="ppt_itinerary_season" value="<?php echo esc_attr( $season ); ?>" placeholder="مثلاً: بهار و اواخر پاییز" style="width:100%;" />
+			</div>
+		</div>
+
+		<hr style="margin:20px 0;">
+
+		<div class="ppt-meta-section">
+			<h3>📅 برنامه‌ریزی روز به روز سفر (روز شمار)</h3>
+			<p class="description">جزییات اقدامات، مسافت‌ها و مکان‌های توقف هر روز را در زیر بنویسید:</p>
+
+			<div id="ppt_itinerary_days_container">
+				<?php for ( $i = 0; $i < 3; $i ++ ) :
+					$day_title = isset( $days_plan[$i]['title'] ) ? $days_plan[$i]['title'] : '';
+					$day_desc  = isset( $days_plan[$i]['desc'] ) ? $days_plan[$i]['desc'] : '';
+					?>
+					<div class="ppt-repeater-item" style="border:1px solid #ccd0d4; padding:15px; margin-bottom:15px; background-color:#f6f7f7; border-radius:4px;">
+						<p>
+							<label><strong>عنوان روز <?php echo esc_html( $i + 1 ); ?>:</strong></label>
+							<input type="text" name="ppt_itinerary_days[<?php echo esc_attr( $i ); ?>][title]" value="<?php echo esc_attr( $day_title ); ?>" style="width:100%;" placeholder="مثال: روز اول - گشت و گذار در حافظیه" />
+						</p>
+						<p>
+							<label><strong>شرح اقدامات و جزییات مسیر:</strong></label>
+							<textarea name="ppt_itinerary_days[<?php echo esc_attr( $i ); ?>][desc]" style="width:100%;" rows="3" placeholder="مکان‌های بازدید، رستوران‌ها و نکات ترابری روز اول را بنویسید"><?php echo esc_textarea( $day_desc ); ?></textarea>
+						</p>
+					</div>
+				<?php endfor; ?>
 			</div>
 		</div>
 		<?php
@@ -286,6 +379,22 @@ class PPT_Meta_Boxes {
 	}
 
 	/**
+	 * Render Manual SEO Schema Meta Box on all posts (Priority 3/4)
+	 */
+	public function render_manual_schema_meta_box( $post ) {
+		wp_nonce_field( 'ppt_save_meta_nonce', 'ppt_meta_nonce' );
+
+		$manual_schema = get_post_meta( $post->ID, '_ppt_manual_schema', true );
+		?>
+		<div class="ppt-meta-field-group">
+			<label for="ppt_manual_schema"><strong>کد اسکیما دستی (JSON-LD Schema Script):</strong></label><br>
+			<textarea id="ppt_manual_schema" name="ppt_manual_schema" rows="6" class="large-text" style="font-family:monospace; direction:ltr; text-align:left;" placeholder='<script type="application/ld+json">&#13;&#10;{&#13;&#10;  "@context": "https://schema.org",&#13;&#10;  "@type": "NewsArticle"&#13;&#10;}&#13;&#10;</script>'><?php echo esc_textarea( $manual_schema ); ?></textarea>
+			<p class="description">کد نشانه‌گذاری اسکیما مدنظر خود را به صورت اسکریپت تگ کامل JSON-LD در بالا قرار دهید تا مستقیما در هدر همین نوشته تزریق گردد.</p>
+		</div>
+		<?php
+	}
+
+	/**
 	 * Save Custom Meta Boxes.
 	 */
 	public function save_meta_boxes( $post_id ) {
@@ -340,7 +449,31 @@ class PPT_Meta_Boxes {
 			update_post_meta( $post_id, '_ppt_ticket_price', sanitize_text_field( $_POST['ppt_ticket_price'] ) );
 		}
 
-		// 3. Guide fields (FAQs and Budgets).
+		// 3. Itinerary fields.
+		if ( isset( $_POST['ppt_itinerary_duration'] ) ) {
+			update_post_meta( $post_id, '_ppt_itinerary_duration', sanitize_text_field( $_POST['ppt_itinerary_duration'] ) );
+		}
+		if ( isset( $_POST['ppt_itinerary_difficulty'] ) ) {
+			update_post_meta( $post_id, '_ppt_itinerary_difficulty', sanitize_text_field( $_POST['ppt_itinerary_difficulty'] ) );
+		}
+		if ( isset( $_POST['ppt_itinerary_start_point'] ) ) {
+			update_post_meta( $post_id, '_ppt_itinerary_start_point', sanitize_text_field( $_POST['ppt_itinerary_start_point'] ) );
+		}
+		if ( isset( $_POST['ppt_itinerary_season'] ) ) {
+			update_post_meta( $post_id, '_ppt_itinerary_season', sanitize_text_field( $_POST['ppt_itinerary_season'] ) );
+		}
+		if ( isset( $_POST['ppt_itinerary_days'] ) && is_array( $_POST['ppt_itinerary_days'] ) ) {
+			$sanitized_days = array();
+			foreach ( $_POST['ppt_itinerary_days'] as $day ) {
+				$sanitized_days[] = array(
+					'title' => sanitize_text_field( $day['title'] ),
+					'desc'  => sanitize_textarea_field( $day['desc'] ),
+				);
+			}
+			update_post_meta( $post_id, '_ppt_itinerary_days', $sanitized_days );
+		}
+
+		// 4. Guide fields (FAQs and Budgets).
 		if ( isset( $_POST['ppt_faqs'] ) && is_array( $_POST['ppt_faqs'] ) ) {
 			$sanitized_faqs = array();
 			foreach ( $_POST['ppt_faqs'] as $faq ) {
@@ -353,7 +486,6 @@ class PPT_Meta_Boxes {
 			}
 			update_post_meta( $post_id, '_ppt_faqs', $sanitized_faqs );
 		} else if ( isset( $_POST['ppt_meta_nonce'] ) ) {
-			// If nonce exists but faqs is missing, it means FAQs were emptied out
 			update_post_meta( $post_id, '_ppt_faqs', array() );
 		}
 
@@ -372,7 +504,7 @@ class PPT_Meta_Boxes {
 			update_post_meta( $post_id, '_ppt_budget_items', array() );
 		}
 
-		// 4. Podcast fields.
+		// 5. Podcast fields.
 		if ( isset( $_POST['ppt_audio_url'] ) ) {
 			update_post_meta( $post_id, '_ppt_audio_url', esc_url_raw( $_POST['ppt_audio_url'] ) );
 		}
@@ -383,10 +515,9 @@ class PPT_Meta_Boxes {
 			update_post_meta( $post_id, '_ppt_podcast_host', sanitize_text_field( $_POST['ppt_podcast_host'] ) );
 		}
 
-		// 5. Video fields.
+		// 6. Video fields.
 		if ( isset( $_POST['ppt_aparat_id'] ) ) {
 			$raw_id = sanitize_text_field( $_POST['ppt_aparat_id'] );
-			// Extra safety: Extract ID if full URL is pasted.
 			if ( preg_match( '/aparat\.com\/v\/([a-zA-Z0-9]+)/i', $raw_id, $matches ) ) {
 				$raw_id = $matches[1];
 			}
@@ -394,6 +525,11 @@ class PPT_Meta_Boxes {
 		}
 		if ( isset( $_POST['ppt_video_duration'] ) ) {
 			update_post_meta( $post_id, '_ppt_video_duration', sanitize_text_field( $_POST['ppt_video_duration'] ) );
+		}
+
+		// 7. Manual Schema.
+		if ( isset( $_POST['ppt_manual_schema'] ) ) {
+			update_post_meta( $post_id, '_ppt_manual_schema', trim( $_POST['ppt_manual_schema'] ) );
 		}
 	}
 }
