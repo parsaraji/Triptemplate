@@ -1,5 +1,6 @@
 /**
  * Premium Persian Tourism - Core JavaScript Interactions
+ * Completely upgraded with dynamic AJAX-based search & filter system (Priority 2).
  */
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -126,7 +127,9 @@ document.addEventListener('DOMContentLoaded', function () {
         var percent = (rect.right - e.clientX) / width;
         if (percent < 0) percent = 0;
         if (percent > 1) percent = 1;
-        audio.currentTime = percent * audio.duration;
+        if (!isNaN(audio.duration)) {
+          audio.currentTime = percent * audio.duration;
+        }
       });
     }
   });
@@ -186,5 +189,51 @@ document.addEventListener('DOMContentLoaded', function () {
         .bindPopup(label)
         .openPopup();
     }
+  }
+
+  // 6. Premium Advanced AJAX Discovery Filter & Sorting (Priority 2)
+  var filterContainer = document.querySelector('.ppt-ajax-filter-row');
+  var editorialGrid  = document.querySelector('.editorial-grid');
+
+  if (filterContainer && editorialGrid && typeof ppt_vars !== 'undefined') {
+    var inputs = filterContainer.querySelectorAll('select, input');
+
+    var performFilter = function () {
+      var params = new URLSearchParams();
+      params.append('action', 'ppt_ajax_filter');
+
+      inputs.forEach(function (input) {
+        if (input.value) {
+          params.append(input.name, input.value);
+        }
+      });
+
+      // Show temporary loading spinner/indicator inside the grid
+      editorialGrid.style.opacity = '0.5';
+
+      fetch(ppt_vars.ajax_url + '?' + params.toString())
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+          editorialGrid.style.opacity = '1';
+          if (data && data.success && data.data && data.data.html) {
+            editorialGrid.innerHTML = data.data.html;
+          }
+        })
+        .catch(function (err) {
+          editorialGrid.style.opacity = '1';
+          console.error('AJAX Filter failed:', err);
+        });
+    };
+
+    inputs.forEach(function (input) {
+      input.addEventListener('change', performFilter);
+      if (input.tagName === 'INPUT') {
+        input.addEventListener('keyup', function () {
+          // debounce slightly
+          clearTimeout(window.ppt_filter_timer);
+          window.ppt_filter_timer = setTimeout(performFilter, 300);
+        });
+      }
+    });
   }
 });

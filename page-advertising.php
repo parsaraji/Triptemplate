@@ -11,7 +11,7 @@ get_header();
 $success_message = '';
 $error_message   = '';
 
-// Handle Ad Booking Form Submissions
+// Handle Ad Booking Form Submissions securely using standard WordPress Custom Post Types (Security Overhaul)
 if ( $_SERVER['REQUEST_METHOD'] === 'POST' && isset( $_POST['ppt_booking_submit'] ) ) {
 	if ( isset( $_POST['ppt_ad_booking_nonce'] ) && wp_verify_nonce( $_POST['ppt_ad_booking_nonce'], 'ppt_save_ad_booking' ) ) {
 		$name  = sanitize_text_field( $_POST['booking_name'] );
@@ -21,24 +21,23 @@ if ( $_SERVER['REQUEST_METHOD'] === 'POST' && isset( $_POST['ppt_booking_submit'
 		$ref   = sanitize_text_field( $_POST['booking_ref'] );
 
 		if ( ! empty( $name ) && ! empty( $phone ) && ! empty( $ref ) ) {
-			// Save the reservation securely in options registry
-			$bookings = get_option( 'ppt_advertising_bookings', array() );
-			if ( ! is_array( $bookings ) ) {
-				$bookings = array();
+			// Insert as an individual non-public Custom Post of type 'ppt_booking'
+			$post_id = wp_insert_post( array(
+				'post_title'  => $name,
+				'post_status' => 'pending',
+				'post_type'   => 'ppt_booking',
+			) );
+
+			if ( ! is_wp_error( $post_id ) ) {
+				update_post_meta( $post_id, '_ppt_booking_phone', $phone );
+				update_post_meta( $post_id, '_ppt_booking_slot', $slot );
+				update_post_meta( $post_id, '_ppt_booking_url', $url );
+				update_post_meta( $post_id, '_ppt_booking_ref', $ref );
+
+				$success_message = 'درخواست رزرو جایگاه با موفقیت ثبت شد! فیش پرداخت شما پس از تایید مدیریت فعال خواهد شد.';
+			} else {
+				$error_message = 'خطایی در ثبت درخواست رخ داد. لطفاً مجدداً تلاش نمایید.';
 			}
-
-			$bookings[] = array(
-				'name'      => $name,
-				'phone'     => $phone,
-				'slot'      => $slot,
-				'url'       => $url,
-				'ref'       => $ref,
-				'date'      => current_time( 'mysql' ),
-				'status'    => 'pending'
-			);
-
-			update_option( 'ppt_advertising_bookings', $bookings );
-			$success_message = 'درخواست رزرو جایگاه با موفقیت ثبت شد! فیش پرداخت شما پس از تایید مدیریت فعال خواهد شد.';
 		} else {
 			$error_message = 'لطفاً تمامی فیلدهای الزامی را پر نمایید.';
 		}

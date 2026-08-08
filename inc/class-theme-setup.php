@@ -244,4 +244,34 @@ class PPT_Theme_Setup {
 
 		return $post_id;
 	}
+
+	/**
+	 * Automatically generates and configures a clean WordPress Child Theme.
+	 * Excludes manual folder-making requirements for administrators.
+	 */
+	public static function create_child_theme_automatically() {
+		global $wp_filesystem;
+		if ( empty( $wp_filesystem ) ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+			WP_Filesystem();
+		}
+
+		$parent_dir = get_template_directory();
+		$child_slug = basename( $parent_dir ) . '-child';
+		$child_dir  = dirname( $parent_dir ) . '/' . $child_slug;
+
+		if ( ! $wp_filesystem->exists( $child_dir ) ) {
+			$wp_filesystem->mkdir( $child_dir );
+		}
+
+		// 1. Write Child style.css
+		$style_content = "/*\nTheme Name: Premium Persian Tourism Child\nTheme URI: https://example.com/premium-persian-tourism\nDescription: Child theme for Premium Persian Tourism\nAuthor: Senior Product Designer & Engineer\nTemplate: " . basename( $parent_dir ) . "\nVersion: 1.0.0\nText Domain: " . $child_slug . "\n*/\n";
+		$wp_filesystem->put_contents( $child_dir . '/style.css', $style_content );
+
+		// 2. Write Child functions.php
+		$funcs_content = "<?php\n// Child Theme Functions\nadd_action( 'wp_enqueue_scripts', function() {\n\twp_enqueue_style( 'parent-style', get_template_directory_uri() . '/style.css' );\n} );\n";
+		$wp_filesystem->put_contents( $child_dir . '/functions.php', $funcs_content );
+
+		return true;
+	}
 }

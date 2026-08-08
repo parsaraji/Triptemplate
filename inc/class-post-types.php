@@ -175,6 +175,27 @@ class PPT_Post_Types {
 			'menu_icon'          => 'dashicons-video-alt3',
 			'show_in_rest'       => true,
 		) );
+
+		// 7. Hidden CPT to securely register Ad Bookings without option bloats (Security Overhaul)
+		register_post_type( 'ppt_booking', array(
+			'labels'             => array(
+				'name'               => 'رزروهای تبلیغات',
+				'singular_name'      => 'رزرو تبلیغ',
+				'menu_name'          => 'رزروهای تبلیغات',
+				'add_new'            => 'افزودن رزرو جدید',
+				'add_new_item'       => 'افزودن رزرو تبلیغ',
+				'edit_item'          => 'ویرایش رزرو',
+				'new_item'           => 'رزرو جدید',
+				'view_item'          => 'نمایش رزرو',
+				'search_items'       => 'جستجوی رزرو',
+				'not_found'          => 'رزروی پیدا نشد',
+			),
+			'public'             => false,
+			'show_ui'            => true,
+			'has_archive'        => false,
+			'supports'           => array( 'title', 'custom-fields' ),
+			'menu_icon'          => 'dashicons-chart-line',
+		) );
 	}
 
 	/**

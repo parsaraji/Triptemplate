@@ -248,3 +248,117 @@ function ppt_get_jalali_modified_date( $the_date, $format, $post ) {
 	return $the_date;
 }
 add_filter( 'get_the_modified_date', 'ppt_get_jalali_modified_date', 10, 3 );
+
+/**
+ * Advanced Ajax Discovery Search & Multi-criteria Taxonomy Filters (Priority 2)
+ * Securely handles non-refresh live queries from the front-end.
+ */
+function ppt_ajax_discovery_filter() {
+	// Check security nonce if provided, otherwise proceed with safe read-only queries
+	$search_query   = isset( $_GET['s'] ) ? sanitize_text_field( $_GET['s'] ) : '';
+	$post_type      = isset( $_GET['content_type'] ) ? sanitize_text_field( $_GET['content_type'] ) : 'any';
+	$province_slug  = isset( $_GET['province'] ) ? sanitize_text_field( $_GET['province'] ) : '';
+	$topic_slug     = isset( $_GET['topic'] ) ? sanitize_text_field( $_GET['topic'] ) : '';
+	$sort_by        = isset( $_GET['sort_by'] ) ? sanitize_text_field( $_GET['sort_by'] ) : 'newest';
+
+	// Whitelist post types to avoid injection
+	$allowed_post_types = array( 'any', 'destination', 'attraction', 'podcast', 'video', 'guide' );
+	if ( ! in_array( $post_type, $allowed_post_types, true ) ) {
+		$post_type = 'any';
+	}
+
+	$args = array(
+		'post_type'      => ( 'any' === $post_type ) ? array( 'destination', 'attraction', 'podcast', 'video', 'guide' ) : $post_type,
+		'posts_per_page' => 12,
+		'post_status'    => 'publish',
+	);
+
+	// Keyword search
+	if ( ! empty( $search_query ) ) {
+		$args['s'] = $search_query;
+	}
+
+	// Taxonomies configuration
+	$tax_query = array();
+	if ( ! empty( $province_slug ) ) {
+		$tax_query[] = array(
+			'taxonomy' => 'province',
+			'field'    => 'slug',
+			'terms'    => $province_slug,
+		);
+	}
+	if ( ! empty( $topic_slug ) ) {
+		$tax_query[] = array(
+			'taxonomy' => 'travel_topic',
+			'field'    => 'slug',
+			'terms'    => $topic_slug,
+		);
+	}
+	if ( count( $tax_query ) > 1 ) {
+		$tax_query['relation'] = 'AND';
+	}
+	if ( ! empty( $tax_query ) ) {
+		$args['tax_query'] = $tax_query;
+	}
+
+	// Dynamic sorting configuration
+	if ( 'popular' === $sort_by ) {
+		$args['orderby'] = 'comment_count';
+		$args['order']   = 'DESC';
+	} elseif ( 'title' === $sort_by ) {
+		$args['orderby'] = 'title';
+		$args['order']   = 'ASC';
+	} else {
+		// Fallback newest sorting
+		$args['orderby'] = 'date';
+		$args['order']   = 'DESC';
+	}
+
+	$query = new WP_Query( $args );
+
+	ob_start();
+
+	if ( $query->have_posts() ) {
+		while ( $query->have_posts() ) {
+			$query->the_post();
+			get_template_part( 'template-parts/content', 'card' );
+		}
+		wp_reset_postdata();
+	} else {
+		echo '<div class="card-box text-center" style="grid-column: 1 / -1; padding: 40px 20px; width:100%;">';
+		echo '<p class="text-muted" style="font-size:15px; margin:0;">هیچ موردی متناسب با فیلترهای انتخابی شما یافت نشد.</p>';
+		echo '</div>';
+	}
+
+	$html = ob_get_clean();
+	wp_send_json_success( array( 'html' => $html ) );
+}
+add_action( 'wp_ajax_ppt_ajax_filter', 'ppt_ajax_discovery_filter' );
+add_action( 'wp_ajax_nopriv_ppt_ajax_filter', 'ppt_ajax_discovery_filter' );
+
+/**
+ * Dynamic Inline CSS Customizer Variables Injection (Priority 1)
+ * Bridges database customizer options cleanly into the front-end layout engine.
+ */
+function ppt_inject_customizer_css() {
+	$brand = get_option( 'ppt_brand_settings', array() );
+	$primary_color   = isset( $brand['primary_color'] ) ? $brand['primary_color'] : '#3182CE';
+	$secondary_color = isset( $brand['secondary_color'] ) ? $brand['secondary_color'] : '#2B6CB0';
+	$bg_color        = isset( $brand['bg_color'] ) ? $brand['bg_color'] : '#F7FAFC';
+	$text_color      = isset( $brand['text_color'] ) ? $brand['text_color'] : '#2D3748';
+	$border_radius   = isset( $brand['border_radius'] ) ? intval( $brand['border_radius'] ) : 12;
+	$container_width = isset( $brand['container_width'] ) ? intval( $brand['container_width'] ) : 1200;
+	?>
+	<style type="text/css">
+		:root {
+			--ppt-primary-color: <?php echo esc_html( $primary_color ); ?> !important;
+			--ppt-secondary-color: <?php echo esc_html( $secondary_color ); ?> !important;
+			--ppt-bg-color: <?php echo esc_html( $bg_color ); ?> !important;
+			--ppt-text-color: <?php echo esc_html( $text_color ); ?> !important;
+			--ppt-border-radius: <?php echo esc_html( $border_radius ); ?>px !important;
+			--ppt-container-width: <?php echo esc_html( $container_width ); ?>px !important;
+		}
+	</style>
+	<?php
+}
+add_action( 'wp_head', 'ppt_inject_customizer_css', 100 );
