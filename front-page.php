@@ -1,7 +1,8 @@
 <?php
 /**
  * Dynamic Tourism Discovery Hub Home Page Template
- * Completely upgraded with refined layout grids, customizable section headers, and call-to-actions.
+ * Completely upgraded to fully support dynamic layouts (Carousel, List, Grid)
+ * for all configured modules (Priority 7).
  *
  * @package Premium_Persian_Tourism
  */
@@ -18,7 +19,7 @@ if ( empty( $sections ) ) {
 		array( 'id' => 'destinations', 'title' => 'مقاصد برتر ایران زمین', 'enabled' => '1', 'source' => 'destination', 'count' => 6, 'layout' => 'grid' ),
 		array( 'id' => 'attractions', 'title' => 'جاذبه‌های گردشگری و باستانی محبوب', 'enabled' => '1', 'source' => 'attraction', 'count' => 4, 'layout' => 'grid' ),
 		array( 'id' => 'podcasts', 'title' => 'رادیو سفر - پادکست‌های صوتی صمیمانه', 'enabled' => '1', 'source' => 'podcast', 'count' => 3, 'layout' => 'list' ),
-		array( 'id' => 'videos', 'title' => 'سفر تصویری - ویدیوها و مستندها', 'enabled' => '1', 'source' => 'video', 'count' => 3, 'layout' => 'grid' ),
+		array( 'id' => 'videos', 'title' => 'سفر تصویری - ویدیوها و مستندها', 'enabled' => '1', 'source' => 'video', 'count' => 3, 'layout' => 'carousel' ),
 		array( 'id' => 'guides', 'title' => 'راهنماهای کاربردی و تجربیات سفر', 'enabled' => '1', 'source' => 'guide', 'count' => 4, 'layout' => 'grid' )
 	);
 }
@@ -45,7 +46,9 @@ foreach ( $sections as $section ) {
 				<div class="search-form-wrapper">
 					<form role="search" method="get" action="<?php echo esc_url( home_url( '/' ) ); ?>">
 						<input type="text" placeholder="مثلاً: شیراز، اصفهان، جزیره قشم، تخت جمشید..." name="s" required />
-						<input type="hidden" name="post_type" value="destination" />
+						<input type="hidden" name="post_type[]" value="destination" />
+						<input type="hidden" name="post_type[]" value="attraction" />
+						<input type="hidden" name="post_type[]" value="podcast" />
 						<button type="submit">جستجوی صمیمانه</button>
 					</form>
 				</div>
@@ -76,16 +79,57 @@ foreach ( $sections as $section ) {
 				<a href="<?php echo esc_url( get_post_type_archive_link( $source ) ); ?>" class="button button-link" style="font-weight:bold; font-size:14px; color:#3182CE;">مشاهده همه موارد &larr;</a>
 			</div>
 
-			<!-- Dynamic Grid Styles -->
-			<div class="editorial-grid">
-				<?php
-				while ( $query->have_posts() ) :
-					$query->the_post();
-					get_template_part( 'template-parts/content', 'card' );
-				endwhile;
-				wp_reset_postdata();
-				?>
-			</div>
+			<!-- Dynamic layout rendering based on admin configuration -->
+			<?php if ( 'carousel' === $layout ) : ?>
+				<!-- Carousel snap slider wrapper -->
+				<div class="ppt-carousel-wrapper" style="overflow-x: auto; scroll-snap-type: x mandatory; display: flex; gap: 20px; padding-bottom: 15px; -webkit-overflow-scrolling: touch; scrollbar-width: thin;">
+					<?php
+					while ( $query->have_posts() ) :
+						$query->the_post();
+						?>
+						<div style="flex: 0 0 280px; scroll-snap-align: start;">
+							<?php get_template_part( 'template-parts/content', 'card' ); ?>
+						</div>
+						<?php
+					endwhile;
+					wp_reset_postdata();
+					?>
+				</div>
+			<?php elseif ( 'list' === $layout ) : ?>
+				<!-- List Layout (Vertical lined list) -->
+				<div class="ppt-horizontal-list-wrapper" style="display: flex; flex-direction: column; gap: 15px;">
+					<?php
+					while ( $query->have_posts() ) :
+						$query->the_post();
+						?>
+						<div style="background: #FFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 15px; display: flex; gap: 20px; align-items: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);">
+							<?php if ( has_post_thumbnail() ) : ?>
+								<div style="width: 120px; aspect-ratio: 16/9; border-radius: 8px; overflow: hidden; flex-shrink: 0;">
+									<?php the_post_thumbnail( 'ppt-card-thumb', array( 'style' => 'width:100%; height:100%; object-fit:cover;' ) ); ?>
+								</div>
+							<?php endif; ?>
+							<div>
+								<h3 style="font-size: 16px; font-weight: bold; margin: 0 0 8px 0;"><a href="<?php the_permalink(); ?>" style="color: #2D3748; text-decoration: none;"><?php the_title(); ?></a></h3>
+								<p style="margin: 0; font-size: 13px; color: #718096; line-height: 1.6;"><?php echo esc_html( wp_trim_words( get_the_excerpt(), 18, '...' ) ); ?></p>
+							</div>
+						</div>
+						<?php
+					endwhile;
+					wp_reset_postdata();
+					?>
+				</div>
+			<?php else : ?>
+				<!-- Standard Editorial Grid Layout (Grid) -->
+				<div class="editorial-grid">
+					<?php
+					while ( $query->have_posts() ) :
+						$query->the_post();
+						get_template_part( 'template-parts/content', 'card' );
+					endwhile;
+					wp_reset_postdata();
+					?>
+				</div>
+			<?php endif; ?>
 		</section>
 		<?php
 	endif;

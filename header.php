@@ -19,11 +19,16 @@ if ( class_exists( 'PPT_Admin_Panel' ) ) {
 }
 $settings = wp_parse_args( $header_settings, $defaults );
 
-$show_search = isset( $settings['show_search'] ) ? $settings['show_search'] : '1';
-$show_cta    = isset( $settings['show_cta'] ) ? $settings['show_cta'] : '1';
-$cta_text    = isset( $settings['cta_text'] ) ? $settings['cta_text'] : '🎙️ رادیو سفر';
-$cta_link    = isset( $settings['cta_link'] ) ? $settings['cta_link'] : '/podcasts/';
-$links       = isset( $settings['custom_links'] ) ? $settings['custom_links'] : array();
+$show_search  = isset( $settings['show_search'] ) ? $settings['show_search'] : '1';
+$show_cta     = isset( $settings['show_cta'] ) ? $settings['show_cta'] : '1';
+$cta_text     = isset( $settings['cta_text'] ) ? $settings['cta_text'] : '🎙️ رادیو سفر';
+$cta_link     = isset( $settings['cta_link'] ) ? $settings['cta_link'] : '/podcasts/';
+$links        = isset( $settings['custom_links'] ) ? $settings['custom_links'] : array();
+
+// Manageable Megamenu Configurations
+$mega_trigger = isset( $settings['megamenu_trigger_url'] ) ? $settings['megamenu_trigger_url'] : 'destination';
+$mega_title_1 = isset( $settings['megamenu_title_1'] ) ? $settings['megamenu_title_1'] : '📍 استان‌های دیدنی ایران';
+$mega_title_2 = isset( $settings['megamenu_title_2'] ) ? $settings['megamenu_title_2'] : '🎧 رادیو صوتی و مستندها';
 ?>
 
 <!-- Premium Persian RTL Header -->
@@ -56,7 +61,7 @@ $links       = isset( $settings['custom_links'] ) ? $settings['custom_links'] : 
 			</div>
 		</div>
 
-		<!-- Middle: Desktop Navigation Menu with built-in Megamenu -->
+		<!-- Middle: Desktop Navigation Menu with built-in Manageable Megamenu -->
 		<nav class="desktop-nav" aria-label="منوی اصلی دسکتاپ">
 			<ul id="primary-menu-list">
 				<?php
@@ -65,24 +70,23 @@ $links       = isset( $settings['custom_links'] ) ? $settings['custom_links'] : 
 						if ( empty( $link['label'] ) ) continue;
 
 						$url = $link['url'];
-						// Normalize relative URLs cleanly
 						if ( 0 === strpos( $url, '/' ) ) {
 							$url = home_url( $url );
 						}
 
-						// Activate Megamenu if it represents Travel Destinations or Destinations keyword
-						if ( false !== strpos( $link['url'], 'destination' ) ) {
+						// Dynamic and Manageable Megamenu triggers
+						if ( ! empty( $mega_trigger ) && false !== strpos( $link['url'], $mega_trigger ) ) {
 							?>
 							<li class="ppt-megamenu-trigger">
 								<a href="<?php echo esc_url( $url ); ?>" class="megamenu-title-link"><?php echo esc_html( $link['label'] ); ?> 👇</a>
 
-								<!-- Dynamic Built-in Megamenu Dropdown -->
+								<!-- Dynamic Manageable Megamenu Dropdown -->
 								<div class="ppt-megamenu-dropdown">
 									<div class="megamenu-columns-grid">
 
 										<!-- Col 1: Provinces List -->
 										<div class="megamenu-col">
-											<h4>📍 استان‌های دیدنی ایران</h4>
+											<h4><?php echo esc_html( $mega_title_1 ); ?></h4>
 											<ul>
 												<?php
 												$provinces = get_terms( array( 'taxonomy' => 'province', 'number' => 5, 'hide_empty' => false ) );
@@ -97,7 +101,7 @@ $links       = isset( $settings['custom_links'] ) ? $settings['custom_links'] : 
 
 										<!-- Col 2: Custom Post Type Lists -->
 										<div class="megamenu-col">
-											<h4>🎧 رادیو صوتی و مستندها</h4>
+											<h4><?php echo esc_html( $mega_title_2 ); ?></h4>
 											<ul>
 												<li><a href="<?php echo esc_url( get_post_type_archive_link( 'podcast' ) ); ?>">شنیدن اپیزودهای رادیو سفر</a></li>
 												<li><a href="<?php echo esc_url( get_post_type_archive_link( 'video' ) ); ?>">تماشای آنلاین مستندهای ویدیویی</a></li>
@@ -157,7 +161,8 @@ $links       = isset( $settings['custom_links'] ) ? $settings['custom_links'] : 
 					$final_cta_link = home_url( $final_cta_link );
 				}
 				?>
-				<a href="<?php echo esc_url( $final_cta_link ); ?>" class="header-cta-btn">🎙️ <?php echo esc_html( $cta_text ); ?></a>
+				<!-- Fixed double-icon issue by rendering the exact raw CTA text (Priority 4) -->
+				<a href="<?php echo esc_url( $final_cta_link ); ?>" class="header-cta-btn"><?php echo esc_html( $cta_text ); ?></a>
 			<?php endif; ?>
 		</div>
 

@@ -763,33 +763,40 @@ class PPT_Admin_Panel {
 
 			<hr style="margin:25px 0; border-top:1px solid #E2E8F0;">
 
-			<h3>مدیریت و تزریق بک‌لینک‌های متنی تجاری</h3>
-			<p class="description">آدرس‌ها و انکر تکست‌های بک‌لینک‌های تجاری خود را ثبت کنید تا به صورت سازمان‌یافته در فوتر تزریق شوند.</p>
+			<div style="background-color:#fafafa; border:1px solid #ccc; padding:20px; border-radius:8px; margin-bottom:20px;">
+				<h4 style="margin-top:0; color:#1e3a8a;">🔗 مدیریت و تزریق بک‌لینک‌های متنی تجاری (نامحدود و پویا)</h4>
+				<p class="description">آدرس‌ها و انکر تکست‌های بک‌لینک‌های تجاری خود را ثبت کنید تا به صورت سازمان‌یافته در فوتر تزریق شوند. می‌توانید بی‌نهایت پیوند تجاری اضافه کنید:</p>
 
-			<div style="background-color:#fafafa; border:1px solid #ccc; padding:15px; border-radius:6px; margin-bottom:20px;">
-				<h4 style="margin-top:0;">بک‌لینک‌های ثبت شده فعلی:</h4>
-				<?php for ( $i = 0; $i < 4; $i ++ ) :
-					$link_url = isset( $backlinks[$i]['url'] ) ? $backlinks[$i]['url'] : '';
-					$link_anc = isset( $backlinks[$i]['anchor'] ) ? $backlinks[$i]['anchor'] : '';
-					$link_nf  = isset( $backlinks[$i]['nofollow'] ) ? $backlinks[$i]['nofollow'] : '0';
-					?>
-					<div style="display:flex; gap:15px; margin-bottom:12px; align-items:center;">
-						<div style="flex:1;">
-							<label>عنوان پیوند (Anchor Text):</label>
-							<input type="text" name="ppt_ad_slots[backlinks][<?php echo esc_attr( $i ); ?>][anchor]" value="<?php echo esc_attr( $link_anc ); ?>" style="width:100%;" placeholder="مثال: خرید بلیط هواپیما" />
+				<div id="ppt_backlinks_repeater_container">
+					<?php
+					$backlinks_count = max( 1, count( $backlinks ) );
+					for ( $i = 0; $i < $backlinks_count; $i ++ ) :
+						$link_url = isset( $backlinks[$i]['url'] ) ? $backlinks[$i]['url'] : '';
+						$link_anc = isset( $backlinks[$i]['anchor'] ) ? $backlinks[$i]['anchor'] : '';
+						$link_nf  = isset( $backlinks[$i]['nofollow'] ) ? $backlinks[$i]['nofollow'] : '0';
+						?>
+						<div class="ppt-backlink-row" style="display:flex; gap:15px; margin-bottom:12px; align-items:center; border-bottom: 1px dashed #E2E8F0; padding-bottom: 12px;">
+							<div style="flex:1;">
+								<label style="font-weight:bold;">عنوان پیوند (Anchor):</label>
+								<input type="text" name="ppt_ad_slots[backlinks][<?php echo esc_attr( $i ); ?>][anchor]" value="<?php echo esc_attr( $link_anc ); ?>" style="width:100%; margin-top:5px;" placeholder="مثال: خرید بلیط هواپیما" />
+							</div>
+							<div style="flex:2;">
+								<label style="font-weight:bold;">آدرس اینترنتی (URL):</label>
+								<input type="url" name="ppt_ad_slots[backlinks][<?php echo esc_attr( $i ); ?>][url]" value="<?php echo esc_url( $link_url ); ?>" style="width:100%; text-align:left; direction:ltr; margin-top:5px;" placeholder="https://example.com" />
+							</div>
+							<div style="flex:1; text-align:center; padding-top:20px;">
+								<label style="font-weight:bold;">
+									<input type="checkbox" name="ppt_ad_slots[backlinks][<?php echo esc_attr( $i ); ?>][nofollow]" value="1" <?php checked( '1', $link_nf ); ?> />
+									نوفالو (Nofollow)
+								</label>
+							</div>
+							<div style="padding-top:20px;">
+								<button type="button" class="button button-link-delete ppt-remove-backlink-row" style="color:#d63638;">حذف</button>
+							</div>
 						</div>
-						<div style="flex:2;">
-							<label>آدرس اینترنتی (URL):</label>
-							<input type="url" name="ppt_ad_slots[backlinks][<?php echo esc_attr( $i ); ?>][url]" value="<?php echo esc_url( $link_url ); ?>" style="width:100%; text-align:left; direction:ltr;" placeholder="https://example.com" />
-						</div>
-						<div style="flex:1; text-align:center;">
-							<label>
-								<input type="checkbox" name="ppt_ad_slots[backlinks][<?php echo esc_attr( $i ); ?>][nofollow]" value="1" <?php checked( '1', $link_nf ); ?> />
-								نوفالو (Nofollow)
-							</label>
-						</div>
-					</div>
-				<?php endfor; ?>
+					<?php endfor; ?>
+				</div>
+				<button type="button" id="ppt_add_backlink_btn" class="button button-primary" style="margin-top:10px;">افزودن بک‌لینک تجاری جدید</button>
 			</div>
 		</div>
 		<?php
@@ -1230,6 +1237,7 @@ class PPT_Admin_Panel {
 
 	/**
 	 * Tab: Manage CPT styles and grid displays.
+	 * Power-up CPT Settings Tab with 12 Granular Administration Controls (Priority 10).
 	 */
 	public function render_cpt_settings_tab() {
 		$brand = get_option( 'ppt_brand_settings', array() );
@@ -1246,10 +1254,72 @@ class PPT_Admin_Panel {
 		$pod_player_bg  = isset( $brand['cpt_pod_player_color'] ) ? $brand['cpt_pod_player_color'] : '#EBF8FF';
 
 		$vid_theatre_bg = isset( $brand['cpt_vid_theatre_bg'] ) ? $brand['cpt_vid_theatre_bg'] : '#0F172A';
+
+		// Newly Added WoodMart-style CPT Settings
+		$show_date     = isset( $brand['cpt_global_show_date'] ) ? $brand['cpt_global_show_date'] : '1';
+		$show_bubble   = isset( $brand['cpt_global_show_comments_bubble'] ) ? $brand['cpt_global_show_comments_bubble'] : '1';
+		$card_ratio    = isset( $brand['cpt_global_card_ratio'] ) ? $brand['cpt_global_card_ratio'] : '16-9';
+		$fallback_grad = isset( $brand['cpt_global_fallback_gradient'] ) ? $brand['cpt_global_fallback_gradient'] : 'blue';
+		$archive_count = isset( $brand['cpt_global_posts_per_page'] ) ? intval( $brand['cpt_global_posts_per_page'] ) : 12;
+		$dest_title_h  = isset( $brand['cpt_dest_archive_title'] ) ? $brand['cpt_dest_archive_title'] : 'مقاصد گردشگری برتر';
+		$attr_title_h  = isset( $brand['cpt_attr_archive_title'] ) ? $brand['cpt_attr_archive_title'] : 'جاذبه‌های گردشگری و باستانی';
 		?>
 		<div class="card-box ppt-admin-card" style="line-height:1.8;">
 			<h3>🗂️ تنظیمات و سفارشی‌سازی تفکیک‌شده ی پست‌تایپ‌ها (CPT Style Panel)</h3>
 			<p class="description">برای هر یک از پست‌تایپ‌های ۶ گانه اختصاصی، المان‌های ظاهری، تم رنگی اختصاصی و نحوه چیدمان‌ها را با جزییات بالا پیکربندی فرمایید:</p>
+
+			<!-- GLOBAL CARDS & GRID SETTINGS (WoodMart Power-up) -->
+			<div style="background:#fff7ed; border:1px solid #fed7aa; padding:20px; border-radius:10px; margin-bottom:25px;">
+				<h4 style="margin-top:0; color:#c2410c; border-bottom:1px solid #fec08a; padding-bottom:8px;">⚙️ تنظیمات عمومی کارت‌ها و آرشیوها (Global CPT Style)</h4>
+				<table class="form-table">
+					<tr>
+						<th scope="row">نمایش تاریخ انتشار روی کارت‌ها</th>
+						<td>
+							<select name="ppt_brand_settings[cpt_global_show_date]" style="width:250px;">
+								<option value="1" <?php selected( $show_date, '1' ); ?>>نمایش تاریخ شمسى</option>
+								<option value="0" <?php selected( $show_date, '0' ); ?>>مخفی کردن تاریخ</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row">نمایش حباب تعداد دیدگاه‌ها</th>
+						<td>
+							<select name="ppt_brand_settings[cpt_global_show_comments_bubble]" style="width:250px;">
+								<option value="1" <?php selected( $show_bubble, '1' ); ?>>نمایش حباب دیدگاه‌ها</option>
+								<option value="0" <?php selected( $show_bubble, '0' ); ?>>عدم نمایش حباب</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row">نسبت تصویر شاخص کارت‌ها (Aspect Ratio)</th>
+						<td>
+							<select name="ppt_brand_settings[cpt_global_card_ratio]" style="width:250px;">
+								<option value="16-9" <?php selected( $card_ratio, '16-9' ); ?>>مستطیل سینمایی (16:9)</option>
+								<option value="4-3" <?php selected( $card_ratio, '4-3' ); ?>>مستطیل استاندارد (4:3)</option>
+								<option value="1-1" <?php selected( $card_ratio, '1-1' ); ?>>مربع کامل (1:1)</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row">تم گرادینت پیش‌فرض تصویر شاخص خالی</th>
+						<td>
+							<select name="ppt_brand_settings[cpt_global_fallback_gradient]" style="width:250px;">
+								<option value="blue" <?php selected( $fallback_grad, 'blue' ); ?>>آبی اقیانوسی ملایم</option>
+								<option value="green" <?php selected( $fallback_grad, 'green' ); ?>>سبز جنگلی صمیمانه</option>
+								<option value="orange" <?php selected( $fallback_grad, 'orange' ); ?>>غروب نارنجی کویر</option>
+								<option value="grey" <?php selected( $fallback_grad, 'grey' ); ?>>سرمه‌ای خنثی مدرن</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row">تعداد پست‌ها در هر صفحه آرشیو (Pagination)</th>
+						<td>
+							<input type="number" name="ppt_brand_settings[cpt_global_posts_per_page]" value="<?php echo esc_attr( $archive_count ); ?>" style="width:100px;" min="4" max="48" />
+							<span class="description">تعداد کارت‌های نمایش داده شده قبل از صفحه‌بندی.</span>
+						</td>
+					</tr>
+				</table>
+			</div>
 
 			<!-- 1. DESTINATIONS SETTINGS -->
 			<div style="background:#f8fafc; border:1px solid #e2e8f0; padding:20px; border-radius:10px; margin-bottom:25px;">
@@ -1280,6 +1350,12 @@ class PPT_Admin_Panel {
 							</label>
 						</td>
 					</tr>
+					<tr>
+						<th scope="row">عنوان سفارشی صفحه آرشیو مقاصد</th>
+						<td>
+							<input type="text" name="ppt_brand_settings[cpt_dest_archive_title]" value="<?php echo esc_attr( $dest_title_h ); ?>" class="regular-text" />
+						</td>
+					</tr>
 				</table>
 			</div>
 
@@ -1300,6 +1376,12 @@ class PPT_Admin_Panel {
 								<input type="checkbox" name="ppt_brand_settings[cpt_attr_show_directions]" value="1" <?php checked( '1', $attr_show_dir ); ?> />
 								کادر حاوی ساعات بازدید، بهای بلیت ورودی و آدرس جاذبه نمایش داده شود.
 							</label>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row">عنوان سفارشی صفحه آرشیو جاذبه‌ها</th>
+						<td>
+							<input type="text" name="ppt_brand_settings[cpt_attr_archive_title]" value="<?php echo esc_attr( $attr_title_h ); ?>" class="regular-text" />
 						</td>
 					</tr>
 				</table>

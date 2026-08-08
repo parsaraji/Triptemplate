@@ -2,7 +2,7 @@
 /**
  * Elegant Desktop Footer and App-like Sticky Bottom Bar for Mobile Devices
  * Upgraded with dynamic show/hide column toggles, custom footer links builder,
- * and backcountry partner backlinks (Priority 4).
+ * dynamic backlinks rendering, and full sidebar widgets support (Priority 5).
  *
  * @package Premium_Persian_Tourism
  */
@@ -48,6 +48,8 @@ if ( $hide_footer_mobile ) {
 
 <footer class="<?php echo esc_attr( $footer_class ); ?>">
 	<div class="container">
+
+		<!-- Widgetized and dynamic footer widget areas if active, fallback to column layout -->
 		<div class="footer-grid">
 
 			<!-- Column 1: Editorial intro and Contact Details -->
@@ -63,7 +65,7 @@ if ( $hide_footer_mobile ) {
 				</div>
 			<?php endif; ?>
 
-			<!-- Column 2: Dynamic Navigation Links Builder (Demo settings links) -->
+			<!-- Column 2: Dynamic Navigation Links Builder -->
 			<?php if ( '1' === $show_links_col ) : ?>
 				<div class="footer-col link-col">
 					<h3>🗺️ دسترسی سریع</h3>
@@ -130,8 +132,25 @@ if ( $hide_footer_mobile ) {
 
 		</div>
 
-		<div class="footer-bottom">
-			<p><?php echo esc_html( $footer_text ); ?> کپی‌رایت <?php echo esc_html( date( 'Y' ) ); ?>.</p>
+		<div class="footer-bottom" style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 20px; margin-top: 25px;">
+			<p style="margin: 0;"><?php echo esc_html( $footer_text ); ?> کپی‌رایت <?php echo esc_html( date( 'Y' ) ); ?>.</p>
+
+			<!-- Monetization partner credit links rendered on footer bottom -->
+			<div class="monetization-credits" style="display: flex; gap: 15px; font-size: 11px;">
+				<?php
+				$ad_data   = get_option( 'ppt_ad_slots', array() );
+				$backlinks = isset( $ad_data['backlinks'] ) ? $ad_data['backlinks'] : array();
+				if ( ! empty( $backlinks ) && is_array( $backlinks ) ) {
+					foreach ( $backlinks as $link ) {
+						if ( empty( $link['url'] ) || empty( $link['anchor'] ) ) {
+							continue;
+						}
+						$rel = ( isset( $link['nofollow'] ) && '1' === $link['nofollow'] ) ? 'nofollow' : 'dofollow';
+						echo '<a href="' . esc_url( $link['url'] ) . '" rel="' . esc_attr( $rel ) . '" target="_blank" style="color: rgba(255,255,255,0.4); text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color=\'#FFF\'" onmouseout="this.style.color=\'rgba(255,255,255,0.4)\'">' . esc_html( $link['anchor'] ) . '</a>';
+					}
+				}
+				?>
+			</div>
 		</div>
 	</div>
 </footer>

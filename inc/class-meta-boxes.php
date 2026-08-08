@@ -1,7 +1,8 @@
 <?php
 /**
  * Non-Gutenberg Custom Meta Boxes
- * Upgraded with detailed Itinerary (برنامه سفر) meta settings, highly comprehensive Destination travel guides, and manual SEO Schema injectors on all posts.
+ * Upgraded with detailed Itinerary (برنامه سفر) meta settings, editable Essential Equipment list,
+ * highly comprehensive Destination travel guides (including the FAQ page builder), and manual SEO Schema injectors on all posts.
  *
  * @package Premium_Persian_Tourism
  */
@@ -116,7 +117,7 @@ class PPT_Meta_Boxes {
 
 	/**
 	 * Render Destination Meta Box.
-	 * Overhauled with professional fields for a complete tourism guide.
+	 * Overhauled with professional fields and the restored FAQ metabox builder (Priority 1).
 	 */
 	public function render_destination_meta_box( $post ) {
 		wp_nonce_field( 'ppt_save_meta_nonce', 'ppt_meta_nonce' );
@@ -133,6 +134,12 @@ class PPT_Meta_Boxes {
 		$transport     = get_post_meta( $post->ID, '_ppt_transport', true );
 		$accommodation = get_post_meta( $post->ID, '_ppt_accommodation', true );
 		$travel_tips   = get_post_meta( $post->ID, '_ppt_travel_tips', true );
+
+		// Restored FAQs metadata for Destinations
+		$faqs          = get_post_meta( $post->ID, '_ppt_faqs', true );
+		if ( ! is_array( $faqs ) ) {
+			$faqs = array();
+		}
 		?>
 		<div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
 			<h4 style="margin: 0 0 10px 0; color: #1e3a8a; font-size: 15px;">📊 شاخص‌های کلیدی و جغرافیایی</h4>
@@ -169,7 +176,7 @@ class PPT_Meta_Boxes {
 			</div>
 		</div>
 
-		<div style="background: #fff; border: 1px solid #e2e8f0; padding: 15px; border-radius: 6px;">
+		<div style="background: #fff; border: 1px solid #e2e8f0; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
 			<h4 style="margin: 0 0 15px 0; color: #0d9488; font-size: 15px;">📝 راهنمای بوم‌گردی و بخش‌های متمایز کننده مقصد</h4>
 
 			<div class="ppt-meta-field-group" style="margin-bottom:15px;">
@@ -196,6 +203,27 @@ class PPT_Meta_Boxes {
 				<label for="ppt_travel_tips"><strong>💡 توصیه‌های کاربردی، نکات کلیدی و ملزومات سفر:</strong></label>
 				<textarea id="ppt_travel_tips" name="ppt_travel_tips" class="large-text" rows="3" style="width:100%; margin-top:5px;" placeholder="نکات فرهنگی بومی، لزوم همراه داشتن تجهیزات صعود، زمان بسته‌شدن جاده‌ها، امنیت مسیر..."><?php echo esc_textarea( $travel_tips ); ?></textarea>
 			</div>
+		</div>
+
+		<!-- Restored FAQ Page Builder for Destinations -->
+		<div style="background: #FFF; border: 1px solid #e2e8f0; padding: 15px; border-radius: 6px;">
+			<h4 style="margin: 0 0 15px 0; color: #b45309; font-size: 15px;">❓ سوالات متداول مقصد (FAQ Builder)</h4>
+			<div id="ppt_dest_faq_container" class="ppt-repeater-container">
+				<?php foreach ( $faqs as $index => $faq ) : ?>
+					<div class="ppt-repeater-item" style="border:1px solid #ccc; padding:10px; margin-bottom:10px; background:#f9f9f9; position:relative;">
+						<p>
+							<label>سوال:</label>
+							<input type="text" name="ppt_faqs[<?php echo esc_attr( $index ); ?>][q]" value="<?php echo esc_attr( $faq['q'] ); ?>" class="large-text" style="width:100%;" />
+						</p>
+						<p>
+							<label>پاسخ:</label>
+							<textarea name="ppt_faqs[<?php echo esc_attr( $index ); ?>][a]" class="large-text" rows="3" style="width:100%;"><?php echo esc_textarea( $faq['a'] ); ?></textarea>
+						</p>
+						<button type="button" class="button button-link-delete ppt-remove-repeater-item" style="color:#d63638;">حذف سوال</button>
+					</div>
+				<?php endforeach; ?>
+			</div>
+			<button type="button" id="ppt_add_faq_btn_dest" class="button button-primary" style="margin-top:10px;">افزودن سوال متداول جدید</button>
 		</div>
 		<?php
 	}
@@ -239,6 +267,7 @@ class PPT_Meta_Boxes {
 
 	/**
 	 * Render Itinerary Meta Box (برنامه سفر).
+	 * Enriched with dynamic Essential Equipment list (Priority 3).
 	 */
 	public function render_itinerary_meta_box( $post ) {
 		wp_nonce_field( 'ppt_save_meta_nonce', 'ppt_meta_nonce' );
@@ -248,6 +277,9 @@ class PPT_Meta_Boxes {
 		$start_pt   = get_post_meta( $post->ID, '_ppt_itinerary_start_point', true );
 		$season     = get_post_meta( $post->ID, '_ppt_itinerary_season', true );
 		$days_plan  = get_post_meta( $post->ID, '_ppt_itinerary_days', true );
+
+		// Editable Essential Equipment list
+		$equipment  = get_post_meta( $post->ID, '_ppt_itinerary_equipment', true );
 
 		if ( ! is_array( $days_plan ) ) {
 			$days_plan = array();
@@ -276,6 +308,13 @@ class PPT_Meta_Boxes {
 				<label><strong>بهترین فصل اجرای برنامه:</strong></label>
 				<input type="text" name="ppt_itinerary_season" value="<?php echo esc_attr( $season ); ?>" placeholder="مثلاً: بهار و اواخر پاییز" style="width:100%;" />
 			</div>
+		</div>
+
+		<!-- Dynamic editable essential equipment list field -->
+		<div class="ppt-meta-field-group" style="margin-top:20px; background:#f0fdf4; border:1px solid #bbf7d0; padding:15px; border-radius:8px;">
+			<label for="ppt_itinerary_equipment"><strong>🎒 لیست تجهیزات ضروری و ملزومات سفر (قابل ویرایش):</strong></label>
+			<textarea id="ppt_itinerary_equipment" name="ppt_itinerary_equipment" rows="4" style="width:100%; margin-top:8px; font-family: inherit;" placeholder="هر ردیف تجهیزات را در یک سطر وارد کنید (مثال:&#13;&#10;- کفش پیاده‌روی مناسب&#13;&#10;- کوله‌پشتی سبک یک‌روزه&#13;&#10;- قمقمه آب شخصی)"><?php echo esc_textarea( $equipment ); ?></textarea>
+			<p class="description" style="color: #166534; margin-top:5px;">هر یک از تجهیزات ثبت شده در ردیف بالا به صورت لیست تیک‌دار صمیمانه در صفحه نهایی رندر می‌شود.</p>
 		</div>
 
 		<hr style="margin:20px 0;">
@@ -332,11 +371,11 @@ class PPT_Meta_Boxes {
 					<div class="ppt-repeater-item" style="border:1px solid #ccc; padding:10px; margin-bottom:10px; background:#f9f9f9; position:relative;">
 						<p>
 							<label>سوال:</label>
-							<input type="text" name="ppt_faqs[<?php echo esc_attr( $index ); ?>][q]" value="<?php echo esc_attr( $faq['q'] ); ?>" class="large-text" />
+							<input type="text" name="ppt_faqs[<?php echo esc_attr( $index ); ?>][q]" value="<?php echo esc_attr( $faq['q'] ); ?>" class="large-text" style="width:100%;" />
 						</p>
 						<p>
 							<label>پاسخ:</label>
-							<textarea name="ppt_faqs[<?php echo esc_attr( $index ); ?>][a]" class="large-text" rows="3"><?php echo esc_textarea( $faq['a'] ); ?></textarea>
+							<textarea name="ppt_faqs[<?php echo esc_attr( $index ); ?>][a]" class="large-text" rows="3" style="width:100%;"><?php echo esc_textarea( $faq['a'] ); ?></textarea>
 						</p>
 						<button type="button" class="button button-link-delete ppt-remove-repeater-item" style="color:#d63638;">حذف سوال</button>
 					</div>
@@ -437,7 +476,7 @@ class PPT_Meta_Boxes {
 		?>
 		<div class="ppt-meta-field-group">
 			<label for="ppt_manual_schema"><strong>کد اسکیما دستی (JSON-LD Schema Script):</strong></label><br>
-			<textarea id="ppt_manual_schema" name="ppt_manual_schema" rows="6" class="large-text" style="font-family:monospace; direction:ltr; text-align:left;" placeholder='<script type="application/ld+json">&#13;&#10;{&#13;&#10;  "@context": "https://schema.org",&#13;&#10;  "@type": "NewsArticle"&#13;&#10;}&#13;&#10;</script>'><?php echo esc_textarea( $manual_schema ); ?></textarea>
+			<textarea id="ppt_manual_schema" name="ppt_manual_schema" rows="6" class="large-text" style="font-family:monospace; direction:ltr; text-align:left;" placeholder='<script type="application/ld+json">&#13;&#10;{&#13;&#10;  "@context": "https://schema.org",&#13;&#10;  "@type": "NewsArticle"&#13;&#10;}&&#13;&#10;</script>'><?php echo esc_textarea( $manual_schema ); ?></textarea>
 			<p class="description">کد نشانه‌گذاری اسکیما مدنظر خود را به صورت اسکریپت تگ کامل JSON-LD در بالا قرار دهید تا مستقیما در هدر همین نوشته تزریق گردد.</p>
 		</div>
 		<?php
@@ -527,6 +566,9 @@ class PPT_Meta_Boxes {
 		}
 		if ( isset( $_POST['ppt_itinerary_season'] ) ) {
 			update_post_meta( $post_id, '_ppt_itinerary_season', sanitize_text_field( $_POST['ppt_itinerary_season'] ) );
+		}
+		if ( isset( $_POST['ppt_itinerary_equipment'] ) ) {
+			update_post_meta( $post_id, '_ppt_itinerary_equipment', sanitize_textarea_field( $_POST['ppt_itinerary_equipment'] ) );
 		}
 		if ( isset( $_POST['ppt_itinerary_days'] ) && is_array( $_POST['ppt_itinerary_days'] ) ) {
 			$sanitized_days = array();

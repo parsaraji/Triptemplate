@@ -57,6 +57,30 @@ jQuery(document).ready(function ($) {
     $(this).closest('.ppt-repeater-item').remove();
   });
 
+  // 1.2 Destination FAQ Repeater Field Logic
+  var destFaqContainer = $('#ppt_dest_faq_container');
+  $('#ppt_add_faq_btn_dest').on('click', function () {
+    var index = destFaqContainer.find('.ppt-repeater-item').length;
+    var html = `
+      <div class="ppt-repeater-item animate-fade-in" style="border:1px solid #ccc; padding:15px; margin-bottom:15px; background:#f9f9f9; border-radius: 4px; position:relative;">
+        <p>
+          <label><strong>سوال:</strong></label><br>
+          <input type="text" name="ppt_faqs[${index}][q]" style="width:100%; margin-top:5px;" placeholder="سوال متداول مسافران را وارد کنید" />
+        </p>
+        <p style="margin-top:10px;">
+          <label><strong>پاسخ:</strong></label><br>
+          <textarea name="ppt_faqs[${index}][a]" style="width:100%; margin-top:5px;" rows="3" placeholder="پاسخ کامل سوال را اینجا بنویسید"></textarea>
+        </p>
+        <button type="button" class="button button-link-delete ppt-remove-repeater-item" style="color:#d63638; margin-top:5px;">حذف سوال</button>
+      </div>
+    `;
+    destFaqContainer.append(html);
+    normalizeAdminDigits();
+  });
+  destFaqContainer.on('click', '.ppt-remove-repeater-item', function () {
+    $(this).closest('.ppt-repeater-item').remove();
+  });
+
   // 1.5 Itinerary Day-by-Day Repeater Logic
   var itineraryContainer = $('#ppt_itinerary_days_container');
 
@@ -93,6 +117,52 @@ jQuery(document).ready(function ($) {
   itineraryContainer.on('click', '.ppt-remove-itinerary-day', function () {
     $(this).closest('.ppt-itinerary-day-row').remove();
     reindexItineraryDays();
+    normalizeAdminDigits();
+  });
+
+  // 1.8 Backlinks Dynamic Repeater Logic
+  var backlinksContainer = $('#ppt_backlinks_repeater_container');
+
+  function reindexBacklinks() {
+    backlinksContainer.find('.ppt-backlink-row').each(function (index) {
+      var row = $(this);
+      row.find('input[name*="[anchor]"]').attr('name', `ppt_ad_slots[backlinks][${index}][anchor]`);
+      row.find('input[name*="[url]"]').attr('name', `ppt_ad_slots[backlinks][${index}][url]`);
+      row.find('input[name*="[nofollow]"]').attr('name', `ppt_ad_slots[backlinks][${index}][nofollow]`);
+    });
+  }
+
+  $('#ppt_add_backlink_btn').on('click', function () {
+    var index = backlinksContainer.find('.ppt-backlink-row').length;
+    var html = `
+      <div class="ppt-backlink-row animate-fade-in" style="display:flex; gap:15px; margin-bottom:12px; align-items:center; border-bottom: 1px dashed #E2E8F0; padding-bottom: 12px;">
+        <div style="flex:1;">
+          <label style="font-weight:bold;">عنوان پیوند (Anchor):</label>
+          <input type="text" name="ppt_ad_slots[backlinks][${index}][anchor]" style="width:100%; margin-top:5px;" placeholder="مثال: خرید بلیط هواپیما" />
+        </div>
+        <div style="flex:2;">
+          <label style="font-weight:bold;">آدرس اینترنتی (URL):</label>
+          <input type="url" name="ppt_ad_slots[backlinks][${index}][url]" style="width:100%; text-align:left; direction:ltr; margin-top:5px;" placeholder="https://example.com" />
+        </div>
+        <div style="flex:1; text-align:center; padding-top:20px;">
+          <label style="font-weight:bold;">
+            <input type="checkbox" name="ppt_ad_slots[backlinks][${index}][nofollow]" value="1" />
+            نوفالو (Nofollow)
+          </label>
+        </div>
+        <div style="padding-top:20px;">
+          <button type="button" class="button button-link-delete ppt-remove-backlink-row" style="color:#d63638;">حذف</button>
+        </div>
+      </div>
+    `;
+    backlinksContainer.append(html);
+    reindexBacklinks();
+    normalizeAdminDigits();
+  });
+
+  backlinksContainer.on('click', '.ppt-remove-backlink-row', function () {
+    $(this).closest('.ppt-backlink-row').remove();
+    reindexBacklinks();
     normalizeAdminDigits();
   });
 

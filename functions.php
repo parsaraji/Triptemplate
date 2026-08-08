@@ -133,6 +133,18 @@ function ppt_filter_destination_archives( $query ) {
 add_action( 'pre_get_posts', 'ppt_filter_destination_archives' );
 
 /**
+ * Synchronize and declare full support for Elementor, Elementor Pro, Rank Math, and Rank Math Pro (Priority 10).
+ */
+function ppt_register_plugins_synchronizations() {
+	// 1. Declare support for Elementor Header Footer template locations
+	add_theme_support( 'elementor-header-footer' );
+
+	// 2. Declare support for Rank Math SEO breadcrumbs and title metadata parsing
+	add_theme_support( 'rank-math-breadcrumbs' );
+}
+add_action( 'after_setup_theme', 'ppt_register_plugins_synchronizations' );
+
+/**
  * Helper to get settings.
  */
 function ppt_get_setting( $option, $key, $default = '' ) {
