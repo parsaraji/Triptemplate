@@ -1,7 +1,7 @@
 <?php
 /**
  * Custom Tabbed WordPress Admin Settings Panel & Extensive Documentation
- * Now with full XML/WXR Demo Content Import/Export Standards and Download guidelines.
+ * Upgraded with Iranian ad network script hooks, backlink controls, and WXR standards.
  *
  * @package Premium_Persian_Tourism
  */
@@ -74,10 +74,11 @@ class PPT_Admin_Panel {
 			<h2 class="nav-tab-wrapper">
 				<a href="?page=ppt-settings&tab=homepage_sections" class="nav-tab <?php echo 'homepage_sections' === $active_tab ? 'nav-tab-active' : ''; ?>">مدیریت صفحه نخست</a>
 				<a href="?page=ppt-settings&tab=brand_settings" class="nav-tab <?php echo 'brand_settings' === $active_tab ? 'nav-tab-active' : ''; ?>">تنظیمات برند و سفارشی‌سازی</a>
-				<a href="?page=ppt-settings&tab=ad_slots" class="nav-tab <?php echo 'ad_slots' === $active_tab ? 'nav-tab-active' : ''; ?>">مدیریت جایگاه‌های تبلیغاتی</a>
+				<a href="?page=ppt-settings&tab=ad_slots" class="nav-tab <?php echo 'ad_slots' === $active_tab ? 'nav-tab-active' : ''; ?>">مدیریت تبلیغات و بک‌لینک‌ها</a>
 				<a href="?page=ppt-settings&tab=map_settings" class="nav-tab <?php echo 'map_settings' === $active_tab ? 'nav-tab-active' : ''; ?>">تنظیمات نقشه</a>
 				<a href="?page=ppt-settings&tab=theme_updater" class="nav-tab <?php echo 'theme_updater' === $active_tab ? 'nav-tab-active' : ''; ?>">بروزرسانی پوسته</a>
 				<a href="?page=ppt-settings&tab=demo_import" class="nav-tab <?php echo 'demo_import' === $active_tab ? 'nav-tab-active' : ''; ?>">درون‌ریزی فایل دمو (XML)</a>
+				<a href="?page=ppt-settings&tab=url_guidelines" class="nav-tab <?php echo 'url_guidelines' === $active_tab ? 'nav-tab-active' : ''; ?>">تنظیمات آدرس‌ها (URL)</a>
 				<a href="?page=ppt-settings&tab=documentation" class="nav-tab <?php echo 'documentation' === $active_tab ? 'nav-tab-active' : ''; ?>">راهنما و مستندات تخصصی</a>
 			</h2>
 
@@ -100,11 +101,13 @@ class PPT_Admin_Panel {
 					$this->render_updater_tab();
 				} elseif ( 'demo_import' === $active_tab ) {
 					$this->render_demo_import_tab();
+				} elseif ( 'url_guidelines' === $active_tab ) {
+					$this->render_url_guidelines_tab();
 				} elseif ( 'documentation' === $active_tab ) {
 					$this->render_documentation_tab();
 				}
 
-				if ( 'documentation' !== $active_tab && 'demo_import' !== $active_tab ) {
+				if ( 'documentation' !== $active_tab && 'demo_import' !== $active_tab && 'url_guidelines' !== $active_tab ) {
 					submit_button( 'ذخیره تنظیمات پوسته' );
 				}
 				?>
@@ -276,16 +279,62 @@ class PPT_Admin_Panel {
 	}
 
 	/**
-	 * Tab 2: Responsive Ad Placement Slots.
+	 * Tab 2: Advanced Advertising Slots & Script connections.
 	 */
 	private function render_ad_tab() {
 		$ad_data = get_option( 'ppt_ad_slots', array() );
 		$slots   = isset( $ad_data['slots'] ) ? $ad_data['slots'] : array();
+		$yektanet = isset( $ad_data['yektanet_header_script'] ) ? $ad_data['yektanet_header_script'] : '';
+		$backlinks = isset( $ad_data['backlinks'] ) ? $ad_data['backlinks'] : array();
 		?>
 		<div class="card-box ppt-admin-card">
-			<h3>جایگاه‌های بنر تبلیغاتی مستقل (بدون Cumulative Layout Shift)</h3>
-			<p class="description">کد تبلیغات مستقل دسکتاپ و موبایل خود را وارد نمایید. این بخش ابعاد مشخصی برای بنرها در فرانت‌اند رزرو می‌کند تا از پرش صفحه جلوگیری گردد.</p>
+			<h3>اتصال به پلتفرم‌های تبلیغات سراسری (یکتانت / صباویژن / تپسل)</h3>
+			<p class="description">کد اسکریپت دریافتی از پلتفرم‌های یکتانت یا صباویژن را در کادر زیر قرار دهید تا به صورت خودکار در هدر وب‌سایت فراخوانی گردد.</p>
 
+			<table class="form-table" style="margin-bottom:30px;">
+				<tr>
+					<th scope="row">کد اسکریپت هدر (Header Script)</th>
+					<td>
+						<textarea name="ppt_ad_slots[yektanet_header_script]" style="width:100%; font-family: monospace; text-align:left; direction:ltr;" rows="5" placeholder="<!-- Yektanet Script -->"><?php echo esc_textarea( $yektanet ); ?></textarea>
+						<p class="description">کدهای دریافتی از پلتفرم تبلیغاتی که معمولا قبل از بسته‌شدن تگ head قرار می‌گیرند.</p>
+					</td>
+				</tr>
+			</table>
+
+			<hr style="margin:20px 0;">
+
+			<h3>مدیریت و تزریق بک‌لینک‌های متنی تجاری</h3>
+			<p class="description">آدرس‌ها و انکر تکست‌های بک‌لینک‌های تجاری خود را ثبت کنید تا به صورت سازمان‌یافته در فوتر تزریق شوند.</p>
+
+			<div style="background-color:#fafafa; border:1px solid #ccc; padding:15px; border-radius:6px; margin-bottom:20px;">
+				<h4 style="margin-top:0;">بک‌لینک‌های ثبت شده فعلی:</h4>
+				<?php for ( $i = 0; $i < 3; $i ++ ) :
+					$link_url = isset( $backlinks[$i]['url'] ) ? $backlinks[$i]['url'] : '';
+					$link_anc = isset( $backlinks[$i]['anchor'] ) ? $backlinks[$i]['anchor'] : '';
+					$link_nf  = isset( $backlinks[$i]['nofollow'] ) ? $backlinks[$i]['nofollow'] : '0';
+					?>
+					<div style="display:flex; gap:15px; margin-bottom:12px; align-items:center;">
+						<div style="flex:1;">
+							<label>عنوان پیوند (Anchor Text):</label>
+							<input type="text" name="ppt_ad_slots[backlinks][<?php echo esc_attr( $i ); ?>][anchor]" value="<?php echo esc_attr( $link_anc ); ?>" style="width:100%;" placeholder="مثال: خرید بلیط هواپیما" />
+						</div>
+						<div style="flex:2;">
+							<label>آدرس اینترنتی (URL):</label>
+							<input type="url" name="ppt_ad_slots[backlinks][<?php echo esc_attr( $i ); ?>][url]" value="<?php echo esc_url( $link_url ); ?>" style="width:100%; text-align:left; direction:ltr;" placeholder="https://example.com" />
+						</div>
+						<div style="flex:1; text-align:center;">
+							<label>
+								<input type="checkbox" name="ppt_ad_slots[backlinks][<?php echo esc_attr( $i ); ?>][nofollow]" value="1" <?php checked( '1', $link_nf ); ?> />
+								نوفالو (Nofollow)
+							</label>
+						</div>
+					</div>
+				<?php endfor; ?>
+			</div>
+
+			<hr style="margin:20px 0;">
+
+			<h3>جایگاه‌های بنر تبلیغاتی مستقل (CLS-Free)</h3>
 			<?php foreach ( $slots as $key => $slot ) : ?>
 				<div class="ppt-ad-slot-box" style="border: 1px solid #ccc; padding: 15px; margin-bottom: 20px; background:#fafafa;">
 					<h4><?php echo esc_html( $slot['label'] ); ?></h4>
@@ -406,8 +455,8 @@ class PPT_Admin_Panel {
 			</div>
 
 			<h4 style="color:#2D3748;">ساختار نمونه سند WXR XML استاندارد برای جاذبه‌ها و پادکست‌ها:</h4>
-			<textarea class="large-text" rows="15" readonly style="font-family:monospace; font-size:11px; direction:ltr; text-align:left; background-color:#1E293B; color:#F8FAFC;">
-<?xml version="1.0" encoding="UTF-8" ?>
+			<textarea class="large-text" rows="15" readonly style="font-family:monospace; font-size:11px; direction:ltr; text-align:left; background-color:#1E293B; color:#F8FAFC;"><?php echo '<?xml version="1.0" encoding="UTF-8" ?>'; ?>
+
 <rss version="2.0"
 	xmlns:excerpt="http://wordpress.org/export/1.2/excerpt/"
 	xmlns:content="http://purl.org/rss/1.0/modules/content/"
@@ -454,6 +503,56 @@ class PPT_Admin_Panel {
 </channel>
 </rss>
 			</textarea>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Tab 7: URL Permalink Structure Guidelines.
+	 */
+	private function render_url_guidelines_tab() {
+		?>
+		<div class="card-box ppt-admin-card" style="line-height:1.9;">
+			<h3>📚 راهنمای پیکربندی و ساختار آدرس‌ها (URL & Permalinks)</h3>
+			<p class="description">برای جلوگیری از بروز خطای ۴۰۴ در صفحات جاذبه‌ها، مقاصد و پادکست‌ها، دستورالعمل‌های زیر را به دقت دنبال کنید:</p>
+
+			<div style="background-color:#F7FAFC; border-right:4px solid #3182CE; padding:15px; margin-bottom:20px;">
+				<strong>تنظیم پیوند یکتا روی گزینه "نام نوشته" (Post Name):</strong>
+				<p style="font-size:14px; margin-top:8px; margin-bottom:0;">به بخش <strong>تنظیمات &rarr; پیوندهای یکتا</strong> مراجعه نموده و چیدمان آدرس را روی گزینه <code>نام نوشته (Post name)</code> قرار دهید تا تمام لایه‌های آدرس‌دهی انگلیسی و سئوبیس لود شوند.</p>
+			</div>
+
+			<h4 style="color:#2D3748;">ساختار پیوندهای یکتای اختصاصی این پوسته:</h4>
+			<table class="wp-list-table widefat fixed striped">
+				<thead>
+					<tr>
+						<th style="width:25%;">نوع محتوا (CPT)</th>
+						<th style="width:35%;">پیش‌وند آدرس دمو</th>
+						<th style="width:40%;">مثال آدرس استاندارد</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><strong>مقاصد گردشگری</strong></td>
+						<td style="font-family:monospace; direction:ltr; text-align:left;">/destinations/</td>
+						<td style="font-family:monospace; direction:ltr; text-align:left;">/destinations/shiraz-tour/</td>
+					</tr>
+					<tr>
+						<td><strong>جاذبه‌های باستانی</strong></td>
+						<td style="font-family:monospace; direction:ltr; text-align:left;">/attractions/</td>
+						<td style="font-family:monospace; direction:ltr; text-align:left;">/attractions/persepolis/</td>
+					</tr>
+					<tr>
+						<td><strong>اپیزود پادکست</strong></td>
+						<td style="font-family:monospace; direction:ltr; text-align:left;">/podcasts/</td>
+						<td style="font-family:monospace; direction:ltr; text-align:left;">/podcasts/shiraz-podcast/</td>
+					</tr>
+					<tr>
+						<td><strong>مستند ویدیویی</strong></td>
+						<td style="font-family:monospace; direction:ltr; text-align:left;">/videos/</td>
+						<td style="font-family:monospace; direction:ltr; text-align:left;">/videos/chahkooh-documentary/</td>
+					</tr>
+				</tbody>
+			</table>
 		</div>
 		<?php
 	}

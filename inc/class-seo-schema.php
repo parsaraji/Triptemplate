@@ -56,7 +56,8 @@ class PPT_Seo_Schema {
 
 		if ( ! empty( $schemas ) ) {
 			foreach ( $schemas as $schema ) {
-				echo "\n" . '<script type="application/ld+json">' . wp_json_encode( $schema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT ) . '</script>' . "\n";
+				// Use JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE to block script tags bypasses (Stored XSS)
+				echo "\n" . '<script type="application/ld+json">' . wp_json_encode( $schema, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE ) . '</script>' . "\n";
 			}
 		}
 	}
@@ -88,7 +89,7 @@ class PPT_Seo_Schema {
 				$items[] = array(
 					'@type'    => 'ListItem',
 					'position' => $position,
-					'name'     => $post_type_obj->labels->name,
+					'name'     => esc_html( $post_type_obj->labels->name ),
 					'item'     => $archive_link,
 				);
 				$position++;
@@ -98,14 +99,14 @@ class PPT_Seo_Schema {
 			$items[] = array(
 				'@type'    => 'ListItem',
 				'position' => $position,
-				'name'     => get_the_title(),
+				'name'     => esc_html( get_the_title() ),
 				'item'     => get_permalink(),
 			);
 		} elseif ( is_archive() ) {
 			$items[] = array(
 				'@type'    => 'ListItem',
 				'position' => 2,
-				'name'     => get_the_archive_title(),
+				'name'     => esc_html( get_the_archive_title() ),
 				'item'     => get_current_clean_url(),
 			);
 		}
@@ -129,16 +130,16 @@ class PPT_Seo_Schema {
 		$schema = array(
 			'@context' => 'https://schema.org',
 			'@type'    => 'TouristDestination',
-			'name'     => get_the_title(),
-			'description' => wp_strip_all_tags( get_the_excerpt() ),
+			'name'     => esc_html( get_the_title() ),
+			'description' => esc_html( wp_strip_all_tags( get_the_excerpt() ) ),
 		);
 
 		if ( ! empty( $best_time ) ) {
-			$schema['touristType'] = $best_time;
+			$schema['touristType'] = esc_html( $best_time );
 		}
 
 		if ( has_post_thumbnail() ) {
-			$schema['image'] = get_the_post_thumbnail_url( $post->ID, 'large' );
+			$schema['image'] = esc_url( get_the_post_thumbnail_url( $post->ID, 'large' ) );
 		}
 
 		if ( ! empty( $lat ) && ! empty( $lng ) ) {
@@ -165,20 +166,20 @@ class PPT_Seo_Schema {
 		$schema = array(
 			'@context' => 'https://schema.org',
 			'@type'    => 'TouristAttraction',
-			'name'     => get_the_title(),
-			'description' => wp_strip_all_tags( get_the_excerpt() ),
+			'name'     => esc_html( get_the_title() ),
+			'description' => esc_html( wp_strip_all_tags( get_the_excerpt() ) ),
 		);
 
 		if ( ! empty( $address ) ) {
 			$schema['address'] = array(
 				'@type'          => 'PostalAddress',
-				'streetAddress' => $address,
+				'streetAddress' => esc_html( $address ),
 				'addressLocality' => 'Iran',
 			);
 		}
 
 		if ( has_post_thumbnail() ) {
-			$schema['image'] = get_the_post_thumbnail_url( $post->ID, 'large' );
+			$schema['image'] = esc_url( get_the_post_thumbnail_url( $post->ID, 'large' ) );
 		}
 
 		if ( ! empty( $lat ) && ! empty( $lng ) ) {
@@ -211,10 +212,10 @@ class PPT_Seo_Schema {
 		foreach ( $faqs as $faq ) {
 			$main_entity[] = array(
 				'@type'          => 'Question',
-				'name'           => $faq['q'],
+				'name'           => esc_html( $faq['q'] ),
 				'acceptedAnswer' => array(
 					'@type' => 'Answer',
-					'text'  => $faq['a'],
+					'text'  => esc_html( $faq['a'] ),
 				),
 			);
 		}
@@ -230,7 +231,9 @@ class PPT_Seo_Schema {
 /**
  * Clean current URL utility helper.
  */
-function get_current_clean_url() {
-	global $wp;
-	return home_url( $wp->request );
+if ( ! function_exists( 'get_current_clean_url' ) ) {
+	function get_current_clean_url() {
+		global $wp;
+		return home_url( $wp->request );
+	}
 }

@@ -1,6 +1,8 @@
 <?php
 /**
- * Responsive Ad Slot Manager Subsystem
+ * Advanced Professional Advertising and Backlink Subsystem
+ * Supports common Iranian advertising script providers (Yektanet, Sabavision, Sanjagh)
+ * and incorporates structural backlink injections.
  *
  * @package Premium_Persian_Tourism
  */
@@ -30,7 +32,45 @@ class PPT_Ad_Manager {
 	 * Constructor.
 	 */
 	private function __construct() {
-		// No hooks needed, accessed statically or dynamically via public methods.
+		add_action( 'wp_head', array( $this, 'inject_yektanet_header_scripts' ), 10 );
+		add_action( 'wp_footer', array( $this, 'inject_backlinks_footer' ), 100 );
+	}
+
+	/**
+	 * Inject Yektanet or SabaVision tracking scripts inside WP Header.
+	 */
+	public function inject_yektanet_header_scripts() {
+		$ad_data = get_option( 'ppt_ad_slots', array() );
+		$yektanet_code = isset( $ad_data['yektanet_header_script'] ) ? $ad_data['yektanet_header_script'] : '';
+
+		if ( ! empty( $yektanet_code ) ) {
+			echo "\n<!-- Global Yektanet Advertising Integrations -->\n";
+			echo $yektanet_code; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			echo "\n";
+		}
+	}
+
+	/**
+	 * Output designated active contextual backlinks in standard footer row.
+	 */
+	public function inject_backlinks_footer() {
+		$ad_data   = get_option( 'ppt_ad_slots', array() );
+		$backlinks = isset( $ad_data['backlinks'] ) ? $ad_data['backlinks'] : array();
+
+		if ( empty( $backlinks ) || ! is_array( $backlinks ) ) {
+			return;
+		}
+
+		echo '<div class="ppt-footer-backlinks container" style="margin:20px auto; padding-top:15px; border-top:1px solid #2D3748; font-size:12px; color:#718096; direction:rtl; text-align:center;">';
+		echo '<span style="margin-left:10px;">شرکای تجاری ما:</span>';
+		foreach ( $backlinks as $link ) {
+			if ( empty( $link['url'] ) || empty( $link['anchor'] ) ) {
+				continue;
+			}
+			$rel = ( isset( $link['nofollow'] ) && '1' === $link['nofollow'] ) ? 'nofollow' : 'dofollow';
+			echo '<a href="' . esc_url( $link['url'] ) . '" rel="' . esc_attr( $rel ) . '" target="_blank" style="color:#A0AEC0; margin-left:15px; text-decoration:none;">' . esc_html( $link['anchor'] ) . '</a>';
+		}
+		echo '</div>';
 	}
 
 	/**
@@ -72,7 +112,7 @@ class PPT_Ad_Manager {
 
 		?>
 		<div class="ppt-ad-placeholder-wrapper <?php echo esc_attr( $slot_key ); ?>-wrapper" style="margin: 20px auto; text-align: center;">
-			<span class="ppt-ad-lbl" style="display:block; font-size:10px; color:#999; margin-bottom:4px; text-align:center;">تبلیغات مستقل</span>
+			<span class="ppt-ad-lbl" style="display:block; font-size:10px; color:#999; margin-bottom:4px; text-align:center;">تبلیغات مستقل (یکتانت / صباویژن)</span>
 			<div class="ppt-ad-container" style="background: #fafafa; border: 1px dashed #ddd; margin: 0 auto; display: flex; align-items: center; justify-content: center; overflow: hidden; <?php echo esc_attr( $cls_style ); ?>">
 
 				<?php if ( ! empty( $desktop_code ) ) : ?>

@@ -102,7 +102,7 @@ function ppt_enqueue_admin_scripts( $hook ) {
 	}
 
 	wp_enqueue_style( 'ppt-admin-style', PPT_THEME_URI . '/assets/css/admin.css', array(), PPT_THEME_VERSION );
-	wp_enqueue_script( 'ppt-admin-script', PPT_THEME_URI . '/assets/js/admin.js', array( 'jquery' ), PPT_THEME_VERSION, true );
+	wp_enqueue_script( 'ppt-admin-script', PPT_THEME_URI . '/assets/js/admin.js', array( 'jquery', 'jquery-ui-sortable' ), PPT_THEME_VERSION, true );
 }
 add_action( 'admin_enqueue_scripts', 'ppt_enqueue_admin_scripts' );
 
@@ -204,7 +204,7 @@ function ppt_to_jalali( $g_y, $g_m, $g_d ) {
 }
 
 /**
- * Filter WP get_the_date / get_the_modified_date and return beautiful Jalali shamsi date.
+ * Filter WP get_the_date and return beautiful Jalali shamsi date.
  */
 function ppt_get_jalali_date( $the_date, $format, $post ) {
 	if ( ! $post ) {
@@ -225,4 +225,26 @@ function ppt_get_jalali_date( $the_date, $format, $post ) {
 	return $the_date;
 }
 add_filter( 'get_the_date', 'ppt_get_jalali_date', 10, 3 );
-add_filter( 'get_the_modified_date', 'ppt_get_jalali_date', 10, 3 );
+
+/**
+ * Filter WP get_the_modified_date and return beautiful Jalali shamsi date.
+ */
+function ppt_get_jalali_modified_date( $the_date, $format, $post ) {
+	if ( ! $post ) {
+		return $the_date;
+	}
+
+	$g_date = get_post_modified_time( 'Y-m-d', false, $post );
+	if ( ! $g_date ) {
+		return $the_date;
+	}
+
+	$parts = explode( '-', $g_date );
+	if ( count( $parts ) === 3 ) {
+		$jalali = ppt_to_jalali( intval( $parts[0] ), intval( $parts[1] ), intval( $parts[2] ) );
+		return $jalali['text'];
+	}
+
+	return $the_date;
+}
+add_filter( 'get_the_modified_date', 'ppt_get_jalali_modified_date', 10, 3 );

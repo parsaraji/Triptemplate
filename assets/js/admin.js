@@ -1,5 +1,6 @@
 /**
  * Custom WordPress Settings Panel Repeater and Admin Interactions
+ * Includes robust drag-and-drop jQuery UI Sortable reordering for homepage modules.
  */
 
 jQuery(document).ready(function ($) {
@@ -60,4 +61,38 @@ jQuery(document).ready(function ($) {
   budgetContainer.on('click', '.ppt-remove-budget-row', function () {
     $(this).closest('tr').remove();
   });
+
+  // 3. Homepage Modules Drag-and-Drop Sortable Reordering
+  var sortableContainer = $('.ppt-sortable-sections');
+  if (sortableContainer.length && $.fn.sortable) {
+    sortableContainer.sortable({
+      handle: '.ppt-drag-handle',
+      axis: 'y',
+      placeholder: 'ui-state-highlight',
+      update: function (event, ui) {
+        // Re-index names dynamically on drag update to save exactly sorted order
+        sortableContainer.find('.ppt-section-row').each(function (index) {
+          var row = $(this);
+
+          // Re-index "id" input
+          row.find('input[name*="[id]"]').attr('name', 'ppt_homepage_sections[sections][' + index + '][id]');
+
+          // Re-index "source" input
+          row.find('input[name*="[source]"]').attr('name', 'ppt_homepage_sections[sections][' + index + '][source]');
+
+          // Re-index "title" input
+          row.find('input[name*="[title]"]').attr('name', 'ppt_homepage_sections[sections][' + index + '][title]');
+
+          // Re-index "count" input
+          row.find('input[name*="[count]"]').attr('name', 'ppt_homepage_sections[sections][' + index + '][count]');
+
+          // Re-index "layout" select
+          row.find('select[name*="[layout]"]').attr('name', 'ppt_homepage_sections[sections][' + index + '][layout]');
+
+          // Re-index "enabled" select
+          row.find('select[name*="[enabled]"]').attr('name', 'ppt_homepage_sections[sections][' + index + '][enabled]');
+        });
+      }
+    });
+  }
 });

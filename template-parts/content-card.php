@@ -1,6 +1,7 @@
 <?php
 /**
  * Global Editorial Post/CPT Grid Card Template Part
+ * Refined to prevent any broken fallback images and display a styled CSS fallback instead.
  *
  * @package Premium_Persian_Tourism
  */
@@ -29,7 +30,11 @@ if ( 'destination' === $post_type ) {
 			<?php if ( has_post_thumbnail() ) : ?>
 				<?php the_post_thumbnail( 'ppt-card-thumb', array( 'alt' => get_the_title() ) ); ?>
 			<?php else : ?>
-				<img src="<?php echo esc_url( PPT_THEME_URI . '/assets/images/fallback-card.jpg' ); ?>" alt="تصویر موقت" style="width:100%; height:100%; object-fit:cover;" />
+				<!-- Beautiful CSS-based placeholder container to avoid 404 console errors of missing jpg assets -->
+				<div class="ppt-css-fallback-thumb" style="width:100%; height:100%; min-height:180px; background: linear-gradient(135deg, #2B6CB0 0%, #1A365D 100%); display:flex; flex-direction:column; justify-content:center; align-items:center; color:#FFF; padding:15px; text-align:center;">
+					<span style="font-size:32px; margin-bottom:5px;">🎙️</span>
+					<span style="font-size:12px; font-weight:bold; opacity:0.8;"><?php bloginfo( 'name' ); ?></span>
+				</div>
 			<?php endif; ?>
 		</a>
 		<span class="card-badge"><?php echo esc_html( $badge_label ); ?></span>
@@ -57,7 +62,6 @@ if ( 'destination' === $post_type ) {
 
 		<div class="card-footer">
 			<a href="<?php the_permalink(); ?>" class="read-more-link" style="font-weight:bold; color:#3182CE;">مطالعه کامل &larr;</a>
-			<!-- Add extra metadata like podcast durations if applicable -->
 			<?php if ( 'podcast' === $post_type ) : ?>
 				<span class="duration-meta" style="color:#E53E3E; font-weight:bold;">⏱️ <?php echo esc_html( get_post_meta( get_the_ID(), '_ppt_podcast_duration', true ) ); ?></span>
 			<?php elseif ( 'video' === $post_type ) : ?>
