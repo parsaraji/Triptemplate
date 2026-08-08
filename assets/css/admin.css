@@ -1,60 +1,77 @@
 /**
  * Custom WordPress Settings Panel Styling for PPT Theme
+ * Upgraded with highly professional, elegant UI variables and layout definitions.
  */
 
 .ppt-admin-wrap {
   margin: 20px 20px 0 0;
   max-width: 1200px;
   font-family: 'Shabnam', 'Tahoma', sans-serif !important;
+  direction: rtl;
+  text-align: right;
 }
 
 .ppt-admin-wrap h1 {
-  font-size: 24px;
-  font-weight: bold;
-  color: #1A202C;
+  font-size: 26px;
+  font-weight: 800;
+  color: #1A365D;
+  margin-bottom: 8px;
+}
+
+.ppt-admin-wrap p.description {
+  font-size: 14px;
+  color: #4A5568;
+  margin-bottom: 25px;
 }
 
 .ppt-admin-wrap .nav-tab-wrapper {
-  margin-bottom: 25px;
-  border-bottom: 2px solid #CBD5E0;
+  margin-bottom: 30px;
+  border-bottom: 3px solid #E2E8F0;
+  display: flex;
+  gap: 5px;
 }
 
 .ppt-admin-wrap .nav-tab {
   font-size: 14px;
   font-weight: bold;
-  padding: 8px 16px;
+  padding: 10px 20px;
   border-bottom: none;
-  background-color: #E2E8F0;
+  background-color: #EDF2F7;
   border: 1px solid #CBD5E0;
   border-bottom: none;
-  margin-left: 4px;
+  border-radius: 8px 8px 0 0;
+  color: #4A5568;
+  margin: 0;
+  transition: all 0.2s ease;
 }
 
 .ppt-admin-wrap .nav-tab-active,
 .ppt-admin-wrap .nav-tab:hover {
-  background-color: #FFF;
-  border-bottom: 2px solid #FFF;
-  color: #2B6CB0;
-  margin-bottom: -2px;
+  background-color: #FFFFFF;
+  border-bottom: 3px solid #FFFFFF;
+  color: #3182CE;
+  margin-bottom: -3px;
+  box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.05);
 }
 
 /* Card layout inside admin settings */
 .card-box.ppt-admin-card {
   background-color: #FFFFFF;
-  border-radius: 8px;
+  border-radius: 12px;
   border: 1px solid #E2E8F0;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
   padding: 30px;
-  margin-bottom: 25px;
+  margin-bottom: 30px;
 }
 
 .card-box.ppt-admin-card h3 {
   font-size: 18px;
+  font-weight: 800;
   color: #2D3748;
   margin-top: 0;
-  border-bottom: 1px solid #EDF2F7;
+  border-bottom: 2px solid #EDF2F7;
   padding-bottom: 12px;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
 
 /* Drag handle styling for sortable homepage sections */
@@ -81,22 +98,35 @@
 /* Form fields customization */
 .ppt-admin-wrap input[type="text"],
 .ppt-admin-wrap input[type="number"],
+.ppt-admin-wrap input[type="url"],
+.ppt-admin-wrap input[type="email"],
 .ppt-admin-wrap select,
 .ppt-admin-wrap textarea {
-  border: 1px solid #CBD5E0;
-  border-radius: 4px;
-  padding: 6px 10px;
+  border: 1.5px solid #CBD5E0;
+  border-radius: 6px;
+  padding: 10px 14px;
   font-family: inherit;
   font-size: 13px;
   outline: none;
+  transition: all 0.2s ease;
+  background-color: #FFF;
 }
 
 .ppt-admin-wrap input[type="text"]:focus,
 .ppt-admin-wrap input[type="number"]:focus,
+.ppt-admin-wrap input[type="url"]:focus,
+.ppt-admin-wrap input[type="email"]:focus,
 .ppt-admin-wrap select:focus,
 .ppt-admin-wrap textarea:focus {
   border-color: #3182CE;
-  box-shadow: 0 0 0 1px #3182CE;
+  box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.15);
+}
+
+/* Form Table Refinements */
+.form-table th {
+  font-weight: 700;
+  color: #2D3748;
+  width: 250px;
 }
 
 /* Meta Boxes specific formatting */

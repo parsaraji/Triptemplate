@@ -1,10 +1,32 @@
 /**
  * Premium Persian Tourism - Core JavaScript Interactions
- * Completely upgraded with Megamenu triggers, ARIA overlays, and AJAX filters.
+ * Completely upgraded with Megamenu triggers, ARIA overlays, AJAX filters, and Persian digit normalizer.
  */
 
 document.addEventListener('DOMContentLoaded', function () {
   'use strict';
+
+  // Helper function to normalize English digits to Persian digits
+  function translateToPersianDigits(text) {
+    var englishDigits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+    var persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+
+    var str = text.toString();
+    for (var i = 0; i < 10; i++) {
+      str = str.replace(new RegExp(englishDigits[i], 'g'), persianDigits[i]);
+    }
+    return str;
+  }
+
+  // Traverse and convert all digits dynamically on user-facing frontend components
+  function normalizePageNumbers() {
+    var elements = document.querySelectorAll('.meta-date, .audio-time, .duration-meta, .card-badge, .ppt-budget-table td, .highlight-item p');
+    elements.forEach(function (el) {
+      if (el.children.length === 0) {
+        el.innerText = translateToPersianDigits(el.innerText);
+      }
+    });
+  }
 
   // 1. Mobile Side Drawer Navigation Panel (Refined with ARIA accessibility checks)
   var burgerBtn = document.querySelector('.burger-menu-btn');
@@ -104,7 +126,7 @@ document.addEventListener('DOMContentLoaded', function () {
           var mins = Math.floor(audio.currentTime / 60);
           var secs = Math.floor(audio.currentTime % 60);
           if (secs < 10) secs = '0' + secs;
-          timeDisplay.innerText = mins + ':' + secs;
+          timeDisplay.innerText = translateToPersianDigits(mins + ':' + secs);
         }
       }
     });
@@ -217,6 +239,7 @@ document.addEventListener('DOMContentLoaded', function () {
           editorialGrid.style.opacity = '1';
           if (data && data.success && data.data && data.data.html) {
             editorialGrid.innerHTML = data.data.html;
+            normalizePageNumbers();
           }
         })
         .catch(function (err) {
@@ -260,4 +283,7 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     });
   }
+
+  // Execute Persian digits normalization
+  normalizePageNumbers();
 });

@@ -626,7 +626,7 @@ class PPT_Admin_Panel {
 			</div>
 
 			<h4 style="color:#2D3748;">ساختار نمونه سند WXR XML استاندارد برای جاذبه‌ها، برنامه‌های سفر، پادکست‌ها، ویدیوها و مقاصد:</h4>
-			<textarea class="large-text" rows="10" readonly style="font-family:monospace; font-size:11px; direction:ltr; text-align:left; background-color:#1E293B; color:#F8FAFC;"><?php echo '<?xml version="1.0" encoding="UTF-8" ?>'; ?>
+			<textarea class="large-text" rows="18" readonly style="font-family:monospace; font-size:11px; direction:ltr; text-align:left; background-color:#1E293B; color:#F8FAFC;"><?php echo '<?xml version="1.0" encoding="UTF-8" ?>'; ?>
 
 <rss version="2.0"
 	xmlns:excerpt="http://wordpress.org/export/1.2/excerpt/"
@@ -670,6 +670,39 @@ class PPT_Admin_Panel {
 		<wp:postmeta>
 			<wp:meta_key><![CDATA[_ppt_itinerary_duration]]></wp:meta_key>
 			<wp:meta_value><![CDATA[۳ روز و ۲ شب]]></wp:meta_value>
+		</wp:postmeta>
+	</item>
+
+	<!-- ۴. نمونه درون‌ریز راهنمای سفر (Guide) -->
+	<item>
+		<title>راهنمای سفر ارزان به قشم</title>
+		<wp:post_type><![CDATA[guide]]></wp:post_type>
+		<wp:status><![CDATA[publish]]></wp:status>
+		<wp:postmeta>
+			<wp:meta_key><![CDATA[_ppt_budget_items]]></wp:meta_key>
+			<wp:meta_value><![CDATA[a:1:{i:0;a:2:{s:5:"title";s:23:"اقامتگاه بومگردی";s:4:"cost";s:17:"۳۰۰,۰۰۰ تومان";}}]]></wp:meta_value>
+		</wp:postmeta>
+	</item>
+
+	<!-- ۵. نمونه درون‌ریز فایل صوتی پادکست (Podcast) -->
+	<item>
+		<title>اپیزود صوتی قشمگردی</title>
+		<wp:post_type><![CDATA[podcast]]></wp:post_type>
+		<wp:status><![CDATA[publish]]></wp:status>
+		<wp:postmeta>
+			<wp:meta_key><![CDATA[_ppt_audio_url]]></wp:meta_key>
+			<wp:meta_value><![CDATA[https://example.com/audio.mp3]]></wp:meta_value>
+		</wp:postmeta>
+	</item>
+
+	<!-- ۶. نمونه درون‌ریز مستند ویدیویی (Video) -->
+	<item>
+		<title>مستند چاهکوه</title>
+		<wp:post_type><![CDATA[video]]></wp:post_type>
+		<wp:status><![CDATA[publish]]></wp:status>
+		<wp:postmeta>
+			<wp:meta_key><![CDATA[_ppt_aparat_id]]></wp:meta_key>
+			<wp:meta_value><![CDATA[fXgHe]]></wp:meta_value>
 		</wp:postmeta>
 	</item>
 </channel>

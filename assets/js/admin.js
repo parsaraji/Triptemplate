@@ -1,10 +1,32 @@
 /**
  * Custom WordPress Settings Panel Repeater and Admin Interactions
- * Includes robust drag-and-drop jQuery UI Sortable reordering for homepage modules.
+ * Includes robust drag-and-drop jQuery UI Sortable reordering for homepage modules
+ * and localized Persian digit conversions.
  */
 
 jQuery(document).ready(function ($) {
   'use strict';
+
+  // Helper to translate standard digits to Persian digits
+  function translateToPersian(text) {
+    var englishDigits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+    var persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+
+    var str = text.toString();
+    for (var i = 0; i < 10; i++) {
+      str = str.replace(new RegExp(englishDigits[i], 'g'), persianDigits[i]);
+    }
+    return str;
+  }
+
+  function normalizeAdminDigits() {
+    $('.wp-list-table td, .description, code, .form-table th').each(function () {
+      var self = $(this);
+      if (self.children().length === 0) {
+        self.text(translateToPersian(self.text()));
+      }
+    });
+  }
 
   // 1. FAQ Repeater Field Logic
   var faqContainer = $('#ppt_faq_repeater_container');
@@ -27,6 +49,7 @@ jQuery(document).ready(function ($) {
     `;
     faqContainer.append(html);
     faqCount++;
+    normalizeAdminDigits();
   });
 
   // Handle Removal of FAQ Item
@@ -55,6 +78,7 @@ jQuery(document).ready(function ($) {
     `;
     budgetContainer.append(html);
     budgetCount++;
+    normalizeAdminDigits();
   });
 
   // Handle Removal of Budget Row
@@ -74,25 +98,17 @@ jQuery(document).ready(function ($) {
         sortableContainer.find('.ppt-section-row').each(function (index) {
           var row = $(this);
 
-          // Re-index "id" input
           row.find('input[name*="[id]"]').attr('name', 'ppt_homepage_sections[sections][' + index + '][id]');
-
-          // Re-index "source" input
           row.find('input[name*="[source]"]').attr('name', 'ppt_homepage_sections[sections][' + index + '][source]');
-
-          // Re-index "title" input
           row.find('input[name*="[title]"]').attr('name', 'ppt_homepage_sections[sections][' + index + '][title]');
-
-          // Re-index "count" input
           row.find('input[name*="[count]"]').attr('name', 'ppt_homepage_sections[sections][' + index + '][count]');
-
-          // Re-index "layout" select
           row.find('select[name*="[layout]"]').attr('name', 'ppt_homepage_sections[sections][' + index + '][layout]');
-
-          // Re-index "enabled" select
           row.find('select[name*="[enabled]"]').attr('name', 'ppt_homepage_sections[sections][' + index + '][enabled]');
         });
       }
     });
   }
+
+  // Convert digits initially
+  normalizeAdminDigits();
 });
