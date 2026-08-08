@@ -225,14 +225,20 @@ while ( have_posts() ) :
 
 				<hr style="margin:30px 0; border:0; border-top:1px solid #EDF2F7;">
 
-				<!-- Section 8: Interactive OSM Map -->
-				<div id="map-section" class="section-content-box" style="margin-bottom:35px;">
-					<?php
-					if ( ! empty( $lat ) && ! empty( $lng ) ) {
-						PPT_Map_System::render_map_container( $lat, $lng, get_the_title() );
-					}
-					?>
-				</div>
+				<!-- Section 8: Interactive OSM Map (Toggled by CPT Settings) -->
+				<?php
+				$brand_settings = get_option( 'ppt_brand_settings', array() );
+				$dest_show_map  = isset( $brand_settings['cpt_dest_show_map'] ) ? $brand_settings['cpt_dest_show_map'] : '1';
+				if ( '1' === $dest_show_map ) :
+				?>
+					<div id="map-section" class="section-content-box" style="margin-bottom:35px;">
+						<?php
+						if ( ! empty( $lat ) && ! empty( $lng ) ) {
+							PPT_Map_System::render_map_container( $lat, $lng, get_the_title() );
+						}
+						?>
+					</div>
+				<?php endif; ?>
 
 				<!-- Section 9: Shared FAQ accordion -->
 				<div id="faq" class="section-content-box" style="margin-top:30px;">

@@ -1,11 +1,12 @@
 /**
  * Custom WordPress Settings Panel Styling for PPT Theme
  * Upgraded with highly professional, elegant UI variables and layout definitions.
+ * Features a dynamic responsive two-column grid with vertical sidebar navigation.
  */
 
 .ppt-admin-wrap {
   margin: 20px 20px 0 0;
-  max-width: 1200px;
+  max-width: 1250px;
   font-family: 'Shabnam', 'Tahoma', sans-serif !important;
   direction: rtl;
   text-align: right;
@@ -24,34 +25,72 @@
   margin-bottom: 25px;
 }
 
-.ppt-admin-wrap .nav-tab-wrapper {
-  margin-bottom: 30px;
-  border-bottom: 3px solid #E2E8F0;
-  display: flex;
-  gap: 5px;
+/* Two Column Responsive Grid */
+.ppt-admin-two-col-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 30px;
+  direction: rtl;
+  margin-top: 30px;
 }
 
-.ppt-admin-wrap .nav-tab {
-  font-size: 14px;
-  font-weight: bold;
-  padding: 10px 20px;
-  border-bottom: none;
-  background-color: #EDF2F7;
-  border: 1px solid #CBD5E0;
-  border-bottom: none;
-  border-radius: 8px 8px 0 0;
-  color: #4A5568;
+@media (max-width: 960px) {
+  .ppt-admin-two-col-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Right-hand Sidebar Vertical Navigation Styles */
+.ppt-admin-sidebar-nav {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
+  padding: 15px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  height: fit-content;
+}
+
+.ppt-vertical-tabs {
+  list-style: none;
+  padding: 0;
   margin: 0;
-  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
-.ppt-admin-wrap .nav-tab-active,
-.ppt-admin-wrap .nav-tab:hover {
-  background-color: #FFFFFF;
-  border-bottom: 3px solid #FFFFFF;
-  color: #3182CE;
-  margin-bottom: -3px;
-  box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.05);
+.ppt-tab-link {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  color: #4A5568 !important;
+  text-decoration: none !important;
+  font-weight: 700;
+  font-size: 14px;
+  border-radius: 8px;
+  transition: all 0.2s ease-in-out;
+  border-right: 4px solid transparent;
+}
+
+.ppt-tab-link:hover {
+  background-color: #F7FAFC;
+  color: #3182CE !important;
+  border-right-color: #E2E8F0;
+}
+
+.ppt-tab-link.active {
+  background-color: #EBF8FF;
+  color: #2B6CB0 !important;
+  border-right-color: #3182CE;
+}
+
+/* Left-hand Content Panel styling */
+.ppt-admin-content-pane {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
 /* Card layout inside admin settings */

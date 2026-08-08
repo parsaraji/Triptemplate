@@ -145,6 +145,13 @@ $prov_color     = isset( $brand_settings['prov_color'] ) ? $brand_settings['prov
 				?>
 			</section>
 
+			<!-- Dynamic Taxonomy End Ad Injection (Priority 5) -->
+			<?php
+			if ( class_exists( 'PPT_Ad_Manager' ) ) {
+				PPT_Ad_Manager::render_taxonomy_end_ad();
+			}
+			?>
+
 		</main>
 
 		<!-- Right Sidebar area -->

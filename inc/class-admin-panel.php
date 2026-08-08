@@ -151,8 +151,8 @@ class PPT_Admin_Panel {
 		$active_tab = isset( $_GET['tab'] ) ? sanitize_key( $_GET['tab'] ) : 'homepage_sections';
 		?>
 		<div class="wrap ppt-admin-wrap">
-			<h1>تنظیمات پوسته جامع گردشگری و رادیو سفر</h1>
-			<p class="description">پیکربندی استایل‌ها، تبلیغات، نقشه، ساختارهای فنی و درون‌ریزی داده‌های نمونه را مدیریت کنید.</p>
+			<h1>⚙️ پنل مدیریت هوشمند و اختصاصی رادیو سفر (نسخه ویژه)</h1>
+			<p class="description">تنظیمات کامل، مدیریت پست‌تایپ‌ها، استایل‌های اختصاصی، تبلیغات پاراگرافی پیشرفته و موتور درون‌ریزی اختصاصی را مدیریت فرمایید.</p>
 
 			<?php if ( isset( $_GET['child_created'] ) && '1' === $_GET['child_created'] ) : ?>
 				<div class="notice notice-success is-dismissible">
@@ -166,55 +166,70 @@ class PPT_Admin_Panel {
 				</div>
 			<?php endif; ?>
 
-			<h2 class="nav-tab-wrapper">
-				<a href="?page=ppt-settings&tab=homepage_sections" class="nav-tab <?php echo 'homepage_sections' === $active_tab ? 'nav-tab-active' : ''; ?>">مدیریت صفحه نخست</a>
-				<a href="?page=ppt-settings&tab=header_builder" class="nav-tab <?php echo 'header_builder' === $active_tab ? 'nav-tab-active' : ''; ?>">🛠️ تنظیمات سربرگ (هدر)</a>
-				<a href="?page=ppt-settings&tab=footer_builder" class="nav-tab <?php echo 'footer_builder' === $active_tab ? 'nav-tab-active' : ''; ?>">🛠️ تنظیمات پابرگ (فوتر)</a>
-				<a href="?page=ppt-settings&tab=brand_settings" class="nav-tab <?php echo 'brand_settings' === $active_tab ? 'nav-tab-active' : ''; ?>">تنظیمات برند و سفارشی‌سازی</a>
-				<a href="?page=ppt-settings&tab=ad_slots" class="nav-tab <?php echo 'ad_slots' === $active_tab ? 'nav-tab-active' : ''; ?>">مدیریت تبلیغات و بک‌لینک‌ها</a>
-				<a href="?page=ppt-settings&tab=map_settings" class="nav-tab <?php echo 'map_settings' === $active_tab ? 'nav-tab-active' : ''; ?>">تنظیمات نقشه</a>
-				<a href="?page=ppt-settings&tab=theme_updater" class="nav-tab <?php echo 'theme_updater' === $active_tab ? 'nav-tab-active' : ''; ?>">بروزرسانی پوسته</a>
-				<a href="?page=ppt-settings&tab=demo_import" class="nav-tab <?php echo 'demo_import' === $active_tab ? 'nav-tab-active' : ''; ?>">درون‌ریزی فایل دمو (XML)</a>
-				<a href="?page=ppt-settings&tab=url_guidelines" class="nav-tab <?php echo 'url_guidelines' === $active_tab ? 'nav-tab-active' : ''; ?>">تنظیمات آدرس‌ها (URL)</a>
-				<a href="?page=ppt-settings&tab=documentation" class="nav-tab <?php echo 'documentation' === $active_tab ? 'nav-tab-active' : ''; ?>">راهنما و مستندات تخصصی</a>
-			</h2>
+			<!-- Professional Two Column RTL responsive grid wrapper -->
+			<div class="ppt-admin-two-col-layout">
 
-			<form method="post" action="options.php" style="margin-top:20px;">
-				<?php
-				if ( 'homepage_sections' === $active_tab ) {
-					settings_fields( 'ppt_homepage_group' );
-					$this->render_homepage_tab();
-				} elseif ( 'header_builder' === $active_tab ) {
-					settings_fields( 'ppt_header_group' );
-					$this->render_header_builder_tab();
-				} elseif ( 'footer_builder' === $active_tab ) {
-					settings_fields( 'ppt_footer_group' );
-					$this->render_footer_builder_tab();
-				} elseif ( 'brand_settings' === $active_tab ) {
-					settings_fields( 'ppt_brand_group' );
-					$this->render_brand_tab();
-				} elseif ( 'ad_slots' === $active_tab ) {
-					settings_fields( 'ppt_ad_group' );
-					$this->render_ad_tab();
-				} elseif ( 'map_settings' === $active_tab ) {
-					settings_fields( 'ppt_map_group' );
-					$this->render_map_tab();
-				} elseif ( 'theme_updater' === $active_tab ) {
-					settings_fields( 'ppt_updater_group' );
-					$this->render_updater_tab();
-				} elseif ( 'demo_import' === $active_tab ) {
-					$this->render_demo_import_tab();
-				} elseif ( 'url_guidelines' === $active_tab ) {
-					$this->render_url_guidelines_tab();
-				} elseif ( 'documentation' === $active_tab ) {
-					$this->render_documentation_tab();
-				}
+				<!-- Right Sidebar: Vertical Navigation Links -->
+				<div class="ppt-admin-sidebar-nav">
+					<ul class="ppt-vertical-tabs">
+						<li><a href="?page=ppt-settings&tab=homepage_sections" class="ppt-tab-link <?php echo 'homepage_sections' === $active_tab ? 'active' : ''; ?>">🏠 مدیریت صفحه نخست</a></li>
+						<li><a href="?page=ppt-settings&tab=header_builder" class="ppt-tab-link <?php echo 'header_builder' === $active_tab ? 'active' : ''; ?>">🛠️ تنظیمات سربرگ (هدر)</a></li>
+						<li><a href="?page=ppt-settings&tab=footer_builder" class="ppt-tab-link <?php echo 'footer_builder' === $active_tab ? 'active' : ''; ?>">🛠️ تنظیمات پابرگ (فوتر)</a></li>
+						<li><a href="?page=ppt-settings&tab=cpt_settings" class="ppt-tab-link <?php echo 'cpt_settings' === $active_tab ? 'active' : ''; ?>">🗂️ مدیریت پست‌تایپ‌ها</a></li>
+						<li><a href="?page=ppt-settings&tab=brand_settings" class="ppt-tab-link <?php echo 'brand_settings' === $active_tab ? 'active' : ''; ?>">🎨 استایل و سفارشی‌سازی</a></li>
+						<li><a href="?page=ppt-settings&tab=ad_slots" class="ppt-tab-link <?php echo 'ad_slots' === $active_tab ? 'active' : ''; ?>">📢 مدیریت تبلیغات هوشمند</a></li>
+						<li><a href="?page=ppt-settings&tab=map_settings" class="ppt-tab-link <?php echo 'map_settings' === $active_tab ? 'active' : ''; ?>">🗺️ تنظیمات نقشه کاداستر</a></li>
+						<li><a href="?page=ppt-settings&tab=theme_updater" class="ppt-tab-link <?php echo 'theme_updater' === $active_tab ? 'active' : ''; ?>">🔄 بروزرسانی و لاگ خطایاب</a></li>
+						<li><a href="?page=ppt-settings&tab=demo_import" class="ppt-tab-link <?php echo 'demo_import' === $active_tab ? 'active' : ''; ?>">📥 فایل‌های درون‌ریز مجزا (XML)</a></li>
+						<li><a href="?page=ppt-settings&tab=url_guidelines" class="ppt-tab-link <?php echo 'url_guidelines' === $active_tab ? 'active' : ''; ?>">🔗 ساختار پیوندهای یکتا</a></li>
+						<li><a href="?page=ppt-settings&tab=documentation" class="ppt-tab-link <?php echo 'documentation' === $active_tab ? 'active' : ''; ?>">📚 راهنمای مستندات Diataxis</a></li>
+					</ul>
+				</div>
 
-				if ( 'documentation' !== $active_tab && 'demo_import' !== $active_tab && 'url_guidelines' !== $active_tab ) {
-					submit_button( 'ذخیره تنظیمات پوسته' );
-				}
-				?>
-			</form>
+				<!-- Left Side: Content Settings Pane -->
+				<div class="ppt-admin-content-pane">
+					<form method="post" action="options.php">
+						<?php
+						if ( 'homepage_sections' === $active_tab ) {
+							settings_fields( 'ppt_homepage_group' );
+							$this->render_homepage_tab();
+						} elseif ( 'header_builder' === $active_tab ) {
+							settings_fields( 'ppt_header_group' );
+							$this->render_header_builder_tab();
+						} elseif ( 'footer_builder' === $active_tab ) {
+							settings_fields( 'ppt_footer_group' );
+							$this->render_footer_builder_tab();
+						} elseif ( 'cpt_settings' === $active_tab ) {
+							settings_fields( 'ppt_brand_group' ); // use brand group as container
+							$this->render_cpt_settings_tab();
+						} elseif ( 'brand_settings' === $active_tab ) {
+							settings_fields( 'ppt_brand_group' );
+							$this->render_brand_tab();
+						} elseif ( 'ad_slots' === $active_tab ) {
+							settings_fields( 'ppt_ad_group' );
+							$this->render_ad_tab();
+						} elseif ( 'map_settings' === $active_tab ) {
+							settings_fields( 'ppt_map_group' );
+							$this->render_map_tab();
+						} elseif ( 'theme_updater' === $active_tab ) {
+							settings_fields( 'ppt_updater_group' );
+							$this->render_updater_tab();
+						} elseif ( 'demo_import' === $active_tab ) {
+							$this->render_demo_import_tab();
+						} elseif ( 'url_guidelines' === $active_tab ) {
+							$this->render_url_guidelines_tab();
+						} elseif ( 'documentation' === $active_tab ) {
+							$this->render_documentation_tab();
+						}
+
+						if ( 'documentation' !== $active_tab && 'demo_import' !== $active_tab && 'url_guidelines' !== $active_tab ) {
+							submit_button( 'ذخیره تنظیمات پوسته' );
+						}
+						?>
+					</form>
+				</div>
+
+			</div>
 		</div>
 		<?php
 	}
@@ -634,13 +649,36 @@ class PPT_Admin_Panel {
 
 	/**
 	 * Tab 2: Advanced Advertising Slots & Script connections.
+	 * Overhauled with professional Paragraph and Taxonomy End injection configurations (Priority 5).
 	 */
 	private function render_ad_tab() {
-		$ad_data = get_option( 'ppt_ad_slots', array() );
-		$slots   = isset( $ad_data['slots'] ) ? $ad_data['slots'] : array();
-		$yektanet = isset( $ad_data['yektanet_header_script'] ) ? $ad_data['yektanet_header_script'] : '';
+		$ad_data   = get_option( 'ppt_ad_slots', array() );
+		$yektanet  = isset( $ad_data['yektanet_header_script'] ) ? $ad_data['yektanet_header_script'] : '';
 		$backlinks = isset( $ad_data['backlinks'] ) ? $ad_data['backlinks'] : array();
+
+		// Advanced Injections
+		$p_count   = isset( $ad_data['paragraph_injection_count'] ) ? intval( $ad_data['paragraph_injection_count'] ) : 2;
+		$p_code    = isset( $ad_data['paragraph_injection_code'] ) ? $ad_data['paragraph_injection_code'] : '';
+		$p_pts     = isset( $ad_data['paragraph_injection_post_types'] ) ? $ad_data['paragraph_injection_post_types'] : array();
+
+		$t_enabled = isset( $ad_data['taxonomy_end_enabled'] ) ? $ad_data['taxonomy_end_enabled'] : '1';
+		$t_code    = isset( $ad_data['taxonomy_end_code'] ) ? $ad_data['taxonomy_end_code'] : '';
 		?>
+		<!-- Comprehensive helpful ad locations guide -->
+		<div class="card-box ppt-admin-card" style="background-color: #f0fdf4; border: 1px solid #bbf7d0; padding: 25px; border-radius: 12px; margin-bottom: 30px;">
+			<h3 style="color: #166534; border-bottom: 2px solid #bbf7d0; padding-bottom: 8px;">🗺️ راهنمای جامع موقعیت‌ها و نحوه درج آگهی در رادیو سفر</h3>
+			<p style="font-size: 14.5px; line-height: 1.8; color: #14532d; text-align: justify; margin: 0 0 15px 0;">
+				برای کسب بیشترین بازدهی، موقعیت‌های تبلیغاتی متعددی به صورت بدون پرش و بهینه (CLS-Free) در قالب قرار گرفته‌اند. در زیر محل‌ها و چگونگی فعال‌سازی هر کدام آمده است:
+			</p>
+			<ul style="list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; font-size: 13.5px; color: #14532d;">
+				<li><strong>۱. بنر هدر (Header):</strong> هدر دسکتاپ و موبایل. کدهای یکتانت یا صباویژن را در بخش تبلیغات هدر درج کنید.</li>
+				<li><strong>۲. بنر سایدبار (Sidebar):</strong> سایدبار سمت چپ تمام نوشته‌ها، مقاصد، برنامه‌های سفر و جاذبه‌ها.</li>
+				<li><strong>۳. بنر بالا/پایین بدنه محتوا:</strong> در ابتدا و انتهای بخش تکی نوشته‌ها لود می‌شود.</li>
+				<li><strong>۴. بنر هوشمند بین‌پاراگرافی:</strong> تزریق کاملا هوشمند خودکار بنر پس از پاراگراف مشخص شده در متن.</li>
+				<li><strong>۵. بنر انتهای استان‌ها و موضوعات:</strong> درج بنر عریض به صورت ثابت در انتهای صفحات آرشیو و فرودگاه استان‌ها.</li>
+			</ul>
+		</div>
+
 		<div class="card-box ppt-admin-card">
 			<h3>اتصال به پلتفرم‌های تبلیغات سراسری (یکتانت / صباویژن / تپسل)</h3>
 			<p class="description">کد اسکریپت دریافتی از پلتفرم‌های یکتانت یا صباویژن را در کادر زیر قرار دهید تا به صورت خودکار در هدر وب‌سایت فراخوانی گردد.</p>
@@ -655,7 +693,75 @@ class PPT_Admin_Panel {
 				</tr>
 			</table>
 
-			<hr style="margin:20px 0;">
+			<hr style="margin:25px 0; border-top:1px solid #E2E8F0;">
+
+			<!-- ADVANCED AUTOMATED PARAGRAPH INJECTIONS -->
+			<h3>📢 سیستم تزریق هوشمند آگهی بین‌پاراگرافی (Paragraph Ad Injection)</h3>
+			<p class="description">به طور کامپوزیت و خودکار، یک بنر تبلیغاتی یا اسکریپت را بعد از پاراگراف مشخصی از محتوای پست‌تایپ‌های فعال قرار دهید:</p>
+
+			<table class="form-table" style="margin-bottom:30px;">
+				<tr>
+					<th scope="row">تزریق بعد از پاراگراف چندم؟</th>
+					<td>
+						<input type="number" name="ppt_ad_slots[paragraph_injection_count]" value="<?php echo esc_attr( $p_count ); ?>" style="width:100px;" min="1" max="15" />
+						<span class="description">توصیه می‌شود عدد ۲ یا ۳ را انتخاب کنید.</span>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">پست‌تایپ‌های فعال جهت تزریق</th>
+					<td>
+						<?php
+						$pts = array(
+							'destination' => 'مقاصد گردشگری',
+							'attraction'  => 'جاذبه‌های توریستی',
+							'guide'       => 'راهنماهای مکتوب سفر',
+							'podcast'     => 'پادکست‌ها',
+							'video'       => 'ویدیوها',
+							'post'        => 'نوشته‌های وبلاگ'
+						);
+						foreach ( $pts as $slug => $lbl ) :
+							$checked = in_array( $slug, $p_pts, true ) ? 'checked' : '';
+							?>
+							<label style="display:inline-block; margin-left:15px; font-weight:bold;">
+								<input type="checkbox" name="ppt_ad_slots[paragraph_injection_post_types][]" value="<?php echo esc_attr( $slug ); ?>" <?php echo $checked; ?> />
+								<?php echo esc_html( $lbl ); ?>
+							</label>
+						<?php endforeach; ?>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">کد بنر یا اسکریپت تزریقی میان‌متن</th>
+					<td>
+						<textarea name="ppt_ad_slots[paragraph_injection_code]" style="width:100%; font-family: monospace; text-align:left; direction:ltr;" rows="5" placeholder="<!-- Place your banner HTML or script here -->"><?php echo esc_textarea( $p_code ); ?></textarea>
+					</td>
+				</tr>
+			</table>
+
+			<hr style="margin:25px 0; border-top:1px solid #E2E8F0;">
+
+			<!-- ADVANCED TAXONOMY END INJECTIONS -->
+			<h3>📢 سیستم آگهی انتهای صفحات استان‌ها و موضوعات سفر (Taxonomy End Ad)</h3>
+			<p class="description">یک بنر ویژه توریستی را به عنوان اسپانسر در بخش انتهایی آرشیو لندینگ‌ها قرار دهید:</p>
+
+			<table class="form-table" style="margin-bottom:30px;">
+				<tr>
+					<th scope="row">وضعیت نمایش آگهی انتهای تاکسونومی</th>
+					<td>
+						<select name="ppt_ad_slots[taxonomy_end_enabled]">
+							<option value="1" <?php selected( $t_enabled, '1' ); ?>>فعال باشد</option>
+							<option value="0" <?php selected( $t_enabled, '0' ); ?>>غیرفعال باشد</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">کد بنر یا اسکریپت انتهای تاکسونومی</th>
+					<td>
+						<textarea name="ppt_ad_slots[taxonomy_end_code]" style="width:100%; font-family: monospace; text-align:left; direction:ltr;" rows="5" placeholder="<!-- Place your sponsor banner here -->"><?php echo esc_textarea( $t_code ); ?></textarea>
+					</td>
+				</tr>
+			</table>
+
+			<hr style="margin:25px 0; border-top:1px solid #E2E8F0;">
 
 			<h3>مدیریت و تزریق بک‌لینک‌های متنی تجاری</h3>
 			<p class="description">آدرس‌ها و انکر تکست‌های بک‌لینک‌های تجاری خود را ثبت کنید تا به صورت سازمان‌یافته در فوتر تزریق شوند.</p>
@@ -787,111 +893,201 @@ class PPT_Admin_Panel {
 	private function render_demo_import_tab() {
 		$brand = get_option( 'ppt_brand_settings', array() );
 		$ad_slots = get_option( 'ppt_ad_slots', array() );
+		$header = get_option( 'ppt_header_settings', array() );
+		$footer = get_option( 'ppt_footer_settings', array() );
 
 		// Create export base64 string
 		$export_data = base64_encode( wp_json_encode( array(
-			'ppt_brand_settings' => $brand,
-			'ppt_ad_slots'       => $ad_slots
+			'ppt_brand_settings'  => $brand,
+			'ppt_ad_slots'        => $ad_slots,
+			'ppt_header_settings' => $header,
+			'ppt_footer_settings' => $footer
 		) ) );
 		?>
 		<div class="card-box ppt-admin-card" style="line-height:1.9;">
 			<h3>استاندارد ساختار فایل‌های درون‌ریز دمو گردشگری (WXR Schema Specs v1.2)</h3>
-			<p class="description">آیین‌نامه و ساختار فایل‌های XML درون‌ریز را برای تمامی ۶ پست‌تایپ اختصاصی و تگ‌های فرعی مشاهده فرمایید. این ساختار کاملا با هسته پیش‌فرض درون‌ریز وردپرس (wordpress-importer) سازگار است:</p>
+			<p class="description">بزرگ‌ترین و کامل‌ترین آرشیو آیین‌نامه و ساختار فایل‌های XML درون‌ریز را برای تک تک ۶ پست‌تایپ اختصاصی و ۲ تاکسونومی ویژه مشاهده فرمایید. هر کادر یک سند معتبر W3C WXR v1.2 کامل همراه با داده نمونه واقعی است:</p>
 
-			<div style="background-color:#F7FAFC; border-right:4px solid #3182CE; padding:15px; border-radius:6px; margin-bottom:20px;">
-				<h4 style="margin-top:0; color:#2C5282;">📥 راهنمای درون‌ریزی فوری:</h4>
-				<p style="font-size:14px; margin-top:8px; margin-bottom:0;">به مسیر <strong>ابزارها &rarr; درون‌ریزی &rarr; WordPress</strong> مراجعه کنید، پلاگین پیش‌فرض را نصب نموده و فایل XML با فرمت زیر را آپلود نمایید.</p>
+			<div style="background-color:#F7FAFC; border-right:4px solid #3182CE; padding:15px; border-radius:6px; margin-bottom:25px;">
+				<h4 style="margin-top:0; color:#2C5282;">📥 راهنمای تفکیکی درون‌ریزی:</h4>
+				<p style="font-size:14px; margin-top:8px; margin-bottom:0;">به مسیر <strong>ابزارها &rarr; درون‌ریزی &rarr; WordPress</strong> مراجعه کنید، کدهای داخل کادرهای زیر را در قالب فایل‌هایی با پسوند <code>.xml</code> ذخیره کرده و به صورت مجزا ایمپورت کنید.</p>
 			</div>
 
-			<h4 style="color:#2D3748;">سند نمونه W3C WXR v1.2 معتبر و استاندارد جهت کپی برداری:</h4>
-			<textarea class="large-text" rows="15" readonly style="font-family:monospace; font-size:11px; direction:ltr; text-align:left; background-color:#1E293B; color:#F8FAFC;"><?php echo '<?xml version="1.0" encoding="UTF-8" ?>'; ?>
+			<!-- 1. DESTINATIONS XML -->
+			<div style="margin-bottom:20px;">
+				<h4 style="color:#2D3748; margin-bottom:8px;">📍 ۱. درون‌ریز اختصاصی مقاصد گردشگری (Destination CPT)</h4>
+				<textarea class="large-text" rows="8" readonly style="font-family:monospace; font-size:11px; direction:ltr; text-align:left; background-color:#1E293B; color:#F8FAFC;"><?php echo '<?xml version="1.0" encoding="UTF-8" ?>'; ?>
 
-<rss version="2.0"
-	xmlns:excerpt="http://wordpress.org/export/1.2/excerpt/"
-	xmlns:content="http://purl.org/rss/1.0/modules/content/"
-	xmlns:wfw="http://wellformedweb.org/commentAPI/"
-	xmlns:dc="http://purl.org/dc/elements/1.1/"
-	xmlns:wp="http://wordpress.org/export/1.2/"
->
+<rss version="2.0" xmlns:excerpt="http://wordpress.org/export/1.2/excerpt/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:wfw="http://wellformedweb.org/commentAPI/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:wp="http://wordpress.org/export/1.2/">
 <channel>
-	<title>رادیو سفر</title>
-	<link>https://safarnama.ir</link>
-	<description>رسانه صوتی تصویری گردشگری</description>
-	<pubDate>Mon, 01 Jan 2026 00:00:00 +0000</pubDate>
-	<language>fa-IR</language>
 	<wp:wxr_version>1.2</wp:wxr_version>
-	<wp:base_site_url>https://safarnama.ir</wp:base_site_url>
-	<wp:base_blog_url>https://safarnama.ir</wp:base_blog_url>
-
-	<!-- ثبت نویسنده پیش‌فرض جهت تایید ایمپورت -->
-	<wp:author>
-		<wp:author_id>1</wp:author_id>
-		<wp:author_login><![CDATA[admin]]></wp:author_login>
-		<wp:author_email><![CDATA[info@safarnama.ir]]></wp:author_email>
-		<wp:author_display_name><![CDATA[مدیر سیستم]]></wp:author_display_name>
-	</wp:author>
-
-	<!-- نمونه ۱. درون‌ریز مقصد گردشگری (Destination) -->
 	<item>
 		<title>شیراز زیبا</title>
 		<link>https://safarnama.ir/destinations/shiraz/</link>
-		<pubDate>Mon, 01 Jan 2026 00:00:00 +0000</pubDate>
-		<dc:creator><![CDATA[admin]]></dc:creator>
-		<wp:post_id>1001</wp:post_id>
-		<wp:post_date><![CDATA[2026-01-01 00:00:00]]></wp:post_date>
-		<wp:post_date_gmt><![CDATA[2026-01-01 00:00:00]]></wp:post_date_gmt>
-		<wp:comment_status><![CDATA[open]]></wp:comment_status>
-		<wp:ping_status><![CDATA[closed]]></wp:ping_status>
-		<wp:post_name><![CDATA[shiraz]]></wp:post_name>
-		<wp:status><![CDATA[publish]]></wp:status>
-		<wp:post_parent>0</wp:post_parent>
-		<wp:menu_order>0</wp:menu_order>
-		<wp:post_type><![CDATA[destination]]></wp:post_type>
-		<content:encoded><![CDATA[توضیحات کامل متنی درباره سفر به شهر شیراز و شیرازگردی در اردیبهشت ماه.]]></content:encoded>
+		<wp:post_name>shiraz</wp:post_name>
+		<wp:status>publish</wp:status>
+		<wp:post_type>destination</wp:post_type>
+		<content:encoded><![CDATA[توضیحات کامل متنی درباره سفر به شهر شیراز و حافظیه و باغ ارم...]]></content:encoded>
 		<wp:postmeta>
-			<wp:meta_key><![CDATA[_ppt_best_time]]></wp:meta_key>
-			<wp:meta_value><![CDATA[اردیبهشت ماه]]></wp:meta_value>
-		</wp:postmeta>
-	</item>
-
-	<!-- نمونه ۲. درون‌ریز جاذبه دیدنی (Attraction) -->
-	<item>
-		<title>تخت جمشید شیراز</title>
-		<link>https://safarnama.ir/attractions/persepolis/</link>
-		<pubDate>Mon, 01 Jan 2026 00:00:00 +0000</pubDate>
-		<dc:creator><![CDATA[admin]]></dc:creator>
-		<wp:post_id>1002</wp:post_id>
-		<wp:post_date><![CDATA[2026-01-01 00:00:00]]></wp:post_date>
-		<wp:post_name><![CDATA[persepolis]]></wp:post_name>
-		<wp:status><![CDATA[publish]]></wp:status>
-		<wp:post_type><![CDATA[attraction]]></wp:post_type>
-		<content:encoded><![CDATA[مجموعه هخامنشی باستانی تخت جمشید.]]></content:encoded>
-		<wp:postmeta>
-			<wp:meta_key><![CDATA[_ppt_address]]></wp:meta_key>
-			<wp:meta_value><![CDATA[فارس، کیلومتر ۱۰ مرودشت]]></wp:meta_value>
-		</wp:postmeta>
-	</item>
-
-	<!-- نمونه ۳. درون‌ریز برنامه سفر (Itinerary) -->
-	<item>
-		<title>برنامه سفر ۳ روزه اصفهان</title>
-		<link>https://safarnama.ir/itineraries/isfahan-3-days/</link>
-		<pubDate>Mon, 01 Jan 2026 00:00:00 +0000</pubDate>
-		<dc:creator><![CDATA[admin]]></dc:creator>
-		<wp:post_id>1003</wp:post_id>
-		<wp:post_date><![CDATA[2026-01-01 00:00:00]]></wp:post_date>
-		<wp:post_name><![CDATA[isfahan-3-days]]></wp:post_name>
-		<wp:status><![CDATA[publish]]></wp:status>
-		<wp:post_type><![CDATA[itinerary]]></wp:post_type>
-		<content:encoded><![CDATA[شرح روز شمار گشت و گذار در اصفهان.]]></content:encoded>
-		<wp:postmeta>
-			<wp:meta_key><![CDATA[_ppt_itinerary_duration]]></wp:meta_key>
-			<wp:meta_value><![CDATA[۳ روز]]></wp:meta_value>
+			<wp:meta_key>_ppt_best_time</wp:meta_key>
+			<wp:meta_value>اردیبهشت ماه</wp:meta_value>
 		</wp:postmeta>
 	</item>
 </channel>
-</rss>
-			</textarea>
+</rss></textarea>
+			</div>
+
+			<!-- 2. ATTRACTIONS XML -->
+			<div style="margin-bottom:20px;">
+				<h4 style="color:#2D3748; margin-bottom:8px;">📸 ۲. درون‌ریز اختصاصی جاذبه‌های گردشگری (Attraction CPT)</h4>
+				<textarea class="large-text" rows="8" readonly style="font-family:monospace; font-size:11px; direction:ltr; text-align:left; background-color:#1E293B; color:#F8FAFC;"><?php echo '<?xml version="1.0" encoding="UTF-8" ?>'; ?>
+
+<rss version="2.0" xmlns:excerpt="http://wordpress.org/export/1.2/excerpt/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:wfw="http://wellformedweb.org/commentAPI/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:wp="http://wordpress.org/export/1.2/">
+<channel>
+	<wp:wxr_version>1.2</wp:wxr_version>
+	<item>
+		<title>تخت جمشید</title>
+		<link>https://safarnama.ir/attractions/persepolis/</link>
+		<wp:post_name>persepolis</wp:post_name>
+		<wp:status>publish</wp:status>
+		<wp:post_type>attraction</wp:post_type>
+		<content:encoded><![CDATA[شکوه تاریخ ایران باستان هخامنشیان در مرودشت...]]></content:encoded>
+		<wp:postmeta>
+			<wp:meta_key>_ppt_address</wp:meta_key>
+			<wp:meta_value>فارس، کیلومتر ۱۰ شمال مرودشت</wp:meta_value>
+		</wp:postmeta>
+	</item>
+</channel>
+</rss></textarea>
+			</div>
+
+			<!-- 3. ITINERARIES XML -->
+			<div style="margin-bottom:20px;">
+				<h4 style="color:#2D3748; margin-bottom:8px;">📅 ۳. درون‌ریز اختصاصی برنامه‌های سفر (Itinerary CPT)</h4>
+				<textarea class="large-text" rows="8" readonly style="font-family:monospace; font-size:11px; direction:ltr; text-align:left; background-color:#1E293B; color:#F8FAFC;"><?php echo '<?xml version="1.0" encoding="UTF-8" ?>'; ?>
+
+<rss version="2.0" xmlns:excerpt="http://wordpress.org/export/1.2/excerpt/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:wfw="http://wellformedweb.org/commentAPI/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:wp="http://wordpress.org/export/1.2/">
+<channel>
+	<wp:wxr_version>1.2</wp:wxr_version>
+	<item>
+		<title>برنامه سفر ۳ روزه اصفهان</title>
+		<link>https://safarnama.ir/itineraries/isfahan-3-days/</link>
+		<wp:post_name>isfahan-3-days</wp:post_name>
+		<wp:status>publish</wp:status>
+		<wp:post_type>itinerary</wp:post_type>
+		<content:encoded><![CDATA[برنامه‌ریزی تفصیلی روز شمار شهر گنبدهای فیروزه‌ای...]]></content:encoded>
+	</item>
+</channel>
+</rss></textarea>
+			</div>
+
+			<!-- 4. GUIDES XML -->
+			<div style="margin-bottom:20px;">
+				<h4 style="color:#2D3748; margin-bottom:8px;">📚 ۴. درون‌ریز اختصاصی راهنماهای مکتوب سفر (Guide CPT)</h4>
+				<textarea class="large-text" rows="8" readonly style="font-family:monospace; font-size:11px; direction:ltr; text-align:left; background-color:#1E293B; color:#F8FAFC;"><?php echo '<?xml version="1.0" encoding="UTF-8" ?>'; ?>
+
+<rss version="2.0" xmlns:excerpt="http://wordpress.org/export/1.2/excerpt/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:wfw="http://wellformedweb.org/commentAPI/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:wp="http://wordpress.org/export/1.2/">
+<channel>
+	<wp:wxr_version>1.2</wp:wxr_version>
+	<item>
+		<title>راهنمای ارزان بوم‌گردی قشم</title>
+		<link>https://safarnama.ir/guides/qeshm-budget/</link>
+		<wp:post_name>qeshm-budget</wp:post_name>
+		<wp:status>publish</wp:status>
+		<wp:post_type>guide</wp:post_type>
+		<content:encoded><![CDATA[چطور با کمترین هزینه عجایب هفت گانه قشم را ببینیم...]]></content:encoded>
+	</item>
+</channel>
+</rss></textarea>
+			</div>
+
+			<!-- 5. PODCASTS XML -->
+			<div style="margin-bottom:20px;">
+				<h4 style="color:#2D3748; margin-bottom:8px;">🎙️ ۵. درون‌ریز اختصاصی پادکست‌های صوتی (Podcast CPT)</h4>
+				<textarea class="large-text" rows="8" readonly style="font-family:monospace; font-size:11px; direction:ltr; text-align:left; background-color:#1E293B; color:#F8FAFC;"><?php echo '<?xml version="1.0" encoding="UTF-8" ?>'; ?>
+
+<rss version="2.0" xmlns:excerpt="http://wordpress.org/export/1.2/excerpt/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:wfw="http://wellformedweb.org/commentAPI/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:wp="http://wordpress.org/export/1.2/">
+<channel>
+	<wp:wxr_version>1.2</wp:wxr_version>
+	<item>
+		<title>رادیو سفر - اپیزود شیراز</title>
+		<link>https://safarnama.ir/podcasts/shiraz-episode/</link>
+		<wp:post_name>shiraz-episode</wp:post_name>
+		<wp:status>publish</wp:status>
+		<wp:post_type>podcast</wp:post_type>
+		<content:encoded><![CDATA[سفر شنیداری به شیراز...]]></content:encoded>
+		<wp:postmeta>
+			<wp:meta_key>_ppt_audio_url</wp:meta_key>
+			<wp:meta_value>https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3</wp:meta_value>
+		</wp:postmeta>
+	</item>
+</channel>
+</rss></textarea>
+			</div>
+
+			<!-- 6. VIDEOS XML -->
+			<div style="margin-bottom:20px;">
+				<h4 style="color:#2D3748; margin-bottom:8px;">🎬 ۶. درون‌ریز اختصاصی مستندهای تصویری (Video CPT)</h4>
+				<textarea class="large-text" rows="8" readonly style="font-family:monospace; font-size:11px; direction:ltr; text-align:left; background-color:#1E293B; color:#F8FAFC;"><?php echo '<?xml version="1.0" encoding="UTF-8" ?>'; ?>
+
+<rss version="2.0" xmlns:excerpt="http://wordpress.org/export/1.2/excerpt/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:wfw="http://wellformedweb.org/commentAPI/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:wp="http://wordpress.org/export/1.2/">
+<channel>
+	<wp:wxr_version>1.2</wp:wxr_version>
+	<item>
+		<title>مستند دره چاهکوه قشم</title>
+		<link>https://safarnama.ir/videos/chahkooh-doc/</link>
+		<wp:post_name>chahkooh-doc</wp:post_name>
+		<wp:status>publish</wp:status>
+		<wp:post_type>video</wp:post_type>
+		<content:encoded><![CDATA[شگفتی زمین‌شناسی قشم...]]></content:encoded>
+		<wp:postmeta>
+			<wp:meta_key>_ppt_aparat_id</wp:meta_key>
+			<wp:meta_value>fXgHe</wp:meta_value>
+		</wp:postmeta>
+	</item>
+</channel>
+</rss></textarea>
+			</div>
+
+			<!-- 7. PROVINCES TAXONOMY XML -->
+			<div style="margin-bottom:20px;">
+				<h4 style="color:#2D3748; margin-bottom:8px;">🗺️ ۷. درون‌ریز اختصاصی استان‌ها (Province Taxonomy)</h4>
+				<textarea class="large-text" rows="8" readonly style="font-family:monospace; font-size:11px; direction:ltr; text-align:left; background-color:#1E293B; color:#F8FAFC;"><?php echo '<?xml version="1.0" encoding="UTF-8" ?>'; ?>
+
+<rss version="2.0" xmlns:excerpt="http://wordpress.org/export/1.2/excerpt/" xmlns:wp="http://wordpress.org/export/1.2/">
+<channel>
+	<wp:wxr_version>1.2</wp:wxr_version>
+	<wp:term>
+		<wp:term_id>10</wp:term_id>
+		<wp:term_taxonomy>province</wp:term_taxonomy>
+		<wp:term_slug><![CDATA[isfahan]]></wp:term_slug>
+		<wp:term_parent><![CDATA[]]></wp:term_parent>
+		<wp:term_name><![CDATA[اصفهان]]></wp:term_name>
+		<wp:term_description><![CDATA[استان توریستی اصفهان ملقب به نصف جهان...]]></wp:term_description>
+	</wp:term>
+</channel>
+</rss></textarea>
+			</div>
+
+			<!-- 8. TRAVEL TOPICS XML -->
+			<div style="margin-bottom:20px;">
+				<h4 style="color:#2D3748; margin-bottom:8px;">⛵ ۸. درون‌ریز اختصاصی موضوعات سفر (Travel Topic Taxonomy)</h4>
+				<textarea class="large-text" rows="8" readonly style="font-family:monospace; font-size:11px; direction:ltr; text-align:left; background-color:#1E293B; color:#F8FAFC;"><?php echo '<?xml version="1.0" encoding="UTF-8" ?>'; ?>
+
+<rss version="2.0" xmlns:excerpt="http://wordpress.org/export/1.2/excerpt/" xmlns:wp="http://wordpress.org/export/1.2/">
+<channel>
+	<wp:wxr_version>1.2</wp:wxr_version>
+	<wp:term>
+		<wp:term_id>20</wp:term_id>
+		<wp:term_taxonomy>travel_topic</wp:term_taxonomy>
+		<wp:term_slug><![CDATA[ecotourism]]></wp:term_slug>
+		<wp:term_parent><![CDATA[]]></wp:term_parent>
+		<wp:term_name><![CDATA[طبیعت‌گردی]]></wp:term_name>
+		<wp:term_description><![CDATA[سفر بوم‌گردی صمیمانه به دل زیست‌بوم‌های طبیعی...]]></wp:term_description>
+	</wp:term>
+</channel>
+</rss></textarea>
+			</div>
 		</div>
 
 		<!-- Import/Export Tools (Priority 4) -->
@@ -1028,6 +1224,128 @@ class PPT_Admin_Panel {
 				<p><strong>چرا عدم استفاده از افزونه‌های سنگین اهمیت دارد؟</strong></p>
 				<p class="text-justify">استفاده مکرر از فریم‌ورک‌های سنگین مانند المنتور و ویژوال کامپوزر با تزریق استایل‌های تکراری و کدهای CSS/JS غیرضروری، سرعت موبایل کاربران را به شدت کاهش داده و بر سئوی محلی تاثیر منفی می‌گذارد. معماری سبک، پاک و برون‌سازمانی این پوسته ضمانت می‌کند که سایت شما بر روی ضعیف‌ترین شبکه‌های موبایلی (3G) در مناطق کوهستانی یا جزایر دوردست ایران, در کمترین زمان ممکن لود گردد.</p>
 			</div>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Tab: Manage CPT styles and grid displays.
+	 */
+	public function render_cpt_settings_tab() {
+		$brand = get_option( 'ppt_brand_settings', array() );
+
+		$dest_badge     = isset( $brand['cpt_dest_badge_color'] ) ? $brand['cpt_dest_badge_color'] : '#3182CE';
+		$dest_cols      = isset( $brand['cpt_dest_cols'] ) ? $brand['cpt_dest_cols'] : '3';
+		$dest_show_map  = isset( $brand['cpt_dest_show_map'] ) ? $brand['cpt_dest_show_map'] : '1';
+
+		$attr_badge     = isset( $brand['cpt_attr_badge_color'] ) ? $brand['cpt_attr_badge_color'] : '#E53E3E';
+		$attr_show_dir  = isset( $brand['cpt_attr_show_directions'] ) ? $brand['cpt_attr_show_directions'] : '1';
+
+		$itin_timeline  = isset( $brand['cpt_itin_timeline_color'] ) ? $brand['cpt_itin_timeline_color'] : '#3182CE';
+
+		$pod_player_bg  = isset( $brand['cpt_pod_player_color'] ) ? $brand['cpt_pod_player_color'] : '#EBF8FF';
+
+		$vid_theatre_bg = isset( $brand['cpt_vid_theatre_bg'] ) ? $brand['cpt_vid_theatre_bg'] : '#0F172A';
+		?>
+		<div class="card-box ppt-admin-card" style="line-height:1.8;">
+			<h3>🗂️ تنظیمات و سفارشی‌سازی تفکیک‌شده ی پست‌تایپ‌ها (CPT Style Panel)</h3>
+			<p class="description">برای هر یک از پست‌تایپ‌های ۶ گانه اختصاصی، المان‌های ظاهری، تم رنگی اختصاصی و نحوه چیدمان‌ها را با جزییات بالا پیکربندی فرمایید:</p>
+
+			<!-- 1. DESTINATIONS SETTINGS -->
+			<div style="background:#f8fafc; border:1px solid #e2e8f0; padding:20px; border-radius:10px; margin-bottom:25px;">
+				<h4 style="margin-top:0; color:#1e3a8a; border-bottom:1px solid #cbd5e0; padding-bottom:8px;">📍 تنظیمات بخش مقاصد گردشگری (Destinations)</h4>
+				<table class="form-table">
+					<tr>
+						<th scope="row">رنگ نشان شاخص (Badge Color)</th>
+						<td>
+							<input type="color" name="ppt_brand_settings[cpt_dest_badge_color]" value="<?php echo esc_attr( $dest_badge ); ?>" />
+							<p class="description">رنگ بک‌گراند تگ‌های استان‌ها و دسته‌بندی‌های مقاصد.</p>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row">چیدمان آرشیو مقاصد (Columns)</th>
+						<td>
+							<select name="ppt_brand_settings[cpt_dest_cols]">
+								<option value="3" <?php selected( $dest_cols, '3' ); ?>>۳ ستونه (دسکتاپ)</option>
+								<option value="2" <?php selected( $dest_cols, '2' ); ?>>۲ ستونه (دسکتاپ بزرگ)</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row">نمایش نقشه تعاملی در صفحه مقصد</th>
+						<td>
+							<label>
+								<input type="checkbox" name="ppt_brand_settings[cpt_dest_show_map]" value="1" <?php checked( '1', $dest_show_map ); ?> />
+								بخش نقشه آزاد OpenStreetMap موقعیت در انتهای صفحه مقصد بارگذاری شود.
+							</label>
+						</td>
+					</tr>
+				</table>
+			</div>
+
+			<!-- 2. ATTRACTIONS SETTINGS -->
+			<div style="background:#f8fafc; border:1px solid #e2e8f0; padding:20px; border-radius:10px; margin-bottom:25px;">
+				<h4 style="margin-top:0; color:#1e3a8a; border-bottom:1px solid #cbd5e0; padding-bottom:8px;">📸 تنظیمات بخش جاذبه‌های توریستی (Attractions)</h4>
+				<table class="form-table">
+					<tr>
+						<th scope="row">رنگ نشان جاذبه (Badge Color)</th>
+						<td>
+							<input type="color" name="ppt_brand_settings[cpt_attr_badge_color]" value="<?php echo esc_attr( $attr_badge ); ?>" />
+						</td>
+					</tr>
+					<tr>
+						<th scope="row">نمایش کادر جزییات و الزامات ورود</th>
+						<td>
+							<label>
+								<input type="checkbox" name="ppt_brand_settings[cpt_attr_show_directions]" value="1" <?php checked( '1', $attr_show_dir ); ?> />
+								کادر حاوی ساعات بازدید، بهای بلیت ورودی و آدرس جاذبه نمایش داده شود.
+							</label>
+						</td>
+					</tr>
+				</table>
+			</div>
+
+			<!-- 3. ITINERARIES SETTINGS -->
+			<div style="background:#f8fafc; border:1px solid #e2e8f0; padding:20px; border-radius:10px; margin-bottom:25px;">
+				<h4 style="margin-top:0; color:#1e3a8a; border-bottom:1px solid #cbd5e0; padding-bottom:8px;">📅 تنظیمات بخش برنامه‌های روزانه سفر (Itineraries)</h4>
+				<table class="form-table">
+					<tr>
+						<th scope="row">رنگ تم تیره خط زمان (Timeline roadmap Color)</th>
+						<td>
+							<input type="color" name="ppt_brand_settings[cpt_itin_timeline_color]" value="<?php echo esc_attr( $itin_timeline ); ?>" />
+							<p class="description">رنگ گام‌های دایره‌ای و خط عمودی روز شمار برنامه‌های سفر.</p>
+						</td>
+					</tr>
+				</table>
+			</div>
+
+			<!-- 4. PODCASTS SETTINGS -->
+			<div style="background:#f8fafc; border:1px solid #e2e8f0; padding:20px; border-radius:10px; margin-bottom:25px;">
+				<h4 style="margin-top:0; color:#1e3a8a; border-bottom:1px solid #cbd5e0; padding-bottom:8px;">🎙️ تنظیمات بخش پادکست‌های صوتی (Podcasts)</h4>
+				<table class="form-table">
+					<tr>
+						<th scope="row">رنگ بک‌گراند پلیر اختصاصی (Player Background)</th>
+						<td>
+							<input type="color" name="ppt_brand_settings[cpt_pod_player_color]" value="<?php echo esc_attr( $pod_player_bg ); ?>" />
+						</td>
+					</tr>
+				</table>
+			</div>
+
+			<!-- 5. VIDEOS SETTINGS -->
+			<div style="background:#f8fafc; border:1px solid #e2e8f0; padding:20px; border-radius:10px;">
+				<h4 style="margin-top:0; color:#1e3a8a; border-bottom:1px solid #cbd5e0; padding-bottom:8px;">🎬 تنظیمات بخش مستندهای تصویری (Videos)</h4>
+				<table class="form-table">
+					<tr>
+						<th scope="row">رنگ پس‌زمینه تیره حالت سینما (Theatre mode Backdrop)</th>
+						<td>
+							<input type="color" name="ppt_brand_settings[cpt_vid_theatre_bg]" value="<?php echo esc_attr( $vid_theatre_bg ); ?>" />
+							<p class="description">رنگ پس‌زمینه تیره هدر ویدیوها برای افزایش تمرکز تماشاگر.</p>
+						</td>
+					</tr>
+				</table>
+			</div>
+
 		</div>
 		<?php
 	}

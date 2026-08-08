@@ -44,15 +44,21 @@ while ( have_posts() ) :
 		<div class="layout-with-sidebar">
 			<main class="site-main card-box" style="line-height:1.9;">
 
-				<!-- Basic Details Card -->
-				<div style="background-color: #F7FAFC; border:1px solid #E2E8F0; border-radius: 8px; padding: 22px; margin-bottom: 25px;">
-					<h3 style="margin-top:0; color:#2B6CB0; font-size:16px; border-bottom:1px solid #EDF2F7; padding-bottom:8px; margin-bottom:12px;">📋 جزییات و الزامات ورود جاذبه</h3>
-					<ul style="list-style:none; padding:0; margin:0; font-size:14px; line-height:2.2;">
-						<li><strong>📍 آدرس دقیق مسیر:</strong> <?php echo esc_html( $address ? $address : 'مشخص نشده' ); ?></li>
-						<li><strong>⏱️ ساعات کار و دسترسی:</strong> <?php echo esc_html( $opening_hours ? $opening_hours : '۹:۰۰ الی ۱۷:۰۰' ); ?></li>
-						<li><strong>🎟️ بهای بلیت ورودی:</strong> <span style="color:#E53E3E; font-weight:bold;"><?php echo esc_html( $ticket_price ? $ticket_price : 'رایگان یا ثبت نشده' ); ?></span></li>
-					</ul>
-				</div>
+				<!-- Basic Details Card (Toggled by CPT Settings) -->
+				<?php
+				$brand_settings = get_option( 'ppt_brand_settings', array() );
+				$attr_show_dir  = isset( $brand_settings['cpt_attr_show_directions'] ) ? $brand_settings['cpt_attr_show_directions'] : '1';
+				if ( '1' === $attr_show_dir ) :
+				?>
+					<div style="background-color: #F7FAFC; border:1px solid #E2E8F0; border-radius: 8px; padding: 22px; margin-bottom: 25px;">
+						<h3 style="margin-top:0; color:#2B6CB0; font-size:16px; border-bottom:1px solid #EDF2F7; padding-bottom:8px; margin-bottom:12px;">📋 جزییات و الزامات ورود جاذبه</h3>
+						<ul style="list-style:none; padding:0; margin:0; font-size:14px; line-height:2.2;">
+							<li><strong>📍 آدرس دقیق مسیر:</strong> <?php echo esc_html( $address ? $address : 'مشخص نشده' ); ?></li>
+							<li><strong>⏱️ ساعات کار و دسترسی:</strong> <?php echo esc_html( $opening_hours ? $opening_hours : '۹:۰۰ الی ۱۷:۰۰' ); ?></li>
+							<li><strong>🎟️ بهای بلیت ورودی:</strong> <span style="color:#E53E3E; font-weight:bold;"><?php echo esc_html( $ticket_price ? $ticket_price : 'رایگان یا ثبت نشده' ); ?></span></li>
+						</ul>
+					</div>
+				<?php endif; ?>
 
 				<div class="entry-content text-justify" style="margin-bottom:35px;">
 					<?php the_content(); ?>

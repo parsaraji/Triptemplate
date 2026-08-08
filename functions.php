@@ -204,37 +204,25 @@ function ppt_to_jalali( $g_y, $g_m, $g_d ) {
 }
 
 /**
- * Filter WP get_the_date and return beautiful Jalali shamsi date.
+ * Localized Persian Digits Normalization Helper.
+ * Converts all English numbers to beautiful Persian numbers.
  */
-function ppt_get_jalali_date( $the_date, $format, $post ) {
-	if ( ! $post ) {
-		return $the_date;
-	}
-
-	$g_date = get_post_time( 'Y-m-d', false, $post );
-	if ( ! $g_date ) {
-		return $the_date;
-	}
-
-	$parts = explode( '-', $g_date );
-	if ( count( $parts ) === 3 ) {
-		$jalali = ppt_to_jalali( intval( $parts[0] ), intval( $parts[1] ), intval( $parts[2] ) );
-		return $jalali['text'];
-	}
-
-	return $the_date;
+function ppt_normalize_persian_digits( $text ) {
+	$english_digits = array( '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' );
+	$persian_digits = array( '۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹' );
+	return str_replace( $english_digits, $persian_digits, $text );
 }
-add_filter( 'get_the_date', 'ppt_get_jalali_date', 10, 3 );
 
 /**
- * Filter WP get_the_modified_date and return beautiful Jalali shamsi date.
+ * Filter WP get_the_date and return beautiful Jalali shamsi date with Farsi digits.
  */
-function ppt_get_jalali_modified_date( $the_date, $format, $post ) {
-	if ( ! $post ) {
+function ppt_get_jalali_date( $the_date, $format, $post ) {
+	$post_obj = get_post( $post );
+	if ( ! $post_obj ) {
 		return $the_date;
 	}
 
-	$g_date = get_post_modified_time( 'Y-m-d', false, $post );
+	$g_date = get_post_time( 'Y-m-d', false, $post_obj );
 	if ( ! $g_date ) {
 		return $the_date;
 	}
@@ -242,12 +230,64 @@ function ppt_get_jalali_modified_date( $the_date, $format, $post ) {
 	$parts = explode( '-', $g_date );
 	if ( count( $parts ) === 3 ) {
 		$jalali = ppt_to_jalali( intval( $parts[0] ), intval( $parts[1] ), intval( $parts[2] ) );
-		return $jalali['text'];
+		return ppt_normalize_persian_digits( $jalali['text'] );
 	}
 
-	return $the_date;
+	return ppt_normalize_persian_digits( $the_date );
+}
+add_filter( 'get_the_date', 'ppt_get_jalali_date', 10, 3 );
+add_filter( 'get_the_time', 'ppt_get_jalali_date', 10, 3 );
+
+/**
+ * Filter WP get_the_modified_date and return beautiful Jalali shamsi date with Farsi digits.
+ */
+function ppt_get_jalali_modified_date( $the_date, $format, $post ) {
+	$post_obj = get_post( $post );
+	if ( ! $post_obj ) {
+		return $the_date;
+	}
+
+	$g_date = get_post_modified_time( 'Y-m-d', false, $post_obj );
+	if ( ! $g_date ) {
+		return $the_date;
+	}
+
+	$parts = explode( '-', $g_date );
+	if ( count( $parts ) === 3 ) {
+		$jalali = ppt_to_jalali( intval( $parts[0] ), intval( $parts[1] ), intval( $parts[2] ) );
+		return ppt_normalize_persian_digits( $jalali['text'] );
+	}
+
+	return ppt_normalize_persian_digits( $the_date );
 }
 add_filter( 'get_the_modified_date', 'ppt_get_jalali_modified_date', 10, 3 );
+
+/**
+ * Filter WP comments date to return beautiful Jalali date with Farsi digits.
+ */
+function ppt_get_jalali_comment_date( $date, $format, $comment ) {
+	if ( ! $comment ) {
+		return $date;
+	}
+	$g_date = $comment->comment_date;
+	if ( ! $g_date ) {
+		return $date;
+	}
+	$parts = explode( ' ', $g_date );
+	$date_parts = explode( '-', $parts[0] );
+	if ( count( $date_parts ) === 3 ) {
+		$jalali = ppt_to_jalali( intval( $date_parts[0] ), intval( $date_parts[1] ), intval( $date_parts[2] ) );
+		return ppt_normalize_persian_digits( $jalali['text'] );
+	}
+	return ppt_normalize_persian_digits( $date );
+}
+add_filter( 'get_comment_date', 'ppt_get_jalali_comment_date', 10, 3 );
+
+/**
+ * Filter comment times and counts to Persian digits.
+ */
+add_filter( 'get_comment_time', 'ppt_normalize_persian_digits', 10, 1 );
+add_filter( 'get_comments_number', 'ppt_normalize_persian_digits', 10, 1 );
 
 /**
  * Advanced Ajax Discovery Search & Multi-criteria Taxonomy Filters (Priority 2)
@@ -357,6 +397,13 @@ function ppt_inject_customizer_css() {
 	$footer_settings = get_option( 'ppt_footer_settings', array() );
 	$footer_bg       = isset( $footer_settings['bg_color'] ) ? $footer_settings['bg_color'] : '#1A202C';
 	$footer_text     = isset( $footer_settings['text_color'] ) ? $footer_settings['text_color'] : '#CBD5E0';
+
+	// Dynamic CPT detailed styles
+	$dest_badge     = isset( $brand['cpt_dest_badge_color'] ) ? $brand['cpt_dest_badge_color'] : '#3182CE';
+	$attr_badge     = isset( $brand['cpt_attr_badge_color'] ) ? $brand['cpt_attr_badge_color'] : '#E53E3E';
+	$itin_timeline  = isset( $brand['cpt_itin_timeline_color'] ) ? $brand['cpt_itin_timeline_color'] : '#3182CE';
+	$pod_player_bg  = isset( $brand['cpt_pod_player_color'] ) ? $brand['cpt_pod_player_color'] : '#EBF8FF';
+	$vid_theatre_bg = isset( $brand['cpt_vid_theatre_bg'] ) ? $brand['cpt_vid_theatre_bg'] : '#0F172A';
 	?>
 	<style type="text/css">
 		:root {
@@ -366,6 +413,20 @@ function ppt_inject_customizer_css() {
 			--ppt-text-color: <?php echo esc_html( $text_color ); ?> !important;
 			--ppt-border-radius: <?php echo esc_html( $border_radius ); ?>px !important;
 			--ppt-container-width: <?php echo esc_html( $container_width ); ?>px !important;
+		}
+
+		/* Granular dynamic CPT style customizations */
+		.card-badge, .destination-hero-content .card-badge {
+			background-color: <?php echo esc_html( $dest_badge ); ?> !important;
+		}
+		.theatre-mode-wrapper {
+			background: linear-gradient(135deg, <?php echo esc_html( $vid_theatre_bg ); ?> 0%, #000 100%) !important;
+		}
+		.ppt-player-box {
+			background-color: <?php echo esc_html( $pod_player_bg ); ?> !important;
+		}
+		.ppt-itinerary-day-row {
+			border-right-color: <?php echo esc_html( $itin_timeline ); ?> !important;
 		}
 
 		/* Dynamic customizer colors for Header */

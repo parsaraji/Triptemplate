@@ -3,6 +3,7 @@
  * Advanced Professional Advertising and Backlink Subsystem
  * Supports common Iranian advertising script providers (Yektanet, Sabavision, Sanjagh)
  * and incorporates structural backlink injections.
+ * Upgraded with Paragraph and Taxonomy End injection configurations (Priority 5).
  *
  * @package Premium_Persian_Tourism
  */
@@ -34,6 +35,7 @@ class PPT_Ad_Manager {
 	private function __construct() {
 		add_action( 'wp_head', array( $this, 'inject_yektanet_header_scripts' ), 10 );
 		add_action( 'wp_footer', array( $this, 'inject_backlinks_footer' ), 100 );
+		add_filter( 'the_content', array( $this, 'inject_ad_after_paragraphs' ), 20 );
 	}
 
 	/**
@@ -71,6 +73,66 @@ class PPT_Ad_Manager {
 			echo '<a href="' . esc_url( $link['url'] ) . '" rel="' . esc_attr( $rel ) . '" target="_blank" style="color:#A0AEC0; margin-left:15px; text-decoration:none;">' . esc_html( $link['anchor'] ) . '</a>';
 		}
 		echo '</div>';
+	}
+
+	/**
+	 * Inject ad banner after the Nth paragraph of selected post types automatically.
+	 */
+	public function inject_ad_after_paragraphs( $content ) {
+		if ( ! is_singular() ) {
+			return $content;
+		}
+
+		$ad_data = get_option( 'ppt_ad_slots', array() );
+		$enabled_pts = isset( $ad_data['paragraph_injection_post_types'] ) ? $ad_data['paragraph_injection_post_types'] : array();
+
+		if ( empty( $enabled_pts ) || ! is_array( $enabled_pts ) || ! in_array( get_post_type(), $enabled_pts, true ) ) {
+			return $content;
+		}
+
+		$paragraph_count = isset( $ad_data['paragraph_injection_count'] ) ? intval( $ad_data['paragraph_injection_count'] ) : 2;
+		$injection_code  = isset( $ad_data['paragraph_injection_code'] ) ? $ad_data['paragraph_injection_code'] : '';
+
+		if ( empty( $injection_code ) ) {
+			return $content;
+		}
+
+		// Parse content by </p> tags
+		$paragraphs = explode( '</p>', $content );
+
+		if ( count( $paragraphs ) > $paragraph_count ) {
+			$ad_html = '<div class="ppt-paragraph-injected-ad" style="margin: 25px auto; text-align: center; max-width: 468px; min-height: 60px; border: 1px dashed #E2E8F0; padding: 10px; background: #FFFDF5; border-radius: 8px;">';
+			$ad_html .= '<span style="display:block; font-size:10px; color:#A0AEC0; margin-bottom:5px;">تبلیغ میان‌محتوای متنی (هوشمند)</span>';
+			$ad_html .= $injection_code;
+			$ad_html .= '</div>';
+
+			$paragraphs[ $paragraph_count - 1 ] .= '</p>' . $ad_html;
+			$content = implode( '</p>', $paragraphs );
+		}
+
+		return $content;
+	}
+
+	/**
+	 * Render ad block at the bottom of taxonomy landing archives.
+	 */
+	public static function render_taxonomy_end_ad() {
+		$ad_data = get_option( 'ppt_ad_slots', array() );
+		$enabled = isset( $ad_data['taxonomy_end_enabled'] ) ? $ad_data['taxonomy_end_enabled'] : '1';
+		$code    = isset( $ad_data['taxonomy_end_code'] ) ? $ad_data['taxonomy_end_code'] : '';
+
+		if ( '1' !== $enabled || empty( $code ) ) {
+			return;
+		}
+
+		?>
+		<div class="ppt-taxonomy-end-ad container" style="margin: 40px auto; text-align: center; max-width: 728px; min-height: 90px; border: 1.5px dashed #CBD5E0; padding: 15px; background: #FFF; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);">
+			<span style="display:block; font-size:11px; color:#A0AEC0; margin-bottom:8px; text-align:center;">📢 حامی مالی این استان / موضوع سفر (تبلیغ اختصاصی)</span>
+			<div style="display:flex; justify-content:center; align-items:center;">
+				<?php echo $code; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+			</div>
+		</div>
+		<?php
 	}
 
 	/**
