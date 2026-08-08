@@ -1,9 +1,9 @@
 <?php
 /**
  * Custom Tabbed WordPress Admin Settings Panel & Commercial Admin Console
- * Includes Visual Customizer, Child Theme Creator, Ad Booking logs, and Import/Export utilities.
- * Refactored to list and clear 'ppt_booking' custom post records (Security Overhaul).
- * Upgraded with multi-taxonomy customizers, footer visibility triggers, and multi-CPT WXR schemas.
+ * Includes Visual Customizer, Child Theme Creator, and Import/Export utilities.
+ * Completely overhauled to feature W3C WXR v1.2 compliant valid XML import templates (Priority 5).
+ * Completely removed any local ad booking logs to focus strictly on Iranian commercial ad scripts.
  *
  * @package Premium_Persian_Tourism
  */
@@ -65,7 +65,7 @@ class PPT_Admin_Panel {
 	}
 
 	/**
-	 * Handle admin commands (Child Theme installation, Import/Export, status updates).
+	 * Handle admin commands (Child Theme installation, Import/Export).
 	 */
 	public function process_admin_actions() {
 		if ( ! is_admin() || ! current_user_can( 'manage_options' ) ) {
@@ -82,20 +82,7 @@ class PPT_Admin_Panel {
 			}
 		}
 
-		// 2. Clear Bookings Action (Security Overhaul: Clears 'ppt_booking' custom post types)
-		if ( isset( $_GET['action'] ) && 'clear_bookings' === $_GET['action'] ) {
-			check_admin_referer( 'ppt_clear_bookings_nonce' );
-			$bookings_posts = get_posts( array( 'post_type' => 'ppt_booking', 'posts_per_page' => -1 ) );
-			if ( ! empty( $bookings_posts ) && is_array( $bookings_posts ) ) {
-				foreach ( $bookings_posts as $bp ) {
-					wp_delete_post( $bp->ID, true );
-				}
-			}
-			wp_safe_redirect( add_query_arg( array( 'page' => 'ppt-settings', 'tab' => 'ad_slots', 'bookings_cleared' => '1' ), admin_url( 'admin.php' ) ) );
-			exit;
-		}
-
-		// 3. Process Settings Import
+		// 2. Process Settings Import
 		if ( isset( $_POST['ppt_import_submit'] ) ) {
 			check_admin_referer( 'ppt_import_settings_nonce' );
 			$import_data = isset( $_POST['ppt_import_string'] ) ? json_decode( base64_decode( sanitize_textarea_field( $_POST['ppt_import_string'] ) ), true ) : null;
@@ -125,12 +112,6 @@ class PPT_Admin_Panel {
 			<?php if ( isset( $_GET['child_created'] ) && '1' === $_GET['child_created'] ) : ?>
 				<div class="notice notice-success is-dismissible">
 					<p><strong>قالب فرزند (Child Theme) با موفقیت ساخته شد!</strong> می‌توانید از بخش نمایش پوسته فرزند را فعال نمایید.</p>
-				</div>
-			<?php endif; ?>
-
-			<?php if ( isset( $_GET['bookings_cleared'] ) && '1' === $_GET['bookings_cleared'] ) : ?>
-				<div class="notice notice-success is-dismissible">
-					<p>لیست رزروهای تبلیغاتی با موفقیت پاکسازی شد.</p>
 				</div>
 			<?php endif; ?>
 
@@ -273,8 +254,6 @@ class PPT_Admin_Panel {
 		$footer_text       = isset( $brand['footer_text'] ) ? $brand['footer_text'] : 'تمامی حقوق این وب‌سایت محفوظ و متعلق به رادیو سفر می‌باشد.';
 		$enable_sticky_bar = isset( $brand['enable_sticky_bar'] ) ? $brand['enable_sticky_bar'] : '1';
 		$header_style      = isset( $brand['header_style'] ) ? $brand['header_style'] : 'premium';
-
-		// Upgraded visibility customizers
 		$hide_footer_mobile = isset( $brand['hide_footer_mobile'] ) ? $brand['hide_footer_mobile'] : '0';
 		$prov_color         = isset( $brand['prov_color'] ) ? $brand['prov_color'] : '#2B6CB0';
 		$topic_color        = isset( $brand['topic_color'] ) ? $brand['topic_color'] : '#B7791F';
@@ -323,7 +302,6 @@ class PPT_Admin_Panel {
 			</table>
 		</div>
 
-		<!-- Segmented Taxonomy Color Options (Priority 1 - Taxonomy customizer option) -->
 		<div class="card-box ppt-admin-card">
 			<h3>🎨 شخصی‌سازی مجزای تم رنگی صفحات استان‌ها و موضوعات سفر</h3>
 			<p class="description">برای جذابیت بصری بیشتر، می‌توانید رنگ متمایز کننده شاخصی برای صفحات آرشیو استان‌ها و موضوعات سفر مشخص فرمایید:</p>
@@ -344,7 +322,6 @@ class PPT_Admin_Panel {
 			</table>
 		</div>
 
-		<!-- Advanced responsive visibility selectors -->
 		<div class="card-box ppt-admin-card">
 			<h3>📱 تنظیمات واکنش‌گرایی و نمایش فوتر</h3>
 			<table class="form-table">
@@ -360,7 +337,6 @@ class PPT_Admin_Panel {
 			</table>
 		</div>
 
-		<!-- Child Theme auto creator widget (Priority 5) -->
 		<div class="card-box ppt-admin-card">
 			<h3>👶 سیستم نصب و فعال‌سازی خودکار قالب فرزند (Child Theme Creator)</h3>
 			<p class="description">جهت اعمال هرگونه توسعه شخصی‌سازی یا توسعه فنی بدون احتمال بروز اختلال بر روی کدهای قالب اصلی، فورا قالب فرزند خود را تولید و فعال نمایید.</p>
@@ -402,68 +378,14 @@ class PPT_Admin_Panel {
 	}
 
 	/**
-	 * Tab 2: Advanced Advertising Slots & Script connections & Ad Booking Logs table.
+	 * Tab 2: Advanced Advertising Slots & Script connections.
 	 */
 	private function render_ad_tab() {
 		$ad_data = get_option( 'ppt_ad_slots', array() );
 		$slots   = isset( $ad_data['slots'] ) ? $ad_data['slots'] : array();
 		$yektanet = isset( $ad_data['yektanet_header_script'] ) ? $ad_data['yektanet_header_script'] : '';
 		$backlinks = isset( $ad_data['backlinks'] ) ? $ad_data['backlinks'] : array();
-
-		// Query the ad reservation bookings log directly from CPT (Security Overhaul: Prevents DoS)
-		$bookings = get_posts( array(
-			'post_type'      => 'ppt_booking',
-			'posts_per_page' => -1,
-			'post_status'    => 'any',
-		) );
 		?>
-		<!-- Submitted Booking Log Reservations -->
-		<div class="card-box ppt-admin-card">
-			<h3>📊 لیست درخواست‌های ثبت شده رزرو تبلیغات و تراکنش‌های کارت‌به‌کارت</h3>
-			<p class="description">اطلاعات فیش‌های بانکی، جایگاه‌های درخواستی و شماره متقاضیان آگهی ثبت شده از فرانت‌اند را در جدول زیر بررسی فرمایید:</p>
-
-			<table class="wp-list-table widefat fixed striped" style="margin-bottom:15px;">
-				<thead>
-					<tr>
-						<th>نام متقاضی</th>
-						<th>شماره تماس</th>
-						<th>جایگاه درخواستی</th>
-						<th>لینک هدف</th>
-						<th>کد پیگیری بانکی</th>
-						<th>تاریخ ثبت فیش</th>
-						<th>وضعیت تایید</th>
-					</tr>
-				</thead>
-				<tbody>
-					<?php if ( ! empty( $bookings ) && is_array( $bookings ) ) : ?>
-						<?php foreach ( $bookings as $book_post ) :
-							$phone = get_post_meta( $book_post->ID, '_ppt_booking_phone', true );
-							$slot  = get_post_meta( $book_post->ID, '_ppt_booking_slot', true );
-							$url   = get_post_meta( $book_post->ID, '_ppt_booking_url', true );
-							$ref   = get_post_meta( $book_post->ID, '_ppt_booking_ref', true );
-							?>
-							<tr>
-								<td><strong><?php echo esc_html( $book_post->post_title ); ?></strong></td>
-								<td><?php echo esc_html( $phone ); ?></td>
-								<td><?php echo esc_html( $slot ); ?></td>
-								<td><a href="<?php echo esc_url( $url ); ?>" target="_blank">مشاهده لینک</a></td>
-								<td><code style="background-color:#E2E8F0; padding:4px 8px;"><?php echo esc_html( $ref ); ?></code></td>
-								<td><?php echo esc_html( $book_post->post_date ); ?></td>
-								<td><span class="text-success" style="font-weight:bold;">در انتظار تایید فیش</span></td>
-							</tr>
-						<?php endforeach; ?>
-					<?php else : ?>
-						<tr>
-							<td colspan="7" class="text-muted" style="text-align:center;">هیچ تراکنش یا رزرو تبلیغاتی اخیری ثبت نگردیده است.</td>
-						</tr>
-					<?php endif; ?>
-				</tbody>
-			</table>
-			<p>
-				<a href="<?php echo esc_url( wp_nonce_url( add_query_arg( array( 'action' => 'clear_bookings' ) ), 'ppt_clear_bookings_nonce' ) ); ?>" class="button button-link-delete" style="color:#d63638;">حذف و پاکسازی تمامی رکوردهای تراکنش‌ها</a>
-			</p>
-		</div>
-
 		<div class="card-box ppt-admin-card">
 			<h3>اتصال به پلتفرم‌های تبلیغات سراسری (یکتانت / صباویژن / تپسل)</h3>
 			<p class="description">کد اسکریپت دریافتی از پلتفرم‌های یکتانت یا صباویژن را در کادر زیر قرار دهید تا به صورت خودکار در هدر وب‌سایت فراخوانی گردد.</p>
@@ -605,6 +527,7 @@ class PPT_Admin_Panel {
 
 	/**
 	 * Tab 6: WXR XML Demo Content Export & Import Standard Tutorials.
+	 * Completely overhauled to feature W3C WXR v1.2 validated structures (Priority 5).
 	 */
 	private function render_demo_import_tab() {
 		$brand = get_option( 'ppt_brand_settings', array() );
@@ -617,92 +540,98 @@ class PPT_Admin_Panel {
 		) ) );
 		?>
 		<div class="card-box ppt-admin-card" style="line-height:1.9;">
-			<h3>استاندارد ساختار فایل‌های درون‌ریز دمو گردشگری (WXR Schema Specs)</h3>
-			<p class="description">آیین‌نامه و ساختار فایل‌های XML درون‌ریز را برای تمامی ۶ پست‌تایپ اختصاصی و تگ‌های فرعی مشاهده فرمایید:</p>
+			<h3>استاندارد ساختار فایل‌های درون‌ریز دمو گردشگری (WXR Schema Specs v1.2)</h3>
+			<p class="description">آیین‌نامه و ساختار فایل‌های XML درون‌ریز را برای تمامی ۶ پست‌تایپ اختصاصی و تگ‌های فرعی مشاهده فرمایید. این ساختار کاملا با هسته پیش‌فرض درون‌ریز وردپرس (wordpress-importer) سازگار است:</p>
 
 			<div style="background-color:#F7FAFC; border-right:4px solid #3182CE; padding:15px; border-radius:6px; margin-bottom:20px;">
 				<h4 style="margin-top:0; color:#2C5282;">📥 راهنمای درون‌ریزی فوری:</h4>
-				<p style="font-size:14px; margin-bottom:0;">برای درون‌ریزی داده‌های صوتی و موقعیت‌های جغرافیایی، از منوی <strong>ابزارها &rarr; درون‌ریزی &rarr; WordPress</strong> استفاده نمایید و فایل XML ساخته شده را آپلود کنید.</p>
+				<p style="font-size:14px; margin-top:8px; margin-bottom:0;">به مسیر <strong>ابزارها &rarr; درون‌ریزی &rarr; WordPress</strong> مراجعه کنید، پلاگین پیش‌فرض را نصب نموده و فایل XML با فرمت زیر را آپلود نمایید.</p>
 			</div>
 
-			<h4 style="color:#2D3748;">ساختار نمونه سند WXR XML استاندارد برای جاذبه‌ها، برنامه‌های سفر، پادکست‌ها، ویدیوها و مقاصد:</h4>
-			<textarea class="large-text" rows="18" readonly style="font-family:monospace; font-size:11px; direction:ltr; text-align:left; background-color:#1E293B; color:#F8FAFC;"><?php echo '<?xml version="1.0" encoding="UTF-8" ?>'; ?>
+			<h4 style="color:#2D3748;">سند نمونه W3C WXR v1.2 معتبر و استاندارد جهت کپی برداری:</h4>
+			<textarea class="large-text" rows="15" readonly style="font-family:monospace; font-size:11px; direction:ltr; text-align:left; background-color:#1E293B; color:#F8FAFC;"><?php echo '<?xml version="1.0" encoding="UTF-8" ?>'; ?>
 
 <rss version="2.0"
 	xmlns:excerpt="http://wordpress.org/export/1.2/excerpt/"
 	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/commentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
 	xmlns:wp="http://wordpress.org/export/1.2/"
 >
 <channel>
-	<title>رادیو سفر - فایل درون‌ریز نمونه</title>
+	<title>رادیو سفر</title>
 	<link>https://safarnama.ir</link>
-	<description>دمو جامع گردشگری صوتی</description>
+	<description>رسانه صوتی تصویری گردشگری</description>
+	<pubDate>Mon, 01 Jan 2026 00:00:00 +0000</pubDate>
+	<language>fa-IR</language>
 	<wp:wxr_version>1.2</wp:wxr_version>
+	<wp:base_site_url>https://safarnama.ir</wp:base_site_url>
+	<wp:base_blog_url>https://safarnama.ir</wp:base_blog_url>
 
-	<!-- ۱. نمونه درون‌ریز مقصد گردشگری (Destination) -->
+	<!-- ثبت نویسنده پیش‌فرض جهت تایید ایمپورت -->
+	<wp:author>
+		<wp:author_id>1</wp:author_id>
+		<wp:author_login><![CDATA[admin]]></wp:author_login>
+		<wp:author_email><![CDATA[info@safarnama.ir]]></wp:author_email>
+		<wp:author_display_name><![CDATA[مدیر سیستم]]></wp:author_display_name>
+	</wp:author>
+
+	<!-- نمونه ۱. درون‌ریز مقصد گردشگری (Destination) -->
 	<item>
 		<title>شیراز زیبا</title>
+		<link>https://safarnama.ir/destinations/shiraz/</link>
+		<pubDate>Mon, 01 Jan 2026 00:00:00 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+		<wp:post_id>1001</wp:post_id>
+		<wp:post_date><![CDATA[2026-01-01 00:00:00]]></wp:post_date>
+		<wp:post_date_gmt><![CDATA[2026-01-01 00:00:00]]></wp:post_date_gmt>
+		<wp:comment_status><![CDATA[open]]></wp:comment_status>
+		<wp:ping_status><![CDATA[closed]]></wp:ping_status>
 		<wp:post_name><![CDATA[shiraz]]></wp:post_name>
-		<wp:post_type><![CDATA[destination]]></wp:post_type>
 		<wp:status><![CDATA[publish]]></wp:status>
+		<wp:post_parent>0</wp:post_parent>
+		<wp:menu_order>0</wp:menu_order>
+		<wp:post_type><![CDATA[destination]]></wp:post_type>
+		<content:encoded><![CDATA[توضیحات کامل متنی درباره سفر به شهر شیراز و شیرازگردی در اردیبهشت ماه.]]></content:encoded>
 		<wp:postmeta>
 			<wp:meta_key><![CDATA[_ppt_best_time]]></wp:meta_key>
 			<wp:meta_value><![CDATA[اردیبهشت ماه]]></wp:meta_value>
 		</wp:postmeta>
 	</item>
 
-	<!-- ۲. نمونه درون‌ریز جاذبه گردشگری (Attraction) -->
+	<!-- نمونه ۲. درون‌ریز جاذبه دیدنی (Attraction) -->
 	<item>
-		<title>تخت جمشید</title>
-		<wp:post_type><![CDATA[attraction]]></wp:post_type>
+		<title>تخت جمشید شیراز</title>
+		<link>https://safarnama.ir/attractions/persepolis/</link>
+		<pubDate>Mon, 01 Jan 2026 00:00:00 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+		<wp:post_id>1002</wp:post_id>
+		<wp:post_date><![CDATA[2026-01-01 00:00:00]]></wp:post_date>
+		<wp:post_name><![CDATA[persepolis]]></wp:post_name>
 		<wp:status><![CDATA[publish]]></wp:status>
+		<wp:post_type><![CDATA[attraction]]></wp:post_type>
+		<content:encoded><![CDATA[مجموعه هخامنشی باستانی تخت جمشید.]]></content:encoded>
 		<wp:postmeta>
 			<wp:meta_key><![CDATA[_ppt_address]]></wp:meta_key>
-			<wp:meta_value><![CDATA[فارس، مرودشت]]></wp:meta_value>
+			<wp:meta_value><![CDATA[فارس، کیلومتر ۱۰ مرودشت]]></wp:meta_value>
 		</wp:postmeta>
 	</item>
 
-	<!-- ۳. نمونه درون‌ریز برنامه سفر (Itinerary) -->
+	<!-- نمونه ۳. درون‌ریز برنامه سفر (Itinerary) -->
 	<item>
-		<title>برنامه ۳ روزه گشت اصفهان</title>
-		<wp:post_type><![CDATA[itinerary]]></wp:post_type>
+		<title>برنامه سفر ۳ روزه اصفهان</title>
+		<link>https://safarnama.ir/itineraries/isfahan-3-days/</link>
+		<pubDate>Mon, 01 Jan 2026 00:00:00 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+		<wp:post_id>1003</wp:post_id>
+		<wp:post_date><![CDATA[2026-01-01 00:00:00]]></wp:post_date>
+		<wp:post_name><![CDATA[isfahan-3-days]]></wp:post_name>
 		<wp:status><![CDATA[publish]]></wp:status>
+		<wp:post_type><![CDATA[itinerary]]></wp:post_type>
+		<content:encoded><![CDATA[شرح روز شمار گشت و گذار در اصفهان.]]></content:encoded>
 		<wp:postmeta>
 			<wp:meta_key><![CDATA[_ppt_itinerary_duration]]></wp:meta_key>
-			<wp:meta_value><![CDATA[۳ روز و ۲ شب]]></wp:meta_value>
-		</wp:postmeta>
-	</item>
-
-	<!-- ۴. نمونه درون‌ریز راهنمای سفر (Guide) -->
-	<item>
-		<title>راهنمای سفر ارزان به قشم</title>
-		<wp:post_type><![CDATA[guide]]></wp:post_type>
-		<wp:status><![CDATA[publish]]></wp:status>
-		<wp:postmeta>
-			<wp:meta_key><![CDATA[_ppt_budget_items]]></wp:meta_key>
-			<wp:meta_value><![CDATA[a:1:{i:0;a:2:{s:5:"title";s:23:"اقامتگاه بومگردی";s:4:"cost";s:17:"۳۰۰,۰۰۰ تومان";}}]]></wp:meta_value>
-		</wp:postmeta>
-	</item>
-
-	<!-- ۵. نمونه درون‌ریز فایل صوتی پادکست (Podcast) -->
-	<item>
-		<title>اپیزود صوتی قشمگردی</title>
-		<wp:post_type><![CDATA[podcast]]></wp:post_type>
-		<wp:status><![CDATA[publish]]></wp:status>
-		<wp:postmeta>
-			<wp:meta_key><![CDATA[_ppt_audio_url]]></wp:meta_key>
-			<wp:meta_value><![CDATA[https://example.com/audio.mp3]]></wp:meta_value>
-		</wp:postmeta>
-	</item>
-
-	<!-- ۶. نمونه درون‌ریز مستند ویدیویی (Video) -->
-	<item>
-		<title>مستند چاهکوه</title>
-		<wp:post_type><![CDATA[video]]></wp:post_type>
-		<wp:status><![CDATA[publish]]></wp:status>
-		<wp:postmeta>
-			<wp:meta_key><![CDATA[_ppt_aparat_id]]></wp:meta_key>
-			<wp:meta_value><![CDATA[fXgHe]]></wp:meta_value>
+			<wp:meta_value><![CDATA[۳ روز]]></wp:meta_value>
 		</wp:postmeta>
 	</item>
 </channel>
@@ -842,7 +771,7 @@ class PPT_Admin_Panel {
 			<div>
 				<h3 style="color:#2B6CB0; border-bottom:1px solid #E2E8F0; padding-bottom:5px;">۴. مفاهیم عمیق و منطق طراحی (Explanation)</h3>
 				<p><strong>چرا عدم استفاده از افزونه‌های سنگین اهمیت دارد؟</strong></p>
-				<p class="text-justify">استفاده مکرر از فریم‌ورک‌های سنگین مانند المنتور و ویژوال کامپوزر با تزریق استایل‌های تکراری و کدهای CSS/JS غیرضروری، سرعت موبایل کاربران را به شدت کاهش داده و بر سئوی محلی تاثیر منفی می‌گذارد. معماری سبک، پاک و برون‌سازمانی این پوسته تضمین می‌کند که سایت شما بر روی ضعیف‌ترین شبکه‌های موبایلی (3G) در مناطق کوهستانی یا جزایر دوردست ایران، در کمترین زمان ممکن لود گردد.</p>
+				<p class="text-justify">استفاده مکرر از فریم‌ورک‌های سنگین مانند المنتور و ویژوال کامپوزر با تزریق استایل‌های تکراری و کدهای CSS/JS غیرضروری، سرعت موبایل کاربران را به شدت کاهش داده و بر سئوی محلی تاثیر منفی می‌گذارد. معماری سبک، پاک و برون‌سازمانی این پوسته تضمین می‌کند که سایت شما بر روی ضعیف‌ترین شبکه‌های موبایلی (3G) در مناطق کوهستانی یا جزایر دوردست ایران, در کمترین زمان ممکن لود گردد.</p>
 			</div>
 		</div>
 		<?php
