@@ -348,6 +348,15 @@ function ppt_inject_customizer_css() {
 	$text_color      = isset( $brand['text_color'] ) ? $brand['text_color'] : '#2D3748';
 	$border_radius   = isset( $brand['border_radius'] ) ? intval( $brand['border_radius'] ) : 12;
 	$container_width = isset( $brand['container_width'] ) ? intval( $brand['container_width'] ) : 1200;
+
+	// Dynamic Header & Footer Styling settings
+	$header_settings = get_option( 'ppt_header_settings', array() );
+	$header_bg       = isset( $header_settings['bg_color'] ) ? $header_settings['bg_color'] : '#FFFFFF';
+	$header_text     = isset( $header_settings['text_color'] ) ? $header_settings['text_color'] : '#2D3748';
+
+	$footer_settings = get_option( 'ppt_footer_settings', array() );
+	$footer_bg       = isset( $footer_settings['bg_color'] ) ? $footer_settings['bg_color'] : '#1A202C';
+	$footer_text     = isset( $footer_settings['text_color'] ) ? $footer_settings['text_color'] : '#CBD5E0';
 	?>
 	<style type="text/css">
 		:root {
@@ -357,6 +366,33 @@ function ppt_inject_customizer_css() {
 			--ppt-text-color: <?php echo esc_html( $text_color ); ?> !important;
 			--ppt-border-radius: <?php echo esc_html( $border_radius ); ?>px !important;
 			--ppt-container-width: <?php echo esc_html( $container_width ); ?>px !important;
+		}
+
+		/* Dynamic customizer colors for Header */
+		.site-header.premium-header {
+			background-color: <?php echo esc_html( $header_bg ); ?> !important;
+			border-bottom: 1px solid rgba(0,0,0,0.06) !important;
+		}
+		.site-header.premium-header .desktop-nav ul li a,
+		.site-header.premium-header .logo-text,
+		.site-header.premium-header .logo-link {
+			color: <?php echo esc_html( $header_text ); ?> !important;
+		}
+		.site-header.premium-header .burger-menu-btn .burger-icon-bar {
+			background-color: <?php echo esc_html( $header_text ); ?> !important;
+		}
+
+		/* Dynamic customizer colors for Footer */
+		footer.site-footer.premium-footer {
+			background-color: <?php echo esc_html( $footer_bg ); ?> !important;
+			color: <?php echo esc_html( $footer_text ); ?> !important;
+			border-top: 1px solid rgba(255,255,255,0.05) !important;
+		}
+		footer.site-footer.premium-footer a,
+		footer.site-footer.premium-footer h3,
+		footer.site-footer.premium-footer .footer-desc,
+		footer.site-footer.premium-footer .footer-bottom p {
+			color: <?php echo esc_html( $footer_text ); ?> !important;
 		}
 	</style>
 	<?php

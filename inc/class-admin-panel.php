@@ -2,8 +2,7 @@
 /**
  * Custom Tabbed WordPress Admin Settings Panel & Commercial Admin Console
  * Includes Visual Customizer, Child Theme Creator, and Import/Export utilities.
- * Completely overhauled to feature W3C WXR v1.2 compliant valid XML import templates (Priority 5).
- * Completely removed any local ad booking logs to focus strictly on Iranian commercial ad scripts.
+ * Highly specialized with customized Header & Footer builders, demo links, colors, and element toggles.
  *
  * @package Premium_Persian_Tourism
  */
@@ -62,6 +61,52 @@ class PPT_Admin_Panel {
 		register_setting( 'ppt_map_group', 'ppt_map_settings' );
 		register_setting( 'ppt_updater_group', 'ppt_updater_settings' );
 		register_setting( 'ppt_brand_group', 'ppt_brand_settings' );
+
+		// Specialized Header and Footer Settings
+		register_setting( 'ppt_header_group', 'ppt_header_settings' );
+		register_setting( 'ppt_footer_group', 'ppt_footer_settings' );
+	}
+
+	/**
+	 * Get Default Header Settings helper.
+	 */
+	public static function get_default_header_settings() {
+		return array(
+			'bg_color'     => '#FFFFFF',
+			'text_color'   => '#2D3748',
+			'show_search'  => '1',
+			'show_cta'     => '1',
+			'cta_text'     => '🎙️ رادیو سفر',
+			'cta_link'     => '/podcasts/',
+			'custom_links' => array(
+				array( 'label' => 'خانه', 'url' => '/' ),
+				array( 'label' => 'مقاصد گردشگری', 'url' => '/destinations/' ),
+				array( 'label' => 'رادیو صوتی پادکست', 'url' => '/podcasts/' ),
+				array( 'label' => 'مستندهای تصویری', 'url' => '/videos/' ),
+				array( 'label' => 'راهنماهای مکتوب', 'url' => '/guides/' )
+			)
+		);
+	}
+
+	/**
+	 * Get Default Footer Settings helper.
+	 */
+	public static function get_default_footer_settings() {
+		return array(
+			'bg_color'               => '#1A202C',
+			'text_color'             => '#CBD5E0',
+			'show_brand_col'         => '1',
+			'show_links_col'         => '1',
+			'show_cpt_col'           => '1',
+			'show_newsletter_col'    => '1',
+			'show_sticky_mobile_nav' => '1',
+			'custom_links'           => array(
+				array( 'label' => 'صفحه نخست سایت', 'url' => '/' ),
+				array( 'label' => 'درباره رادیو سفر', 'url' => '/about-us/' ),
+				array( 'label' => 'تماس با کارشناسان', 'url' => '/contact-us/' ),
+				array( 'label' => 'قوانین و مقررات آگهی', 'url' => '/advertising/' )
+			)
+		);
 	}
 
 	/**
@@ -123,6 +168,8 @@ class PPT_Admin_Panel {
 
 			<h2 class="nav-tab-wrapper">
 				<a href="?page=ppt-settings&tab=homepage_sections" class="nav-tab <?php echo 'homepage_sections' === $active_tab ? 'nav-tab-active' : ''; ?>">مدیریت صفحه نخست</a>
+				<a href="?page=ppt-settings&tab=header_builder" class="nav-tab <?php echo 'header_builder' === $active_tab ? 'nav-tab-active' : ''; ?>">🛠️ تنظیمات سربرگ (هدر)</a>
+				<a href="?page=ppt-settings&tab=footer_builder" class="nav-tab <?php echo 'footer_builder' === $active_tab ? 'nav-tab-active' : ''; ?>">🛠️ تنظیمات پابرگ (فوتر)</a>
 				<a href="?page=ppt-settings&tab=brand_settings" class="nav-tab <?php echo 'brand_settings' === $active_tab ? 'nav-tab-active' : ''; ?>">تنظیمات برند و سفارشی‌سازی</a>
 				<a href="?page=ppt-settings&tab=ad_slots" class="nav-tab <?php echo 'ad_slots' === $active_tab ? 'nav-tab-active' : ''; ?>">مدیریت تبلیغات و بک‌لینک‌ها</a>
 				<a href="?page=ppt-settings&tab=map_settings" class="nav-tab <?php echo 'map_settings' === $active_tab ? 'nav-tab-active' : ''; ?>">تنظیمات نقشه</a>
@@ -137,6 +184,12 @@ class PPT_Admin_Panel {
 				if ( 'homepage_sections' === $active_tab ) {
 					settings_fields( 'ppt_homepage_group' );
 					$this->render_homepage_tab();
+				} elseif ( 'header_builder' === $active_tab ) {
+					settings_fields( 'ppt_header_group' );
+					$this->render_header_builder_tab();
+				} elseif ( 'footer_builder' === $active_tab ) {
+					settings_fields( 'ppt_footer_group' );
+					$this->render_footer_builder_tab();
 				} elseif ( 'brand_settings' === $active_tab ) {
 					settings_fields( 'ppt_brand_group' );
 					$this->render_brand_tab();
@@ -231,6 +284,208 @@ class PPT_Admin_Panel {
 					<?php endforeach; ?>
 				</tbody>
 			</table>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Tab 1.2: Specialized Header Builder Settings
+	 */
+	private function render_header_builder_tab() {
+		$saved    = get_option( 'ppt_header_settings', array() );
+		$defaults = self::get_default_header_settings();
+		$settings = wp_parse_args( $saved, $defaults );
+
+		$bg_color    = $settings['bg_color'];
+		$text_color  = $settings['text_color'];
+		$show_search = $settings['show_search'];
+		$show_cta    = $settings['show_cta'];
+		$cta_text    = $settings['cta_text'];
+		$cta_link    = $settings['cta_link'];
+		$links       = $settings['custom_links'];
+		?>
+		<div class="card-box ppt-admin-card" style="line-height:1.8;">
+			<h3>🎨 پلتفرم اختصاصی سفارشی‌سازی سربرگ (Header Settings Panel)</h3>
+			<p class="description">رنگ‌بندی هدر، حذف و اضافه کردن المان‌ها (نوار جستجو، دکمه فراخوانی) و تنظیم لینک‌های دمو را به صورت پویا مدیریت فرمایید:</p>
+
+			<table class="form-table" style="margin-top:15px;">
+				<tr>
+					<th scope="row">رنگ پس‌زمینه سربرگ (Header Background)</th>
+					<td>
+						<input type="color" name="ppt_header_settings[bg_color]" value="<?php echo esc_attr( $bg_color ); ?>" />
+						<p class="description">رنگ پس‌زمینه کل کادر هدر سایت.</p>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">رنگ متون و منوهای سربرگ (Header Links Color)</th>
+					<td>
+						<input type="color" name="ppt_header_settings[text_color]" value="<?php echo esc_attr( $text_color ); ?>" />
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">نمایش فرم جستجو در هدر</th>
+					<td>
+						<label>
+							<input type="checkbox" name="ppt_header_settings[show_search]" value="1" <?php checked( '1', $show_search ); ?> />
+							کادر بازشونده جستجوی زنده مقاصد در هدر نمایش داده شود.
+						</label>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">نمایش دکمه قرمز فراخوانی (Header CTA Button)</th>
+					<td>
+						<label>
+							<input type="checkbox" name="ppt_header_settings[show_cta]" value="1" <?php checked( '1', $show_cta ); ?> id="ppt_toggle_header_cta" />
+							دکمه برجسته جذب مخاطب در منوی دسکتاپ فعال باشد.
+						</label>
+					</td>
+				</tr>
+				<tr class="header-cta-fields">
+					<th scope="row">عنوان دکمه فراخوانی (CTA Button Text)</th>
+					<td>
+						<input type="text" name="ppt_header_settings[cta_text]" value="<?php echo esc_attr( $cta_text ); ?>" class="regular-text" />
+					</td>
+				</tr>
+				<tr class="header-cta-fields">
+					<th scope="row">آدرس لینک دکمه فراخوانی (CTA Link)</th>
+					<td>
+						<input type="text" name="ppt_header_settings[cta_link]" value="<?php echo esc_attr( $cta_link ); ?>" class="regular-text" style="text-align:left; direction:ltr;" />
+					</td>
+				</tr>
+			</table>
+
+			<hr style="margin:20px 0;">
+
+			<h3>🔗 مدیریت و تنظیم لینک‌های سفارشی سربرگ (Header Links Builder)</h3>
+			<p class="description">لینک‌های پیش‌فرض دمو را در زیر ویرایش کنید. در صورت خالی گذاشتن فیلدها، منوی فهرست دمو همچنان نمایش داده خواهد شد:</p>
+
+			<div style="background-color:#fafafa; border:1px solid #ccc; padding:15px; border-radius:6px; margin-bottom:20px;">
+				<h4 style="margin-top:0;">لینک‌های منوی هدر (۵ لینک نمایشی):</h4>
+				<?php for ( $i = 0; $i < 5; $i ++ ) :
+					$label = isset( $links[$i]['label'] ) ? $links[$i]['label'] : '';
+					$url   = isset( $links[$i]['url'] ) ? $links[$i]['url'] : '';
+					?>
+					<div style="display:flex; gap:15px; margin-bottom:12px; align-items:center;">
+						<div style="flex:1;">
+							<label>عنوان لینک (دمو):</label>
+							<input type="text" name="ppt_header_settings[custom_links][<?php echo esc_attr( $i ); ?>][label]" value="<?php echo esc_attr( $label ); ?>" style="width:100%;" placeholder="مثال: رادیو سفر" />
+						</div>
+						<div style="flex:2;">
+							<label>آدرس اینترنتی (URL):</label>
+							<input type="text" name="ppt_header_settings[custom_links][<?php echo esc_attr( $i ); ?>][url]" value="<?php echo esc_attr( $url ); ?>" style="width:100%; text-align:left; direction:ltr;" placeholder="/podcasts/" />
+						</div>
+					</div>
+				<?php endfor; ?>
+			</div>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Tab 1.3: Specialized Footer Builder Settings
+	 */
+	private function render_footer_builder_tab() {
+		$saved    = get_option( 'ppt_footer_settings', array() );
+		$defaults = self::get_default_footer_settings();
+		$settings = wp_parse_args( $saved, $defaults );
+
+		$bg_color               = $settings['bg_color'];
+		$text_color             = $settings['text_color'];
+		$show_brand_col         = $settings['show_brand_col'];
+		$show_links_col         = $settings['show_links_col'];
+		$show_cpt_col           = $settings['show_cpt_col'];
+		$show_newsletter_col    = $settings['show_newsletter_col'];
+		$show_sticky_mobile_nav = $settings['show_sticky_mobile_nav'];
+		$links                  = $settings['custom_links'];
+		?>
+		<div class="card-box ppt-admin-card" style="line-height:1.8;">
+			<h3>🎨 پلتفرم اختصاصی سفارشی‌سازی پابرگ (Footer Settings Panel)</h3>
+			<p class="description">رنگ‌بندی فوتر بزرگ، فعال/غیرفعال‌سازی تک تک ستون‌های چهارگانه، و تنظیم نوار چسبان پایینی موبایل را از کادر زیر انجام دهید:</p>
+
+			<table class="form-table" style="margin-top:15px;">
+				<tr>
+					<th scope="row">رنگ پس‌زمینه پابرگ (Footer Background)</th>
+					<td>
+						<input type="color" name="ppt_footer_settings[bg_color]" value="<?php echo esc_attr( $bg_color ); ?>" />
+						<p class="description">رنگ پس‌زمینه کل بخش پایینی (فوتر بزرگ).</p>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">رنگ متون و لینک‌های فوتر (Footer Text Color)</th>
+					<td>
+						<input type="color" name="ppt_footer_settings[text_color]" value="<?php echo esc_attr( $text_color ); ?>" />
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">نمایش ستون ۱ (معرفی برند و تماس با ما)</th>
+					<td>
+						<label>
+							<input type="checkbox" name="ppt_footer_settings[show_brand_col]" value="1" <?php checked( '1', $show_brand_col ); ?> />
+							نمایش ستون توضیحات بوم‌گردی رادیو سفر و آدرس دفتر ونک.
+						</label>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">نمایش ستون ۲ (دسترسی سریع)</th>
+					<td>
+						<label>
+							<input type="checkbox" name="ppt_footer_settings[show_links_col]" value="1" <?php checked( '1', $show_links_col ); ?> />
+							ستون لیست منوهای دلخواه در فوتر نمایش داده شود.
+						</label>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">نمایش ستون ۳ (سفر شنیداری و مقاصد برتر)</th>
+					<td>
+						<label>
+							<input type="checkbox" name="ppt_footer_settings[show_cpt_col]" value="1" <?php checked( '1', $show_cpt_col ); ?> />
+							ستون لینک‌های پادکست‌ها، ویدیوها و مقاصد.
+						</label>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">نمایش ستون ۴ (عضویت در خبرنامه و شبکه‌های اجتماعی)</th>
+					<td>
+						<label>
+							<input type="checkbox" name="ppt_footer_settings[show_newsletter_col]" value="1" <?php checked( '1', $show_newsletter_col ); ?> />
+							کادر عضویت در خبرنامه و آیکون‌های اینستاگرام/تلگرام.
+						</label>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">نمایش نوار چسبان موبایل (Mobile Sticky Bottom Bar)</th>
+					<td>
+						<label>
+							<input type="checkbox" name="ppt_footer_settings[show_sticky_mobile_nav]" value="1" <?php checked( '1', $show_sticky_mobile_nav ); ?> />
+							نمایش دکمه‌های ناوبری اپلیکیشن‌مانند در پایین‌ترین قسمت صفحات موبایل و تبلت.
+						</label>
+					</td>
+				</tr>
+			</table>
+
+			<hr style="margin:20px 0;">
+
+			<h3>🔗 مدیریت و تنظیم لینک‌های دلخواه فوتر (Footer Links Builder)</h3>
+			<p class="description">لینک‌های دلخواه خود را در زیر مشخص کنید تا در ستون دسترسی سریع فوتر به زیبایی چیده شوند:</p>
+
+			<div style="background-color:#fafafa; border:1px solid #ccc; padding:15px; border-radius:6px; margin-bottom:20px;">
+				<h4 style="margin-top:0;">لینک‌های ستون ۲ فوتر (۴ لینک نمایشی):</h4>
+				<?php for ( $i = 0; $i < 4; $i ++ ) :
+					$label = isset( $links[$i]['label'] ) ? $links[$i]['label'] : '';
+					$url   = isset( $links[$i]['url'] ) ? $links[$i]['url'] : '';
+					?>
+					<div style="display:flex; gap:15px; margin-bottom:12px; align-items:center;">
+						<div style="flex:1;">
+							<label>عنوان لینک (دمو):</label>
+							<input type="text" name="ppt_footer_settings[custom_links][<?php echo esc_attr( $i ); ?>][label]" value="<?php echo esc_attr( $label ); ?>" style="width:100%;" placeholder="مثال: تماس با ما" />
+						</div>
+						<div style="flex:2;">
+							<label>آدرس اینترنتی (URL):</label>
+							<input type="text" name="ppt_footer_settings[custom_links][<?php echo esc_attr( $i ); ?>][url]" value="<?php echo esc_attr( $url ); ?>" style="width:100%; text-align:left; direction:ltr;" placeholder="/contact-us/" />
+						</div>
+					</div>
+				<?php endfor; ?>
+			</div>
 		</div>
 		<?php
 	}
@@ -771,7 +1026,7 @@ class PPT_Admin_Panel {
 			<div>
 				<h3 style="color:#2B6CB0; border-bottom:1px solid #E2E8F0; padding-bottom:5px;">۴. مفاهیم عمیق و منطق طراحی (Explanation)</h3>
 				<p><strong>چرا عدم استفاده از افزونه‌های سنگین اهمیت دارد؟</strong></p>
-				<p class="text-justify">استفاده مکرر از فریم‌ورک‌های سنگین مانند المنتور و ویژوال کامپوزر با تزریق استایل‌های تکراری و کدهای CSS/JS غیرضروری، سرعت موبایل کاربران را به شدت کاهش داده و بر سئوی محلی تاثیر منفی می‌گذارد. معماری سبک، پاک و برون‌سازمانی این پوسته تضمین می‌کند که سایت شما بر روی ضعیف‌ترین شبکه‌های موبایلی (3G) در مناطق کوهستانی یا جزایر دوردست ایران, در کمترین زمان ممکن لود گردد.</p>
+				<p class="text-justify">استفاده مکرر از فریم‌ورک‌های سنگین مانند المنتور و ویژوال کامپوزر با تزریق استایل‌های تکراری و کدهای CSS/JS غیرضروری، سرعت موبایل کاربران را به شدت کاهش داده و بر سئوی محلی تاثیر منفی می‌گذارد. معماری سبک، پاک و برون‌سازمانی این پوسته ضمانت می‌کند که سایت شما بر روی ضعیف‌ترین شبکه‌های موبایلی (3G) در مناطق کوهستانی یا جزایر دوردست ایران, در کمترین زمان ممکن لود گردد.</p>
 			</div>
 		</div>
 		<?php
