@@ -57,6 +57,45 @@ jQuery(document).ready(function ($) {
     $(this).closest('.ppt-repeater-item').remove();
   });
 
+  // 1.5 Itinerary Day-by-Day Repeater Logic
+  var itineraryContainer = $('#ppt_itinerary_days_container');
+
+  function reindexItineraryDays() {
+    itineraryContainer.find('.ppt-itinerary-day-row').each(function (index) {
+      var row = $(this);
+      row.find('.day-number-label').text(translateToPersian(index + 1));
+      row.find('input[name*="ppt_itinerary_days"]').attr('name', `ppt_itinerary_days[${index}][title]`);
+      row.find('textarea[name*="ppt_itinerary_days"]').attr('name', `ppt_itinerary_days[${index}][desc]`);
+    });
+  }
+
+  $('#ppt_add_itinerary_day_btn').on('click', function () {
+    var index = itineraryContainer.find('.ppt-itinerary-day-row').length;
+    var html = `
+      <div class="ppt-repeater-item ppt-itinerary-day-row animate-fade-in" style="border:1px solid #ccd0d4; padding:15px; margin-bottom:15px; background-color:#f6f7f7; border-radius:4px; position: relative;">
+        <p>
+          <label><strong>عنوان روز <span class="day-number-label">${index + 1}</span>:</strong></label>
+          <input type="text" name="ppt_itinerary_days[${index}][title]" style="width:100%; margin-top:5px;" placeholder="مثال: روز ${index + 1} - گشت و گذار در منطقه" />
+        </p>
+        <p style="margin-top:10px;">
+          <label><strong>شرح اقدامات و جزییات مسیر:</strong></label>
+          <textarea name="ppt_itinerary_days[${index}][desc]" style="width:100%; margin-top:5px;" rows="3" placeholder="مکان‌های بازدید، رستوران‌ها و نکات ترابری این روز را بنویسید"></textarea>
+        </p>
+        <button type="button" class="button button-link-delete ppt-remove-itinerary-day" style="color:#d63638; position: absolute; left: 15px; bottom: 15px;">حذف روز</button>
+      </div>
+    `;
+    itineraryContainer.append(html);
+    reindexItineraryDays();
+    normalizeAdminDigits();
+  });
+
+  // Handle Removal of Itinerary Day
+  itineraryContainer.on('click', '.ppt-remove-itinerary-day', function () {
+    $(this).closest('.ppt-itinerary-day-row').remove();
+    reindexItineraryDays();
+    normalizeAdminDigits();
+  });
+
   // 2. Budget Repeater Field Logic (Table Rows)
   var budgetContainer = $('#ppt_budget_repeater_container');
   var budgetCount = budgetContainer.find('tr').length;

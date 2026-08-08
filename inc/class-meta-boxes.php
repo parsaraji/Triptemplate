@@ -285,22 +285,26 @@ class PPT_Meta_Boxes {
 			<p class="description">جزییات اقدامات، مسافت‌ها و مکان‌های توقف هر روز را در زیر بنویسید:</p>
 
 			<div id="ppt_itinerary_days_container">
-				<?php for ( $i = 0; $i < 3; $i ++ ) :
+				<?php
+				$days_count = max( 1, count( $days_plan ) );
+				for ( $i = 0; $i < $days_count; $i ++ ) :
 					$day_title = isset( $days_plan[$i]['title'] ) ? $days_plan[$i]['title'] : '';
 					$day_desc  = isset( $days_plan[$i]['desc'] ) ? $days_plan[$i]['desc'] : '';
 					?>
-					<div class="ppt-repeater-item" style="border:1px solid #ccd0d4; padding:15px; margin-bottom:15px; background-color:#f6f7f7; border-radius:4px;">
+					<div class="ppt-repeater-item ppt-itinerary-day-row" style="border:1px solid #ccd0d4; padding:15px; margin-bottom:15px; background-color:#f6f7f7; border-radius:4px; position: relative;">
 						<p>
-							<label><strong>عنوان روز <?php echo esc_html( $i + 1 ); ?>:</strong></label>
+							<label><strong>عنوان روز <span class="day-number-label"><?php echo esc_html( $i + 1 ); ?></span>:</strong></label>
 							<input type="text" name="ppt_itinerary_days[<?php echo esc_attr( $i ); ?>][title]" value="<?php echo esc_attr( $day_title ); ?>" style="width:100%;" placeholder="مثال: روز اول - گشت و گذار در حافظیه" />
 						</p>
 						<p>
 							<label><strong>شرح اقدامات و جزییات مسیر:</strong></label>
-							<textarea name="ppt_itinerary_days[<?php echo esc_attr( $i ); ?>][desc]" style="width:100%;" rows="3" placeholder="مکان‌های بازدید، رستوران‌ها و نکات ترابری روز اول را بنویسید"><?php echo esc_textarea( $day_desc ); ?></textarea>
+							<textarea name="ppt_itinerary_days[<?php echo esc_attr( $i ); ?>][desc]" style="width:100%;" rows="3" placeholder="مکان‌های بازدید، رستوران‌ها و نکات ترابری این روز را بنویسید"><?php echo esc_textarea( $day_desc ); ?></textarea>
 						</p>
+						<button type="button" class="button button-link-delete ppt-remove-itinerary-day" style="color:#d63638; position: absolute; left: 15px; bottom: 15px;">حذف روز</button>
 					</div>
 				<?php endfor; ?>
 			</div>
+			<button type="button" id="ppt_add_itinerary_day_btn" class="button button-primary">افزودن روز جدید به برنامه سفر</button>
 		</div>
 		<?php
 	}
