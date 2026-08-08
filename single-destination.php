@@ -1,7 +1,8 @@
 <?php
 /**
  * Single Destination Editorial Travel Guide Template
- * Now enriched with Climate Guides, Localized travel tips, FAQ Page accordion, and Leaflet Interactive maps.
+ * Enriched with Climate Guides, Localized travel tips, FAQ Page accordion, Leaflet Interactive maps,
+ * and comprehensive travel parameters (Souvenirs, Foods, Transport, Accommodation).
  *
  * @package Premium_Persian_Tourism
  */
@@ -12,11 +13,18 @@ while ( have_posts() ) :
 	the_post();
 
 	// Retrieve Custom Metadata
-	$best_time = get_post_meta( get_the_ID(), '_ppt_best_time', true );
-	$weather   = get_post_meta( get_the_ID(), '_ppt_weather', true );
-	$cost_lvl  = get_post_meta( get_the_ID(), '_ppt_cost_level', true );
-	$lat       = get_post_meta( get_the_ID(), '_ppt_lat', true );
-	$lng       = get_post_meta( get_the_ID(), '_ppt_lng', true );
+	$best_time     = get_post_meta( get_the_ID(), '_ppt_best_time', true );
+	$weather       = get_post_meta( get_the_ID(), '_ppt_weather', true );
+	$cost_lvl      = get_post_meta( get_the_ID(), '_ppt_cost_level', true );
+	$lat           = get_post_meta( get_the_ID(), '_ppt_lat', true );
+	$lng           = get_post_meta( get_the_ID(), '_ppt_lng', true );
+
+	// Advanced Enriched fields
+	$souvenirs     = get_post_meta( get_the_ID(), '_ppt_souvenirs', true );
+	$local_foods   = get_post_meta( get_the_ID(), '_ppt_local_foods', true );
+	$transport     = get_post_meta( get_the_ID(), '_ppt_transport', true );
+	$accommodation = get_post_meta( get_the_ID(), '_ppt_accommodation', true );
+	$travel_tips   = get_post_meta( get_the_ID(), '_ppt_travel_tips', true );
 
 	$cost_lvl_lbl = 'متوسط';
 	if ( 'low' === $cost_lvl ) {
@@ -79,10 +87,22 @@ while ( have_posts() ) :
 					<h4>فهرست عناوین راهنما</h4>
 					<ul>
 						<li><a href="#overview" class="active">۱. معرفی و توصیف اجمالی</a></li>
-						<li><a href="#tips">۲. توصیه‌ها و ملزومات سفر (Travel Tips)</a></li>
-						<li><a href="#attractions">۳. جاذبه‌های دیدنی و گردشگری اطراف</a></li>
-						<li><a href="#map-section">۴. موقعیت جغرافیابی و مسیریابی تعاملی</a></li>
-						<li><a href="#faq">۵. سوالات متداول مسافران</a></li>
+						<?php if ( ! empty( $souvenirs ) ) : ?>
+							<li><a href="#souvenirs">۲. صنایع دستی و سوغات محلی</a></li>
+						<?php endif; ?>
+						<?php if ( ! empty( $local_foods ) ) : ?>
+							<li><a href="#foods">۳. غذاهای بومی و طعم‌های ماندگار</a></li>
+						<?php endif; ?>
+						<?php if ( ! empty( $transport ) ) : ?>
+							<li><a href="#transport">۴. راه‌های دسترسی و ترابری</a></li>
+						<?php endif; ?>
+						<?php if ( ! empty( $accommodation ) ) : ?>
+							<li><a href="#accommodation">۵. بوم‌گردی‌ها و گزینه‌های اقامت</a></li>
+						<?php endif; ?>
+						<li><a href="#tips">۶. توصیه‌ها و ملزومات کلیدی سفر</a></li>
+						<li><a href="#attractions">۷. جاذبه‌های تفریحی نزدیک</a></li>
+						<li><a href="#map-section">۸. موقعیت روی نقشه تعاملی</a></li>
+						<li><a href="#faq">۹. سوالات متداول مسافران</a></li>
 					</ul>
 				</div>
 
@@ -94,21 +114,67 @@ while ( have_posts() ) :
 					</div>
 				</div>
 
+				<!-- Section 2: Souvenirs & Crafts -->
+				<?php if ( ! empty( $souvenirs ) ) : ?>
+					<div id="souvenirs" class="section-content-box" style="margin-bottom:35px; border-top:1px solid #EDF2F7; padding-top:25px;">
+						<h2 class="section-title" style="color:#2C5282; border-bottom:2px solid #EDF2F7; padding-bottom:8px; margin-bottom:15px; display:flex; align-items:center; gap:8px;">
+							<span>🎁</span> صنایع دستی و سوغات محلی
+						</h2>
+						<p style="font-size:15px; color:#4A5568; white-space: pre-line;" class="text-justify"><?php echo esc_html( $souvenirs ); ?></p>
+					</div>
+				<?php endif; ?>
+
+				<!-- Section 3: Local Foods -->
+				<?php if ( ! empty( $local_foods ) ) : ?>
+					<div id="foods" class="section-content-box" style="margin-bottom:35px; border-top:1px solid #EDF2F7; padding-top:25px;">
+						<h2 class="section-title" style="color:#2C5282; border-bottom:2px solid #EDF2F7; padding-bottom:8px; margin-bottom:15px; display:flex; align-items:center; gap:8px;">
+							<span>🍲</span> غذاهای بومی و طعم‌های ماندگار
+						</h2>
+						<p style="font-size:15px; color:#4A5568; white-space: pre-line;" class="text-justify"><?php echo esc_html( $local_foods ); ?></p>
+					</div>
+				<?php endif; ?>
+
+				<!-- Section 4: Transport -->
+				<?php if ( ! empty( $transport ) ) : ?>
+					<div id="transport" class="section-content-box" style="margin-bottom:35px; border-top:1px solid #EDF2F7; padding-top:25px;">
+						<h2 class="section-title" style="color:#2C5282; border-bottom:2px solid #EDF2F7; padding-bottom:8px; margin-bottom:15px; display:flex; align-items:center; gap:8px;">
+							<span>🚗</span> راه‌های دسترسی و ترابری
+						</h2>
+						<p style="font-size:15px; color:#4A5568; white-space: pre-line;" class="text-justify"><?php echo esc_html( $transport ); ?></p>
+					</div>
+				<?php endif; ?>
+
+				<!-- Section 5: Accommodation -->
+				<?php if ( ! empty( $accommodation ) ) : ?>
+					<div id="accommodation" class="section-content-box" style="margin-bottom:35px; border-top:1px solid #EDF2F7; padding-top:25px;">
+						<h2 class="section-title" style="color:#2C5282; border-bottom:2px solid #EDF2F7; padding-bottom:8px; margin-bottom:15px; display:flex; align-items:center; gap:8px;">
+							<span>🏡</span> بوم‌گردی‌ها و گزینه‌های اقامت
+						</h2>
+						<p style="font-size:15px; color:#4A5568; white-space: pre-line;" class="text-justify"><?php echo esc_html( $accommodation ); ?></p>
+					</div>
+				<?php endif; ?>
+
 				<hr style="margin:30px 0; border:0; border-top:1px solid #EDF2F7;">
 
-				<!-- Section 2: Localized Travel Tips -->
+				<!-- Section 6: Localized Travel Tips -->
 				<div id="tips" class="section-content-box" style="margin-bottom:35px; background-color: #FFFDF5; border:1px solid #FEFCBF; padding:20px; border-radius:8px;">
-					<h3 style="color:#B7791F; margin-top:0;">💡 توصیه‌های کاربردی و ملزومات سفر رادیو سفر</h3>
-					<ul style="padding-right:20px; margin-bottom:0; font-size:14px; line-height:2;">
-						<li>پیش از حرکت، حتما از رزرو بودن اقامتگاه بوم‌گردی خود اطمینان حاصل فرمایید.</li>
-						<li>در مناطق کوهستانی، حتماً تجهیزات کامل و زنجیر چرخ به همراه داشته باشید.</li>
-						<li>پاسداشت فرهنگ بومی، استفاده از لیدرهای محلی و خرید صنایع دستی بومی به اقتصاد پایدار منطقه کمک بسزایی می‌کند.</li>
-					</ul>
+					<h3 style="color:#B7791F; margin-top:0; display:flex; align-items:center; gap:8px;">
+						<span>💡</span> نکات کلیدی و ملزومات سفر رادیو سفر
+					</h3>
+					<?php if ( ! empty( $travel_tips ) ) : ?>
+						<p style="font-size:14px; line-height:2; color:#744210; margin:0; white-space: pre-line;" class="text-justify"><?php echo esc_html( $travel_tips ); ?></p>
+					<?php else : ?>
+						<ul style="padding-right:20px; margin-bottom:0; font-size:14px; line-height:2; color:#744210;">
+							<li>پیش از حرکت، حتما از رزرو بودن اقامتگاه بوم‌گردی خود اطمینان حاصل فرمایید.</li>
+							<li>در مناطق کوهستانی، حتماً تجهیزات کامل و زنجیر چرخ به همراه داشته باشید.</li>
+							<li>پاسداشت فرهنگ بومی، استفاده از لیدرهای محلی و خرید صنایع دستی بومی به اقتصاد پایدار منطقه کمک بسزایی می‌کند.</li>
+						</ul>
+					<?php endif; ?>
 				</div>
 
 				<hr style="margin:30px 0; border:0; border-top:1px solid #EDF2F7;">
 
-				<!-- Section 3: Associated Attractions -->
+				<!-- Section 7: Associated Attractions -->
 				<div id="attractions" class="section-content-box" style="margin-bottom:35px;">
 					<h2 class="section-title" style="color:#2C5282; border-bottom:2px solid #EDF2F7; padding-bottom:8px; margin-bottom:15px;">جاذبه‌های تفریحی و دیدنی نزدیک</h2>
 					<p class="description">مهم‌ترین مکان‌های دیدنی، تاریخی و طبیعی نزدیک که در سفر به این مقصد باید تجربه کنید:</p>
@@ -159,7 +225,7 @@ while ( have_posts() ) :
 
 				<hr style="margin:30px 0; border:0; border-top:1px solid #EDF2F7;">
 
-				<!-- Section 4: Interactive OSM Map -->
+				<!-- Section 8: Interactive OSM Map -->
 				<div id="map-section" class="section-content-box" style="margin-bottom:35px;">
 					<?php
 					if ( ! empty( $lat ) && ! empty( $lng ) ) {
@@ -168,7 +234,7 @@ while ( have_posts() ) :
 					?>
 				</div>
 
-				<!-- Section 5: Shared FAQ accordion -->
+				<!-- Section 9: Shared FAQ accordion -->
 				<div id="faq" class="section-content-box" style="margin-top:30px;">
 					<h3 class="section-title" style="color:#2C5282; border-bottom:2px solid #EDF2F7; padding-bottom:8px; margin-bottom:15px;">سوالات متداول کاربران درباره سفر به <?php the_title(); ?></h3>
 					<?php
@@ -186,6 +252,15 @@ while ( have_posts() ) :
 						endforeach;
 					else :
 						echo '<p class="text-muted">سوالی برای این مقصد افزوده نشده است.</p>';
+					endif;
+					?>
+				</div>
+
+				<!-- Section 10: Comments Area -->
+				<div class="comments-section-wrapper" style="margin-top: 50px; border-top: 2px solid #EDF2F7; padding-top: 30px;">
+					<?php
+					if ( comments_open() || get_comments_number() ) :
+						comments_template();
 					endif;
 					?>
 				</div>

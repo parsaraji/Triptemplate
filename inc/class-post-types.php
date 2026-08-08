@@ -102,7 +102,7 @@ class PPT_Post_Types {
 			'public'             => true,
 			'has_archive'        => true,
 			'rewrite'            => array( 'slug' => 'itineraries' ),
-			'supports'           => array( 'title', 'editor', 'thumbnail', 'excerpt' ),
+			'supports'           => array( 'title', 'editor', 'thumbnail', 'excerpt', 'comments' ),
 			'menu_icon'          => 'dashicons-calendar-alt',
 			'show_in_rest'       => true,
 		) );
@@ -148,7 +148,7 @@ class PPT_Post_Types {
 			'public'             => true,
 			'has_archive'        => true,
 			'rewrite'            => array( 'slug' => 'podcasts' ),
-			'supports'           => array( 'title', 'editor', 'thumbnail', 'excerpt' ),
+			'supports'           => array( 'title', 'editor', 'thumbnail', 'excerpt', 'comments' ),
 			'menu_icon'          => 'dashicons-microphone',
 			'show_in_rest'       => true,
 		) );
@@ -171,7 +171,7 @@ class PPT_Post_Types {
 			'public'             => true,
 			'has_archive'        => true,
 			'rewrite'            => array( 'slug' => 'videos' ),
-			'supports'           => array( 'title', 'editor', 'thumbnail', 'excerpt' ),
+			'supports'           => array( 'title', 'editor', 'thumbnail', 'excerpt', 'comments' ),
 			'menu_icon'          => 'dashicons-video-alt3',
 			'show_in_rest'       => true,
 		) );

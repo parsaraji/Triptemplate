@@ -1,7 +1,7 @@
 <?php
 /**
  * Non-Gutenberg Custom Meta Boxes
- * Upgraded with detailed Itinerary (برنامه سفر) meta settings and manual SEO Schema injectors on all posts.
+ * Upgraded with detailed Itinerary (برنامه سفر) meta settings, highly comprehensive Destination travel guides, and manual SEO Schema injectors on all posts.
  *
  * @package Premium_Persian_Tourism
  */
@@ -116,40 +116,85 @@ class PPT_Meta_Boxes {
 
 	/**
 	 * Render Destination Meta Box.
+	 * Overhauled with professional fields for a complete tourism guide.
 	 */
 	public function render_destination_meta_box( $post ) {
 		wp_nonce_field( 'ppt_save_meta_nonce', 'ppt_meta_nonce' );
 
-		$best_time = get_post_meta( $post->ID, '_ppt_best_time', true );
-		$weather   = get_post_meta( $post->ID, '_ppt_weather', true );
-		$cost_level = get_post_meta( $post->ID, '_ppt_cost_level', true );
-		$lat       = get_post_meta( $post->ID, '_ppt_lat', true );
-		$lng       = get_post_meta( $post->ID, '_ppt_lng', true );
+		$best_time     = get_post_meta( $post->ID, '_ppt_best_time', true );
+		$weather       = get_post_meta( $post->ID, '_ppt_weather', true );
+		$cost_level    = get_post_meta( $post->ID, '_ppt_cost_level', true );
+		$lat           = get_post_meta( $post->ID, '_ppt_lat', true );
+		$lng           = get_post_meta( $post->ID, '_ppt_lng', true );
+
+		// Advanced tourism fields
+		$souvenirs     = get_post_meta( $post->ID, '_ppt_souvenirs', true );
+		$local_foods   = get_post_meta( $post->ID, '_ppt_local_foods', true );
+		$transport     = get_post_meta( $post->ID, '_ppt_transport', true );
+		$accommodation = get_post_meta( $post->ID, '_ppt_accommodation', true );
+		$travel_tips   = get_post_meta( $post->ID, '_ppt_travel_tips', true );
 		?>
-		<div class="ppt-meta-field-group">
-			<label for="ppt_best_time"><strong>بهترین زمان سفر:</strong></label>
-			<input type="text" id="ppt_best_time" name="ppt_best_time" value="<?php echo esc_attr( $best_time ); ?>" placeholder="مثلاً: اردیبهشت و خرداد، پاییز" class="large-text" />
-		</div>
-		<div class="ppt-meta-field-group" style="margin-top:15px;">
-			<label for="ppt_weather"><strong>وضعیت آب و هوا:</strong></label>
-			<input type="text" id="ppt_weather" name="ppt_weather" value="<?php echo esc_attr( $weather ); ?>" placeholder="مثلاً: کوهستانی و معتدل" class="large-text" />
-		</div>
-		<div class="ppt-meta-field-group" style="margin-top:15px;">
-			<label for="ppt_cost_level"><strong>حدود هزینه سفر (سطح قیمت):</strong></label>
-			<select id="ppt_cost_level" name="ppt_cost_level">
-				<option value="low" <?php selected( $cost_level, 'low' ); ?>>اقتصادی و ارزان</option>
-				<option value="medium" <?php selected( $cost_level, 'medium' ); ?>>متوسط</option>
-				<option value="high" <?php selected( $cost_level, 'high' ); ?>>لوکس و گران</option>
-			</select>
-		</div>
-		<div class="ppt-meta-field-group" style="margin-top:15px; display: flex; gap: 15px;">
-			<div>
-				<label for="ppt_lat"><strong>عرض جغرافیایی (Latitude):</strong></label><br>
-				<input type="text" id="ppt_lat" name="ppt_lat" value="<?php echo esc_attr( $lat ); ?>" placeholder="مثلاً: 35.6892" />
+		<div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
+			<h4 style="margin: 0 0 10px 0; color: #1e3a8a; font-size: 15px;">📊 شاخص‌های کلیدی و جغرافیایی</h4>
+			<div class="ppt-meta-field-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+				<div>
+					<label for="ppt_best_time"><strong>بهترین زمان سفر:</strong></label>
+					<input type="text" id="ppt_best_time" name="ppt_best_time" value="<?php echo esc_attr( $best_time ); ?>" placeholder="مثلاً: اردیبهشت و خرداد، پاییز" class="large-text" style="width:100%; margin-top:5px;" />
+				</div>
+				<div>
+					<label for="ppt_weather"><strong>وضعیت آب و هوا:</strong></label>
+					<input type="text" id="ppt_weather" name="ppt_weather" value="<?php echo esc_attr( $weather ); ?>" placeholder="مثلاً: کوهستانی و معتدل" class="large-text" style="width:100%; margin-top:5px;" />
+				</div>
 			</div>
-			<div>
-				<label for="ppt_lng"><strong>طول جغرافیایی (Longitude):</strong></label><br>
-				<input type="text" id="ppt_lng" name="ppt_lng" value="<?php echo esc_attr( $lng ); ?>" placeholder="مثلاً: 51.3890" />
+
+			<div class="ppt-meta-field-group" style="margin-top:15px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+				<div>
+					<label for="ppt_cost_level"><strong>حدود هزینه سفر (سطح قیمت):</strong></label>
+					<select id="ppt_cost_level" name="ppt_cost_level" style="width:100%; margin-top:5px;">
+						<option value="low" <?php selected( $cost_level, 'low' ); ?>>اقتصادی و ارزان</option>
+						<option value="medium" <?php selected( $cost_level, 'medium' ); ?>>متوسط</option>
+						<option value="high" <?php selected( $cost_level, 'high' ); ?>>لوکس و گران</option>
+					</select>
+				</div>
+				<div style="display: flex; gap: 10px;">
+					<div style="flex: 1;">
+						<label for="ppt_lat"><strong>عرض جغرافیایی (Latitude):</strong></label>
+						<input type="text" id="ppt_lat" name="ppt_lat" value="<?php echo esc_attr( $lat ); ?>" placeholder="مثلاً: 35.6892" style="width:100%; margin-top:5px;" />
+					</div>
+					<div style="flex: 1;">
+						<label for="ppt_lng"><strong>طول جغرافیایی (Longitude):</strong></label>
+						<input type="text" id="ppt_lng" name="ppt_lng" value="<?php echo esc_attr( $lng ); ?>" placeholder="مثلاً: 51.3890" style="width:100%; margin-top:5px;" />
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div style="background: #fff; border: 1px solid #e2e8f0; padding: 15px; border-radius: 6px;">
+			<h4 style="margin: 0 0 15px 0; color: #0d9488; font-size: 15px;">📝 راهنمای بوم‌گردی و بخش‌های متمایز کننده مقصد</h4>
+
+			<div class="ppt-meta-field-group" style="margin-bottom:15px;">
+				<label for="ppt_souvenirs"><strong>🎁 سوغات و صنایع دستی معروف مقصد:</strong></label>
+				<textarea id="ppt_souvenirs" name="ppt_souvenirs" class="large-text" rows="3" style="width:100%; margin-top:5px;" placeholder="صنایع دستی، خوراکی‌ها، گلیم، قالی، شیرینی‌های محلی و آثار ویژه این خطه..."><?php echo esc_textarea( $souvenirs ); ?></textarea>
+			</div>
+
+			<div class="ppt-meta-field-group" style="margin-bottom:15px;">
+				<label for="ppt_local_foods"><strong>🍲 غذاهای محلی، خورشت‌ها و رستوران‌های پیشنهادی:</strong></label>
+				<textarea id="ppt_local_foods" name="ppt_local_foods" class="large-text" rows="3" style="width:100%; margin-top:5px;" placeholder="کباب‌های بومی، پلوهای مخصوص، دسرها و نان‌های محلی..."><?php echo esc_textarea( $local_foods ); ?></textarea>
+			</div>
+
+			<div class="ppt-meta-field-group" style="margin-bottom:15px;">
+				<label for="ppt_transport"><strong>🚗 وضعیت حمل و نقل، راه‌های دسترسی و ترابری:</strong></label>
+				<textarea id="ppt_transport" name="ppt_transport" class="large-text" rows="3" style="width:100%; margin-top:5px;" placeholder="چگونه برویم؟ راه‌آهن، فرودگاه، ترمینال، جاده‌های کوهستانی یا آسفالته..."><?php echo esc_textarea( $transport ); ?></textarea>
+			</div>
+
+			<div class="ppt-meta-field-group" style="margin-bottom:15px;">
+				<label for="ppt_accommodation"><strong>🏡 گزینه‌های اقامت، هتل‌ها و بوم‌گردی‌ها:</strong></label>
+				<textarea id="ppt_accommodation" name="ppt_accommodation" class="large-text" rows="3" style="width:100%; margin-top:5px;" placeholder="اقامتگاه‌های بوم‌گردی دنج، هتل‌های ۵ ستاره، امکان کمپینگ صمیمانه در منطقه..."><?php echo esc_textarea( $accommodation ); ?></textarea>
+			</div>
+
+			<div class="ppt-meta-field-group">
+				<label for="ppt_travel_tips"><strong>💡 توصیه‌های کاربردی، نکات کلیدی و ملزومات سفر:</strong></label>
+				<textarea id="ppt_travel_tips" name="ppt_travel_tips" class="large-text" rows="3" style="width:100%; margin-top:5px;" placeholder="نکات فرهنگی بومی، لزوم همراه داشتن تجهیزات صعود، زمان بسته‌شدن جاده‌ها، امنیت مسیر..."><?php echo esc_textarea( $travel_tips ); ?></textarea>
 			</div>
 		</div>
 		<?php
@@ -428,6 +473,23 @@ class PPT_Meta_Boxes {
 		}
 		if ( isset( $_POST['ppt_cost_level'] ) ) {
 			update_post_meta( $post_id, '_ppt_cost_level', sanitize_text_field( $_POST['ppt_cost_level'] ) );
+		}
+
+		// Advanced Destination meta fields
+		if ( isset( $_POST['ppt_souvenirs'] ) ) {
+			update_post_meta( $post_id, '_ppt_souvenirs', sanitize_textarea_field( $_POST['ppt_souvenirs'] ) );
+		}
+		if ( isset( $_POST['ppt_local_foods'] ) ) {
+			update_post_meta( $post_id, '_ppt_local_foods', sanitize_textarea_field( $_POST['ppt_local_foods'] ) );
+		}
+		if ( isset( $_POST['ppt_transport'] ) ) {
+			update_post_meta( $post_id, '_ppt_transport', sanitize_textarea_field( $_POST['ppt_transport'] ) );
+		}
+		if ( isset( $_POST['ppt_accommodation'] ) ) {
+			update_post_meta( $post_id, '_ppt_accommodation', sanitize_textarea_field( $_POST['ppt_accommodation'] ) );
+		}
+		if ( isset( $_POST['ppt_travel_tips'] ) ) {
+			update_post_meta( $post_id, '_ppt_travel_tips', sanitize_textarea_field( $_POST['ppt_travel_tips'] ) );
 		}
 
 		// Shared Coordinates (Destination & Attraction).

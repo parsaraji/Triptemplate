@@ -95,6 +95,15 @@ while ( have_posts() ) :
 					?>
 				</div>
 
+				<!-- Comments Area -->
+				<div class="comments-section-wrapper" style="margin-top: 50px; border-top: 2px solid #EDF2F7; padding-top: 30px;">
+					<?php
+					if ( comments_open() || get_comments_number() ) :
+						comments_template();
+					endif;
+					?>
+				</div>
+
 			</main>
 
 			<!-- Right Sidebar Area -->
