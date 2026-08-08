@@ -5,7 +5,7 @@
 document.addEventListener('DOMContentLoaded', function () {
   'use strict';
 
-  // 1. Mobile Side Drawer Navigation Panel
+  // 1. Mobile Side Drawer Navigation Panel (Refined with ARIA accessibility checks)
   var burgerBtn = document.querySelector('.burger-menu-btn');
   var mobileDrawer = document.getElementById('mobile-nav-drawer');
   var drawerOverlay = document.getElementById('drawer-bg-overlay');
@@ -15,6 +15,8 @@ document.addEventListener('DOMContentLoaded', function () {
     if (mobileDrawer && drawerOverlay) {
       mobileDrawer.classList.add('open');
       drawerOverlay.classList.add('open');
+      mobileDrawer.setAttribute('aria-hidden', 'false');
+      if (burgerBtn) burgerBtn.setAttribute('aria-expanded', 'true');
       document.body.style.overflow = 'hidden';
     }
   }
@@ -23,6 +25,8 @@ document.addEventListener('DOMContentLoaded', function () {
     if (mobileDrawer && drawerOverlay) {
       mobileDrawer.classList.remove('open');
       drawerOverlay.classList.remove('open');
+      mobileDrawer.setAttribute('aria-hidden', 'true');
+      if (burgerBtn) burgerBtn.setAttribute('aria-expanded', 'false');
       document.body.style.overflow = '';
     }
   }

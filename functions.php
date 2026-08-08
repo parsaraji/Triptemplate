@@ -1,7 +1,7 @@
 <?php
 /**
  * Theme Functions and Bootstrapping
- * Now with optimized taxonomy query handling using pre_get_posts filter to eliminate query_posts() overhead.
+ * Now with localized high-accuracy Jalali (Shamsi) Date Conversion Helpers.
  *
  * @package Premium_Persian_Tourism
  */
@@ -107,8 +107,7 @@ function ppt_enqueue_admin_scripts( $hook ) {
 add_action( 'admin_enqueue_scripts', 'ppt_enqueue_admin_scripts' );
 
 /**
- * Hook into pre_get_posts to optimize and filter taxonomy queries cleanly
- * instead of query_posts() overhead on destination archive pages.
+ * Hook into pre_get_posts to optimize and filter taxonomy queries cleanly.
  */
 function ppt_filter_destination_archives( $query ) {
 	if ( is_admin() || ! $query->is_main_query() ) {
@@ -140,3 +139,90 @@ function ppt_get_setting( $option, $key, $default = '' ) {
 	$settings = get_option( $option, array() );
 	return isset( $settings[ $key ] ) ? $settings[ $key ] : $default;
 }
+
+/**
+ * Jalali (Shamsi) High-Precision Date Conversion Algorithm in PHP.
+ */
+function ppt_to_jalali( $g_y, $g_m, $g_d ) {
+	$g_days_in_month = array( 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 );
+	$j_days_in_month = array( 31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29 );
+
+	$gy = $g_y - 1600;
+	$gm = $g_m - 1;
+	$gd = $g_d - 1;
+
+	$g_day_no = 365 * $gy + floor( ( $gy + 3 ) / 4 ) - floor( ( $gy + 99 ) / 100 ) + floor( ( $gy + 399 ) / 400 );
+
+	for ( $i = 0; $i < $gm; $i++ ) {
+		$g_day_no += $g_days_in_month[ $i ];
+	}
+	if ( $gm > 1 && ( ( $gy % 4 === 0 && $gy % 100 !== 0 ) || ( $gy % 400 === 0 ) ) ) {
+		$g_day_no++;
+	}
+	$g_day_no += $gd;
+
+	$j_day_no = $g_day_no - 79;
+
+	$j_np = floor( $j_day_no / 12053 );
+	$j_day_no %= 12053;
+
+	$jy = 979 + 33 * $j_np + 4 * floor( $j_day_no / 1461 );
+	$j_day_no %= 1461;
+
+	if ( $j_day_no >= 366 ) {
+		$jy += floor( ( $j_day_no - 1 ) / 365 );
+		$j_day_no = ( $j_day_no - 1 ) % 365;
+	}
+
+	for ( $i = 0; $i < 11 && $j_day_no >= $j_days_in_month[ $i ]; $i++ ) {
+		$j_day_no -= $j_days_in_month[ $i ];
+	}
+	$jm = $i + 1;
+	$jd = $j_day_no + 1;
+
+	$persian_months = array(
+		1  => 'فروردین',
+		2  => 'اردیبهشت',
+		3  => 'خرداد',
+		4  => 'تیر',
+		5  => 'مرداد',
+		6  => 'شهریور',
+		7  => 'مهر',
+		8  => 'آبان',
+		9  => 'آذر',
+		10 => 'دی',
+		11 => 'بهمن',
+		12 => 'اسفند'
+	);
+
+	return array(
+		'year'  => $jy,
+		'month' => $jm,
+		'day'   => $jd,
+		'text'  => $jd . ' ' . $persian_months[ $jm ] . ' ' . $jy
+	);
+}
+
+/**
+ * Filter WP get_the_date / get_the_modified_date and return beautiful Jalali shamsi date.
+ */
+function ppt_get_jalali_date( $the_date, $format, $post ) {
+	if ( ! $post ) {
+		return $the_date;
+	}
+
+	$g_date = get_post_time( 'Y-m-d', false, $post );
+	if ( ! $g_date ) {
+		return $the_date;
+	}
+
+	$parts = explode( '-', $g_date );
+	if ( count( $parts ) === 3 ) {
+		$jalali = ppt_to_jalali( intval( $parts[0] ), intval( $parts[1] ), intval( $parts[2] ) );
+		return $jalali['text'];
+	}
+
+	return $the_date;
+}
+add_filter( 'get_the_date', 'ppt_get_jalali_date', 10, 3 );
+add_filter( 'get_the_modified_date', 'ppt_get_jalali_date', 10, 3 );

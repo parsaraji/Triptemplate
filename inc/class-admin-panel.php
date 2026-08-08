@@ -1,7 +1,7 @@
 <?php
 /**
  * Custom Tabbed WordPress Admin Settings Panel & Extensive Documentation
- * Includes brand settings, layout choices, and sticky mobile footer toggles.
+ * Now with full XML/WXR Demo Content Import/Export Standards and Download guidelines.
  *
  * @package Premium_Persian_Tourism
  */
@@ -69,7 +69,7 @@ class PPT_Admin_Panel {
 		?>
 		<div class="wrap ppt-admin-wrap">
 			<h1>تنظیمات پوسته جامع گردشگری و رادیو سفر</h1>
-			<p class="description">تنظیمات بخش‌های مختلف صفحه نخست، تبلیغات، نقشه و ساختارهای فنی وب‌سایت را از این بخش مدیریت کنید.</p>
+			<p class="description">تنظیمات بخش‌های مختلف صفحه نخست، تبلیغات، نقشه، ساختارهای فنی و درون‌ریزی داده‌های نمونه را مدیریت کنید.</p>
 
 			<h2 class="nav-tab-wrapper">
 				<a href="?page=ppt-settings&tab=homepage_sections" class="nav-tab <?php echo 'homepage_sections' === $active_tab ? 'nav-tab-active' : ''; ?>">مدیریت صفحه نخست</a>
@@ -77,6 +77,7 @@ class PPT_Admin_Panel {
 				<a href="?page=ppt-settings&tab=ad_slots" class="nav-tab <?php echo 'ad_slots' === $active_tab ? 'nav-tab-active' : ''; ?>">مدیریت جایگاه‌های تبلیغاتی</a>
 				<a href="?page=ppt-settings&tab=map_settings" class="nav-tab <?php echo 'map_settings' === $active_tab ? 'nav-tab-active' : ''; ?>">تنظیمات نقشه</a>
 				<a href="?page=ppt-settings&tab=theme_updater" class="nav-tab <?php echo 'theme_updater' === $active_tab ? 'nav-tab-active' : ''; ?>">بروزرسانی پوسته</a>
+				<a href="?page=ppt-settings&tab=demo_import" class="nav-tab <?php echo 'demo_import' === $active_tab ? 'nav-tab-active' : ''; ?>">درون‌ریزی فایل دمو (XML)</a>
 				<a href="?page=ppt-settings&tab=documentation" class="nav-tab <?php echo 'documentation' === $active_tab ? 'nav-tab-active' : ''; ?>">راهنما و مستندات تخصصی</a>
 			</h2>
 
@@ -97,11 +98,13 @@ class PPT_Admin_Panel {
 				} elseif ( 'theme_updater' === $active_tab ) {
 					settings_fields( 'ppt_updater_group' );
 					$this->render_updater_tab();
+				} elseif ( 'demo_import' === $active_tab ) {
+					$this->render_demo_import_tab();
 				} elseif ( 'documentation' === $active_tab ) {
 					$this->render_documentation_tab();
 				}
 
-				if ( 'documentation' !== $active_tab ) {
+				if ( 'documentation' !== $active_tab && 'demo_import' !== $active_tab ) {
 					submit_button( 'ذخیره تنظیمات پوسته' );
 				}
 				?>
@@ -192,14 +195,12 @@ class PPT_Admin_Panel {
 		$telegram          = isset( $brand['social_telegram'] ) ? $brand['social_telegram'] : '';
 		$aparat            = isset( $brand['social_aparat'] ) ? $brand['social_aparat'] : '';
 		$footer_text       = isset( $brand['footer_text'] ) ? $brand['footer_text'] : 'تمامی حقوق این وب‌سایت محفوظ و متعلق به رادیو سفر می‌باشد.';
-
-		// Expanded settings fields
 		$enable_sticky_bar = isset( $brand['enable_sticky_bar'] ) ? $brand['enable_sticky_bar'] : '1';
 		$header_style      = isset( $brand['header_style'] ) ? $brand['header_style'] : 'premium';
 		?>
 		<div class="card-box ppt-admin-card">
 			<h3>تنظیمات هویت بصری برند، تماس، شبکه‌های اجتماعی و ناوبری موبایل</h3>
-			<p class="description">از این قسمت می‌توانید تم رنگی، شماره تماس، ایمیل، آدرس شبکه‌های اجتماعی و رفتار نوارهای ناوبری رادیو سفر را سفارشی‌سازی کنید.</p>
+			<p class="description">تم رنگی، شماره تماس، ایمیل، آدرس شبکه‌های اجتماعی و رفتار نوارهای ناوبری رادیو سفر را سفارشی‌سازی کنید.</p>
 
 			<table class="form-table" style="margin-top:15px;">
 				<tr>
@@ -282,7 +283,7 @@ class PPT_Admin_Panel {
 		$slots   = isset( $ad_data['slots'] ) ? $ad_data['slots'] : array();
 		?>
 		<div class="card-box ppt-admin-card">
-			<h3>جایگاه‌های بنر تبلیغاتی مستقل (بدون تغییر چیدمان و Cumulative Layout Shift)</h3>
+			<h3>جایگاه‌های بنر تبلیغاتی مستقل (بدون Cumulative Layout Shift)</h3>
 			<p class="description">کد تبلیغات مستقل دسکتاپ و موبایل خود را وارد نمایید. این بخش ابعاد مشخصی برای بنرها در فرانت‌اند رزرو می‌کند تا از پرش صفحه جلوگیری گردد.</p>
 
 			<?php foreach ( $slots as $key => $slot ) : ?>
@@ -349,7 +350,7 @@ class PPT_Admin_Panel {
 					<td>
 						<label>
 							<input type="checkbox" name="ppt_map_settings[lazy_load]" value="1" <?php checked( '1', $lazy_load ); ?> />
-							لود فریم یا المان جاوا اسکریپت نقشه فقط با اسکرول کاربر یا کلیک شروع شود (بهینه‌سازی تضمینی سرعت صفحه).
+							لود فریم یا المان جاوا اسکریپت نقشه فقط با اسکرول کاربر یا کلیک شروع شود (بهینه‌سازی سرعت صفحه).
 						</label>
 					</td>
 				</tr>
@@ -391,6 +392,73 @@ class PPT_Admin_Panel {
 	}
 
 	/**
+	 * Tab 6: WXR XML Demo Content Export & Import Standard Tutorials.
+	 */
+	private function render_demo_import_tab() {
+		?>
+		<div class="card-box ppt-admin-card" style="line-height:1.9;">
+			<h3>استاندارد ساختار فایل‌های درون‌ریز دمو گردشگری (WordPress eXtended RSS - WXR)</h3>
+			<p class="description">این بخش مشخصات و ساختار استاندارد فایل‌های <code>.xml</code> درون‌ریز را برای پست‌تایپ‌ها و متادیتاها تشریح می‌کند.</p>
+
+			<div style="background-color:#F7FAFC; border:1px solid #E2E8F0; padding:15px; border-radius:6px; margin-bottom:20px;">
+				<h4 style="margin-top:0; color:#2C5282;">📥 راهنمای درون‌ریزی فوری:</h4>
+				<p style="font-size:14px; margin-bottom:0;">برای درون‌ریزی داده‌های صوتی و موقعیت‌های جغرافیایی، از منوی <strong>ابزارها &rarr; درون‌ریزی &rarr; WordPress</strong> استفاده نمایید و فایل XML ساخته شده را آپلود کنید. به طور موازی، داده‌های دمو با هر بار فعال‌سازی پوسته به صورت خودکار تولید می‌شوند.</p>
+			</div>
+
+			<h4 style="color:#2D3748;">ساختار نمونه سند WXR XML استاندارد برای جاذبه‌ها و پادکست‌ها:</h4>
+			<textarea class="large-text" rows="15" readonly style="font-family:monospace; font-size:11px; direction:ltr; text-align:left; background-color:#1E293B; color:#F8FAFC;">
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0"
+	xmlns:excerpt="http://wordpress.org/export/1.2/excerpt/"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/commentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:wp="http://wordpress.org/export/1.2/"
+>
+<channel>
+	<title>رادیو سفر - فایل درون‌ریز نمونه</title>
+	<link>https://safarnama.ir</link>
+	<description>دمو جامع گردشگری صوتی</description>
+	<wp:wxr_version>1.2</wp:wxr_version>
+
+	<!-- نمونه آیتم جاذبه گردشگری همراه با متادیتاها -->
+	<item>
+		<title>مجموعه تاریخی باغ شازده ماهان کرمان</title>
+		<link>https://safarnama.ir/attractions/shazdeh-garden/</link>
+		<pubDate>Mon, 01 Jan 2026 00:00:00 +0000</pubDate>
+		<wp:post_id>2001</wp:post_id>
+		<wp:post_date><![CDATA[2026-01-01 00:00:00]]></wp:post_date>
+		<wp:post_name><![CDATA[shazdeh-garden]]></wp:post_name>
+		<wp:status><![CDATA[publish]]></wp:status>
+		<wp:post_type><![CDATA[attraction]]></wp:post_type>
+
+		<!-- دسته‌بندی و تعیین استان -->
+		<category domain="province" Oregon="kerman"><![CDATA[کرمان]]></category>
+
+		<content:encoded><![CDATA[باغ شاهزاده ماهان یکی از زیباترین باغ‌های تاریخی ایران است که در دل کویر کرمان می‌درخشد. این اثر ثبت جهانی یونسکو بوده و از سیستم آبرسانی پله‌ای فوق‌العاده‌ای بهره می‌برد.]]></content:encoded>
+
+		<!-- اطلاعات جغرافیایی و بهای بلیت -->
+		<wp:postmeta>
+			<wp:meta_key><![CDATA[_ppt_address]]></wp:meta_key>
+			<wp:meta_value><![CDATA[کرمان، ۶ کیلومتری مسیر ماهان]]></wp:meta_value>
+		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key><![CDATA[_ppt_lat]]></wp:meta_key>
+			<wp:meta_value><![CDATA[30.0242]]></wp:meta_value>
+		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key><![CDATA[_ppt_lng]]></wp:meta_key>
+			<wp:meta_value><![CDATA[57.2801]]></wp:meta_value>
+		</wp:postmeta>
+	</item>
+</channel>
+</rss>
+			</textarea>
+		</div>
+		<?php
+	}
+
+	/**
 	 * Tab 5: Professional Diataxis Documentation
 	 */
 	private function render_documentation_tab() {
@@ -407,7 +475,7 @@ class PPT_Admin_Panel {
 					<li>پوسته را روی یک وردپرس تازه نصب شده فعال کنید.</li>
 					<li>با فعال‌سازی پوسته، داده‌های دمو صوتی و متنی (شیراز، اصفهان، جزیره قشم و چاهکوه) همراه با نقشه‌ها به طور خودکار تولید می‌شوند.</li>
 					<li>به مسیر <strong>نمایش &rarr; فهرست‌ها</strong> رفته و منوی اصلی (Primary RTL) را به دلخواه تنظیم کنید.</li>
-					<li>از تب "مدیریت صفحه نخست" چیدمان ایده‌آل لایوها و ماژول‌ها را اولویت‌بندی کرده و دکمه ذخیره را بزنید.</li>
+					<li>از تب "مدیریت صفحه نخست" چیدمان لایوها و ماژول‌ها را اولویت‌بندی کرده و دکمه ذخیره را بزنید.</li>
 				</ol>
 			</div>
 
@@ -418,7 +486,7 @@ class PPT_Admin_Panel {
 				<p><strong>چگونه یک پادکست جدید در رادیو سفر اضافه کنیم؟</strong></p>
 				<ol>
 					<li>به منوی <strong>پادکست‌ها &rarr; افزودن پادکست جدید</strong> مراجعه کنید.</li>
-					<li>عنوان اپیزود و توضیحات متنی آن را به صورت معمول وارد کنید.</li>
+					<li>عنوان اپیزود و توضیحات متنی آن را وارد کنید.</li>
 					<li>در فیلد تصویر شاخص، کاور جذاب پادکست را آپلود کنید.</li>
 					<li>در انتهای صفحه و در بخش "تنظیمات فایل صوتی پادکست"، آدرس مستقیم فایل صوتی با فرمت <code>MP3</code> را الصاق کنید و دکمه انتشار را بفشارید.</li>
 				</ol>
@@ -427,7 +495,7 @@ class PPT_Admin_Panel {
 				<ul>
 					<li>به بخش <strong>ویدیوها &rarr; افزودن ویدیو جدید</strong> بروید.</li>
 					<li>شناسه کوتاه ویدیو آپارات (مثلاً <code>fXgHe</code>) را کپی کرده و در بخش فیلد شناسه آپارات قرار دهید.</li>
-					<li>پوسته به طور کاملا خودکار تصویر و دکمه پخش تنبل را لود کرده و از افت فاحش رتبه جی‌تی‌متریکس شما جلوگیری می‌کند.</li>
+					<li>پوسته به طور کاملا خودکار تصویر و دکمه پخش تنبل را لود کرده و از افت سرعت وب‌سایت شما جلوگیری می‌کند.</li>
 				</ul>
 			</div>
 
