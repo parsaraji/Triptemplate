@@ -287,7 +287,7 @@ add_filter( 'get_comment_date', 'ppt_get_jalali_comment_date', 10, 3 );
  * Filter comment times and counts to Persian digits.
  */
 add_filter( 'get_comment_time', 'ppt_normalize_persian_digits', 10, 1 );
-add_filter( 'get_comments_number', 'ppt_normalize_persian_digits', 10, 1 );
+add_filter( 'comments_number', 'ppt_normalize_persian_digits', 10, 1 );
 
 /**
  * Advanced Ajax Discovery Search & Multi-criteria Taxonomy Filters (Priority 2)
