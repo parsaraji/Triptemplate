@@ -1,7 +1,7 @@
 /**
  * Custom WordPress Settings Panel Repeater and Admin Interactions
- * Includes robust drag-and-drop jQuery UI Sortable reordering for homepage modules
- * and localized Persian digit conversions.
+ * Includes robust drag-and-drop jQuery UI Sortable reordering for homepage modules,
+ * dynamic link repeaters for header & footer builders, and localized Persian digit conversions.
  */
 
 jQuery(document).ready(function ($) {
@@ -163,6 +163,84 @@ jQuery(document).ready(function ($) {
   backlinksContainer.on('click', '.ppt-remove-backlink-row', function () {
     $(this).closest('.ppt-backlink-row').remove();
     reindexBacklinks();
+    normalizeAdminDigits();
+  });
+
+  // 1.9 Header Dynamic Links Builder Logic
+  var headerContainer = $('#ppt_header_links_repeater_container');
+
+  function reindexHeaderLinks() {
+    headerContainer.find('.ppt-header-link-row').each(function (index) {
+      var row = $(this);
+      row.find('input[name*="[label]"]').attr('name', `ppt_header_settings[custom_links][${index}][label]`);
+      row.find('input[name*="[url]"]').attr('name', `ppt_header_settings[custom_links][${index}][url]`);
+    });
+  }
+
+  $('#ppt_add_header_link_btn').on('click', function () {
+    var index = headerContainer.find('.ppt-header-link-row').length;
+    var html = `
+      <div class="ppt-header-link-row animate-fade-in" style="display:flex; gap:15px; margin-bottom:12px; align-items:center; border-bottom: 1px dashed #E2E8F0; padding-bottom: 12px;">
+        <div style="flex:1;">
+          <label style="font-weight:bold;">عنوان منو:</label>
+          <input type="text" name="ppt_header_settings[custom_links][${index}][label]" style="width:100%; margin-top:5px;" placeholder="مثال: رادیو سفر" />
+        </div>
+        <div style="flex:2;">
+          <label style="font-weight:bold;">آدرس اینترنتی (URL):</label>
+          <input type="text" name="ppt_header_settings[custom_links][${index}][url]" style="width:100%; text-align:left; direction:ltr; margin-top:5px;" placeholder="/podcasts/" />
+        </div>
+        <div style="padding-top:20px;">
+          <button type="button" class="button button-link-delete ppt-remove-header-link" style="color:#d63638;">حذف منو</button>
+        </div>
+      </div>
+    `;
+    headerContainer.append(html);
+    reindexHeaderLinks();
+    normalizeAdminDigits();
+  });
+
+  headerContainer.on('click', '.ppt-remove-header-link', function () {
+    $(this).closest('.ppt-header-link-row').remove();
+    reindexHeaderLinks();
+    normalizeAdminDigits();
+  });
+
+  // 2.0 Footer Dynamic Links Builder Logic
+  var footerContainer = $('#ppt_footer_links_repeater_container');
+
+  function reindexFooterLinks() {
+    footerContainer.find('.ppt-footer-link-row').each(function (index) {
+      var row = $(this);
+      row.find('input[name*="[label]"]').attr('name', `ppt_footer_settings[custom_links][${index}][label]`);
+      row.find('input[name*="[url]"]').attr('name', `ppt_footer_settings[custom_links][${index}][url]`);
+    });
+  }
+
+  $('#ppt_add_footer_link_btn').on('click', function () {
+    var index = footerContainer.find('.ppt-footer-link-row').length;
+    var html = `
+      <div class="ppt-footer-link-row animate-fade-in" style="display:flex; gap:15px; margin-bottom:12px; align-items:center; border-bottom: 1px dashed #E2E8F0; padding-bottom: 12px;">
+        <div style="flex:1;">
+          <label style="font-weight:bold;">عنوان منو:</label>
+          <input type="text" name="ppt_footer_settings[custom_links][${index}][label]" style="width:100%; margin-top:5px;" placeholder="مثال: تماس با ما" />
+        </div>
+        <div style="flex:2;">
+          <label style="font-weight:bold;">آدرس اینترنتی (URL):</label>
+          <input type="text" name="ppt_footer_settings[custom_links][${index}][url]" style="width:100%; text-align:left; direction:ltr; margin-top:5px;" placeholder="/contact-us/" />
+        </div>
+        <div style="padding-top:20px;">
+          <button type="button" class="button button-link-delete ppt-remove-footer-link" style="color:#d63638;">حذف منو</button>
+        </div>
+      </div>
+    `;
+    footerContainer.append(html);
+    reindexFooterLinks();
+    normalizeAdminDigits();
+  });
+
+  footerContainer.on('click', '.ppt-remove-footer-link', function () {
+    $(this).closest('.ppt-footer-link-row').remove();
+    reindexFooterLinks();
     normalizeAdminDigits();
   });
 

@@ -2,7 +2,8 @@
 /**
  * Custom Tabbed WordPress Admin Settings Panel & Commercial Admin Console
  * Includes Visual Customizer, Child Theme Creator, and Import/Export utilities.
- * Highly specialized with customized Header & Footer builders, demo links, colors, and element toggles.
+ * Highly specialized with customized Header & Footer builders, dynamic unlimited repeaters, colors, and element toggles.
+ * Overhauled to fix checkbox unchecking state resets and provide dynamic link repeaters.
  *
  * @package Premium_Persian_Tourism
  */
@@ -72,12 +73,15 @@ class PPT_Admin_Panel {
 	 */
 	public static function get_default_header_settings() {
 		return array(
-			'bg_color'     => '#FFFFFF',
-			'text_color'   => '#2D3748',
-			'show_search'  => '1',
-			'show_cta'     => '1',
-			'cta_text'     => '🎙️ رادیو سفر',
-			'cta_link'     => '/podcasts/',
+			'bg_color'              => '#FFFFFF',
+			'text_color'            => '#2D3748',
+			'show_search'           => '1',
+			'show_cta'              => '1',
+			'cta_text'              => '🎙️ رادیو سفر',
+			'cta_link'              => '/podcasts/',
+			'megamenu_trigger_url'  => 'destination',
+			'megamenu_title_1'      => '📍 استان‌های دیدنی ایران',
+			'megamenu_title_2'      => '🎧 رادیو صوتی و مستندها',
 			'custom_links' => array(
 				array( 'label' => 'خانه', 'url' => '/' ),
 				array( 'label' => 'مقاصد گردشگری', 'url' => '/destinations/' ),
@@ -304,20 +308,25 @@ class PPT_Admin_Panel {
 	}
 
 	/**
-	 * Tab 1.2: Specialized Header Builder Settings
+	 * Tab 1.2: Specialized Header Builder Settings with dynamic link repeaters and manageable megamenus (Priority 3/5).
 	 */
 	private function render_header_builder_tab() {
 		$saved    = get_option( 'ppt_header_settings', array() );
 		$defaults = self::get_default_header_settings();
 		$settings = wp_parse_args( $saved, $defaults );
 
-		$bg_color    = $settings['bg_color'];
-		$text_color  = $settings['text_color'];
-		$show_search = $settings['show_search'];
-		$show_cta    = $settings['show_cta'];
-		$cta_text    = $settings['cta_text'];
-		$cta_link    = $settings['cta_link'];
-		$links       = $settings['custom_links'];
+		$bg_color     = $settings['bg_color'];
+		$text_color   = $settings['text_color'];
+		$show_search  = $settings['show_search'];
+		$show_cta     = $settings['show_cta'];
+		$cta_text     = $settings['cta_text'];
+		$cta_link     = $settings['cta_link'];
+		$links        = isset( $settings['custom_links'] ) ? $settings['custom_links'] : array();
+
+		// Megamenu manageable options (Priority 5)
+		$mega_trigger = isset( $settings['megamenu_trigger_url'] ) ? $settings['megamenu_trigger_url'] : 'destination';
+		$mega_title_1 = isset( $settings['megamenu_title_1'] ) ? $settings['megamenu_title_1'] : '📍 استان‌های دیدنی ایران';
+		$mega_title_2 = isset( $settings['megamenu_title_2'] ) ? $settings['megamenu_title_2'] : '🎧 رادیو صوتی و مستندها';
 		?>
 		<div class="card-box ppt-admin-card" style="line-height:1.8;">
 			<h3>🎨 پلتفرم اختصاصی سفارشی‌سازی سربرگ (Header Settings Panel)</h3>
@@ -341,15 +350,19 @@ class PPT_Admin_Panel {
 					<th scope="row">نمایش فرم جستجو در هدر</th>
 					<td>
 						<label>
+							<!-- Fixed checkbox unchecking state resets by placing a hidden fallback input (Priority 1) -->
+							<input type="hidden" name="ppt_header_settings[show_search]" value="0">
 							<input type="checkbox" name="ppt_header_settings[show_search]" value="1" <?php checked( '1', $show_search ); ?> />
 							کادر بازشونده جستجوی زنده مقاصد در هدر نمایش داده شود.
 						</label>
 					</td>
 				</tr>
 				<tr>
-					<th scope="row">نمایش دکمه قرمز فراخوانی (Header CTA Button)</th>
+					<th scope="row">نمایش دکمه فراخوانی (Header CTA Button)</th>
 					<td>
 						<label>
+							<!-- Fixed checkbox unchecking state resets by placing a hidden fallback input (Priority 1) -->
+							<input type="hidden" name="ppt_header_settings[show_cta]" value="0">
 							<input type="checkbox" name="ppt_header_settings[show_cta]" value="1" <?php checked( '1', $show_cta ); ?> id="ppt_toggle_header_cta" />
 							دکمه برجسته جذب مخاطب در منوی دسکتاپ فعال باشد.
 						</label>
@@ -369,35 +382,73 @@ class PPT_Admin_Panel {
 				</tr>
 			</table>
 
-			<hr style="margin:20px 0;">
+			<hr style="margin:25px 0; border-top:1px solid #E2E8F0;">
 
-			<h3>🔗 مدیریت و تنظیم لینک‌های سفارشی سربرگ (Header Links Builder)</h3>
-			<p class="description">لینک‌های پیش‌فرض دمو را در زیر ویرایش کنید. در صورت خالی گذاشتن فیلدها، منوی فهرست دمو همچنان نمایش داده خواهد شد:</p>
+			<!-- Megamenu Links Customizer (Priority 5) -->
+			<h3>🍔 مدیریت و شخصی‌سازی ستون‌های مگامنو (Manageable Megamenu)</h3>
+			<p class="description">برای لینکی که مگامنو باز می‌کند، کلمات کلیدی محرک و تیتر ستون‌های معرفی را شخصی‌سازی فرمایید:</p>
 
-			<div style="background-color:#fafafa; border:1px solid #ccc; padding:15px; border-radius:6px; margin-bottom:20px;">
-				<h4 style="margin-top:0;">لینک‌های منوی هدر (۵ لینک نمایشی):</h4>
-				<?php for ( $i = 0; $i < 5; $i ++ ) :
-					$label = isset( $links[$i]['label'] ) ? $links[$i]['label'] : '';
-					$url   = isset( $links[$i]['url'] ) ? $links[$i]['url'] : '';
-					?>
-					<div style="display:flex; gap:15px; margin-bottom:12px; align-items:center;">
-						<div style="flex:1;">
-							<label>عنوان لینک (دمو):</label>
-							<input type="text" name="ppt_header_settings[custom_links][<?php echo esc_attr( $i ); ?>][label]" value="<?php echo esc_attr( $label ); ?>" style="width:100%;" placeholder="مثال: رادیو سفر" />
+			<table class="form-table" style="margin-bottom:30px;">
+				<tr>
+					<th scope="row">کلمه کلیدی محرک مگامنو (Trigger Keyword)</th>
+					<td>
+						<input type="text" name="ppt_header_settings[megamenu_trigger_url]" value="<?php echo esc_attr( $mega_trigger ); ?>" class="regular-text" style="text-align:left; direction:ltr;" />
+						<p class="description">لینک‌هایی از منو که آدرس آن‌ها حاوی این کلمه باشد به عنوان مگا‌منوی عریض باز می‌شوند (مثلاً: <code>destination</code>).</p>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">عنوان ستون ۱ مگامنو (استان‌ها)</th>
+					<td>
+						<input type="text" name="ppt_header_settings[megamenu_title_1]" value="<?php echo esc_attr( $mega_title_1 ); ?>" class="regular-text" />
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">عنوان ستون ۲ مگامنو (رسانه‌ها)</th>
+					<td>
+						<input type="text" name="ppt_header_settings[megamenu_title_2]" value="<?php echo esc_attr( $mega_title_2 ); ?>" class="regular-text" />
+					</td>
+				</tr>
+			</table>
+
+			<hr style="margin:20px 0; border-top:1px solid #E2E8F0;">
+
+			<!-- Dynamic Link Repeaters (Priority 3) -->
+			<h3>🔗 مدیریت و تنظیم لینک‌های سفارشی سربرگ (Dynamic Header Links Builder)</h3>
+			<p class="description">می‌توانید بی‌نهایت لینک ناوبری جدید به منوی اصلی هدر اضافه کرده یا موارد دلخواه را حذف فرمایید:</p>
+
+			<div style="background-color:#fafafa; border:1px solid #ccc; padding:20px; border-radius:8px; margin-bottom:20px;">
+				<h4 style="margin-top:0; color:#1e3a8a;">پیوندهای منوی هدر:</h4>
+
+				<div id="ppt_header_links_repeater_container">
+					<?php
+					$links_count = max( 1, count( $links ) );
+					for ( $i = 0; $i < $links_count; $i ++ ) :
+						$label = isset( $links[$i]['label'] ) ? $links[$i]['label'] : '';
+						$url   = isset( $links[$i]['url'] ) ? $links[$i]['url'] : '';
+						?>
+						<div class="ppt-header-link-row" style="display:flex; gap:15px; margin-bottom:12px; align-items:center; border-bottom: 1px dashed #E2E8F0; padding-bottom: 12px;">
+							<div style="flex:1;">
+								<label style="font-weight:bold;">عنوان منو:</label>
+								<input type="text" name="ppt_header_settings[custom_links][<?php echo esc_attr( $i ); ?>][label]" value="<?php echo esc_attr( $label ); ?>" style="width:100%; margin-top:5px;" placeholder="مثال: رادیو سفر" />
+							</div>
+							<div style="flex:2;">
+								<label style="font-weight:bold;">آدرس اینترنتی (URL):</label>
+								<input type="text" name="ppt_header_settings[custom_links][<?php echo esc_attr( $i ); ?>][url]" value="<?php echo esc_attr( $url ); ?>" style="width:100%; text-align:left; direction:ltr; margin-top:5px;" placeholder="/podcasts/" />
+							</div>
+							<div style="padding-top:20px;">
+								<button type="button" class="button button-link-delete ppt-remove-header-link" style="color:#d63638;">حذف منو</button>
+							</div>
 						</div>
-						<div style="flex:2;">
-							<label>آدرس اینترنتی (URL):</label>
-							<input type="text" name="ppt_header_settings[custom_links][<?php echo esc_attr( $i ); ?>][url]" value="<?php echo esc_attr( $url ); ?>" style="width:100%; text-align:left; direction:ltr;" placeholder="/podcasts/" />
-						</div>
-					</div>
-				<?php endfor; ?>
+					<?php endfor; ?>
+				</div>
+				<button type="button" id="ppt_add_header_link_btn" class="button button-primary" style="margin-top:10px;">افزودن لینک منوی جدید</button>
 			</div>
 		</div>
 		<?php
 	}
 
 	/**
-	 * Tab 1.3: Specialized Footer Builder Settings
+	 * Tab 1.3: Specialized Footer Builder Settings with dynamic link repeaters (Priority 3).
 	 */
 	private function render_footer_builder_tab() {
 		$saved    = get_option( 'ppt_footer_settings', array() );
@@ -411,7 +462,7 @@ class PPT_Admin_Panel {
 		$show_cpt_col           = $settings['show_cpt_col'];
 		$show_newsletter_col    = $settings['show_newsletter_col'];
 		$show_sticky_mobile_nav = $settings['show_sticky_mobile_nav'];
-		$links                  = $settings['custom_links'];
+		$links                  = isset( $settings['custom_links'] ) ? $settings['custom_links'] : array();
 		?>
 		<div class="card-box ppt-admin-card" style="line-height:1.8;">
 			<h3>🎨 پلتفرم اختصاصی سفارشی‌سازی پابرگ (Footer Settings Panel)</h3>
@@ -422,7 +473,7 @@ class PPT_Admin_Panel {
 					<th scope="row">رنگ پس‌زمینه پابرگ (Footer Background)</th>
 					<td>
 						<input type="color" name="ppt_footer_settings[bg_color]" value="<?php echo esc_attr( $bg_color ); ?>" />
-						<p class="description">رنگ پس‌زمینه کل بخش پایینی (فوتر بزرگ).</p>
+						<p class="description">رنگ پس‌زمینه کل کادر فوتر بزرگ.</p>
 					</td>
 				</tr>
 				<tr>
@@ -435,6 +486,7 @@ class PPT_Admin_Panel {
 					<th scope="row">نمایش ستون ۱ (معرفی برند و تماس با ما)</th>
 					<td>
 						<label>
+							<input type="hidden" name="ppt_footer_settings[show_brand_col]" value="0">
 							<input type="checkbox" name="ppt_footer_settings[show_brand_col]" value="1" <?php checked( '1', $show_brand_col ); ?> />
 							نمایش ستون توضیحات بوم‌گردی رادیو سفر و آدرس دفتر ونک.
 						</label>
@@ -444,6 +496,7 @@ class PPT_Admin_Panel {
 					<th scope="row">نمایش ستون ۲ (دسترسی سریع)</th>
 					<td>
 						<label>
+							<input type="hidden" name="ppt_footer_settings[show_links_col]" value="0">
 							<input type="checkbox" name="ppt_footer_settings[show_links_col]" value="1" <?php checked( '1', $show_links_col ); ?> />
 							ستون لیست منوهای دلخواه در فوتر نمایش داده شود.
 						</label>
@@ -453,6 +506,7 @@ class PPT_Admin_Panel {
 					<th scope="row">نمایش ستون ۳ (سفر شنیداری و مقاصد برتر)</th>
 					<td>
 						<label>
+							<input type="hidden" name="ppt_footer_settings[show_cpt_col]" value="0">
 							<input type="checkbox" name="ppt_footer_settings[show_cpt_col]" value="1" <?php checked( '1', $show_cpt_col ); ?> />
 							ستون لینک‌های پادکست‌ها، ویدیوها و مقاصد.
 						</label>
@@ -462,6 +516,7 @@ class PPT_Admin_Panel {
 					<th scope="row">نمایش ستون ۴ (عضویت در خبرنامه و شبکه‌های اجتماعی)</th>
 					<td>
 						<label>
+							<input type="hidden" name="ppt_footer_settings[show_newsletter_col]" value="0">
 							<input type="checkbox" name="ppt_footer_settings[show_newsletter_col]" value="1" <?php checked( '1', $show_newsletter_col ); ?> />
 							کادر عضویت در خبرنامه و آیکون‌های اینستاگرام/تلگرام.
 						</label>
@@ -471,8 +526,9 @@ class PPT_Admin_Panel {
 					<th scope="row">نمایش نوار چسبان موبایل (Mobile Sticky Bottom Bar)</th>
 					<td>
 						<label>
+							<input type="hidden" name="ppt_footer_settings[show_sticky_mobile_nav]" value="0">
 							<input type="checkbox" name="ppt_footer_settings[show_sticky_mobile_nav]" value="1" <?php checked( '1', $show_sticky_mobile_nav ); ?> />
-							نمایش دکمه‌های ناوبری اپلیکیشن‌مانند در پایین‌ترین قسمت صفحات موبایل و تبلت.
+							نمایش دکمه‌های ناوبری سریع در پایین‌ترین قسمت صفحات موبایل و تبلت.
 						</label>
 					</td>
 				</tr>
@@ -480,26 +536,36 @@ class PPT_Admin_Panel {
 
 			<hr style="margin:20px 0;">
 
-			<h3>🔗 مدیریت و تنظیم لینک‌های دلخواه فوتر (Footer Links Builder)</h3>
-			<p class="description">لینک‌های دلخواه خود را در زیر مشخص کنید تا در ستون دسترسی سریع فوتر به زیبایی چیده شوند:</p>
+			<!-- Dynamic Link Repeaters (Priority 3) -->
+			<h3>🔗 مدیریت و تنظیم لینک‌های دلخواه فوتر (Dynamic Footer Links Builder)</h3>
+			<p class="description">می‌توانید بی‌نهایت لینک جدید به منوی دسترسی سریع ستون دوم اضافه کرده یا منوهای غیرضروری را حذف فرمایید:</p>
 
-			<div style="background-color:#fafafa; border:1px solid #ccc; padding:15px; border-radius:6px; margin-bottom:20px;">
-				<h4 style="margin-top:0;">لینک‌های ستون ۲ فوتر (۴ لینک نمایشی):</h4>
-				<?php for ( $i = 0; $i < 4; $i ++ ) :
-					$label = isset( $links[$i]['label'] ) ? $links[$i]['label'] : '';
-					$url   = isset( $links[$i]['url'] ) ? $links[$i]['url'] : '';
-					?>
-					<div style="display:flex; gap:15px; margin-bottom:12px; align-items:center;">
-						<div style="flex:1;">
-							<label>عنوان لینک (دمو):</label>
-							<input type="text" name="ppt_footer_settings[custom_links][<?php echo esc_attr( $i ); ?>][label]" value="<?php echo esc_attr( $label ); ?>" style="width:100%;" placeholder="مثال: تماس با ما" />
+			<div style="background-color:#fafafa; border:1px solid #ccc; padding:20px; border-radius:8px; margin-bottom:20px;">
+				<h4 style="margin-top:0; color:#1e3a8a;">پیوندهای ستون ۲ فوتر:</h4>
+
+				<div id="ppt_footer_links_repeater_container">
+					<?php
+					$links_count = max( 1, count( $links ) );
+					for ( $i = 0; $i < $links_count; $i ++ ) :
+						$label = isset( $links[$i]['label'] ) ? $links[$i]['label'] : '';
+						$url   = isset( $links[$i]['url'] ) ? $links[$i]['url'] : '';
+						?>
+						<div class="ppt-footer-link-row" style="display:flex; gap:15px; margin-bottom:12px; align-items:center; border-bottom: 1px dashed #E2E8F0; padding-bottom: 12px;">
+							<div style="flex:1;">
+								<label style="font-weight:bold;">عنوان منو:</label>
+								<input type="text" name="ppt_footer_settings[custom_links][<?php echo esc_attr( $i ); ?>][label]" value="<?php echo esc_attr( $label ); ?>" style="width:100%; margin-top:5px;" placeholder="مثال: تماس با ما" />
+							</div>
+							<div style="flex:2;">
+								<label style="font-weight:bold;">آدرس اینترنتی (URL):</label>
+								<input type="text" name="ppt_footer_settings[custom_links][<?php echo esc_attr( $i ); ?>][url]" value="<?php echo esc_attr( $url ); ?>" style="width:100%; text-align:left; direction:ltr; margin-top:5px;" placeholder="/contact-us/" />
+							</div>
+							<div style="padding-top:20px;">
+								<button type="button" class="button button-link-delete ppt-remove-footer-link" style="color:#d63638;">حذف منو</button>
+							</div>
 						</div>
-						<div style="flex:2;">
-							<label>آدرس اینترنتی (URL):</label>
-							<input type="text" name="ppt_footer_settings[custom_links][<?php echo esc_attr( $i ); ?>][url]" value="<?php echo esc_attr( $url ); ?>" style="width:100%; text-align:left; direction:ltr;" placeholder="/contact-us/" />
-						</div>
-					</div>
-				<?php endfor; ?>
+					<?php endfor; ?>
+				</div>
+				<button type="button" id="ppt_add_footer_link_btn" class="button button-primary" style="margin-top:10px;">افزودن لینک پابرگ جدید</button>
 			</div>
 		</div>
 		<?php
@@ -599,6 +665,7 @@ class PPT_Admin_Panel {
 					<th scope="row">مخفی‌سازی کامل فوتر در تبلت و موبایل</th>
 					<td>
 						<label>
+							<input type="hidden" name="ppt_brand_settings[hide_footer_mobile]" value="0">
 							<input type="checkbox" name="ppt_brand_settings[hide_footer_mobile]" value="1" <?php checked( '1', $hide_footer_mobile ); ?> />
 							غیرفعال‌سازی نمایش فوتر بزرگ دسکتاپ در رزولوشن‌های عرض کم موبایلی برای سرعت بیشتر صفحه.
 						</label>
@@ -883,6 +950,7 @@ if ( class_exists( 'PPT_Ad_Manager' ) ) {<br>
 					<th scope="row">فعال‌سازی سراسری نقشه‌ها</th>
 					<td>
 						<label>
+							<input type="hidden" name="ppt_map_settings[enable_maps]" value="0">
 							<input type="checkbox" name="ppt_map_settings[enable_maps]" value="1" <?php checked( '1', $enable_maps ); ?> />
 							نقشه‌های تعاملی موقعیت مکانی در جزییات جاذبه‌ها و مقاصد بارگذاری شوند.
 						</label>
@@ -902,6 +970,7 @@ if ( class_exists( 'PPT_Ad_Manager' ) ) {<br>
 					<th scope="row">بارگذاری تنبل (Lazy Load) نقشه‌ها</th>
 					<td>
 						<label>
+							<input type="hidden" name="ppt_map_settings[lazy_load]" value="0">
 							<input type="checkbox" name="ppt_map_settings[lazy_load]" value="1" <?php checked( '1', $lazy_load ); ?> />
 							لود فریم یا المان جاوا اسکریپت نقشه فقط با اسکرول کاربر یا کلیک شروع شود (بهینه‌سازی سرعت صفحه).
 						</label>
@@ -1292,7 +1361,7 @@ if ( class_exists( 'PPT_Ad_Manager' ) ) {<br>
 			<div>
 				<h3 style="color:#2B6CB0; border-bottom:1px solid #E2E8F0; padding-bottom:5px;">۴. مفاهیم عمیق و منطق طراحی (Explanation)</h3>
 				<p><strong>چرا عدم استفاده از افزونه‌های سنگین اهمیت دارد؟</strong></p>
-				<p class="text-justify">استفاده مکرر از فریم‌ورک‌های سنگین مانند المنتور و ویژوال کامپوزر با تزریق استایل‌های تکراری و کدهای CSS/JS غیرضروری، سرعت موبایل کاربران را به شدت کاهش داده و بر سئوی محلی تاثیر منفی می‌گذارد. معماری سبک، پاک و برون‌سازمانی این پوسته ضمانت می‌کند که سایت شما بر روی ضعیف‌ترین شبکه‌های موبایلی (3G) در مناطق کوهستانی یا جزایر دوردست ایران, در کمترین زمان ممکن لود گردد.</p>
+				<p class="text-justify">استفاده مکرر از فریم‌ورک‌های سنگین مانند المنتور و ویژوال کامپوزر با تزریق استایل‌های تکراری و کدهای CSS/JS غیرضروری، سرعت موبایل کاربران را به شدت کاهش داده و بر سئوی محلی تاثیر منفی می‌گذارد. معماری سبک, پاک و برون‌سازمانی این پوسته ضمانت می‌کند که سایت شما بر روی ضعیف‌ترین شبکه‌های موبایلی (3G) در مناطق کوهستانی یا جزایر دوردست ایران, در کمترین زمان ممکن لود گردد.</p>
 			</div>
 		</div>
 		<?php
@@ -1408,6 +1477,7 @@ if ( class_exists( 'PPT_Ad_Manager' ) ) {<br>
 						<th scope="row">نمایش نقشه تعاملی در صفحه مقصد</th>
 						<td>
 							<label>
+								<input type="hidden" name="ppt_brand_settings[cpt_dest_show_map]" value="0">
 								<input type="checkbox" name="ppt_brand_settings[cpt_dest_show_map]" value="1" <?php checked( '1', $dest_show_map ); ?> />
 								بخش نقشه آزاد OpenStreetMap موقعیت در انتهای صفحه مقصد بارگذاری شود.
 							</label>
@@ -1436,6 +1506,7 @@ if ( class_exists( 'PPT_Ad_Manager' ) ) {<br>
 						<th scope="row">نمایش کادر جزییات و الزامات ورود</th>
 						<td>
 							<label>
+								<input type="hidden" name="ppt_brand_settings[cpt_attr_show_directions]" value="0">
 								<input type="checkbox" name="ppt_brand_settings[cpt_attr_show_directions]" value="1" <?php checked( '1', $attr_show_dir ); ?> />
 								کادر حاوی ساعات بازدید، بهای بلیت ورودی و آدرس جاذبه نمایش داده شود.
 							</label>
