@@ -302,6 +302,14 @@ add_filter( 'get_comment_time', 'ppt_normalize_persian_digits', 10, 1 );
 add_filter( 'comments_number', 'ppt_normalize_persian_digits', 10, 1 );
 
 /**
+ * Automatically normalize WordPress widgets, block texts, and widget titles to Persian digits (Priority 10).
+ */
+add_filter( 'widget_text', 'ppt_normalize_persian_digits', 20, 1 );
+add_filter( 'widget_title', 'ppt_normalize_persian_digits', 20, 1 );
+add_filter( 'widget_block_content', 'ppt_normalize_persian_digits', 20, 1 );
+add_filter( 'widget_text_content', 'ppt_normalize_persian_digits', 20, 1 );
+
+/**
  * Advanced Ajax Discovery Search & Multi-criteria Taxonomy Filters (Priority 2)
  * Securely handles non-refresh live queries from the front-end.
  */

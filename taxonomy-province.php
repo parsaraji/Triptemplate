@@ -154,18 +154,22 @@ $prov_color     = isset( $brand_settings['prov_color'] ) ? $brand_settings['prov
 
 		</main>
 
-		<!-- Right Sidebar area -->
+		<!-- Right Sidebar area (Taxonomy & Archives Managed Widgets) -->
 		<aside class="sidebar-right">
+			<?php if ( is_active_sidebar( 'taxonomy-sidebar' ) ) : ?>
+				<?php dynamic_sidebar( 'taxonomy-sidebar' ); ?>
+			<?php else : ?>
+				<!-- Default Fallback customized widgets for Taxonomy -->
+				<div class="widget card-box" style="background:#FFF; border:1px solid #E2E8F0; border-radius:12px; padding:20px; margin-bottom:25px;">
+					<h3 class="widget-title" style="font-size:16px; font-weight:bold; color:#2D3748; margin-bottom:12px; border-bottom:2px solid #EDF2F7; padding-bottom:8px;">🗺️ درباره استان <?php echo esc_html( $term->name ); ?></h3>
+					<p style="font-size:13.5px; line-height:1.8; color:#4A5568;" class="text-justify">
+						استان <?php echo esc_html( $term->name ); ?> یکی از مقاصد استراتژیک گردشگری ایران است که سالانه میزبان صدها هزار مسافر داخلی و گردشگر بین‌المللی می‌باشد. جاذبه‌های ثبت شده، هتل‌های سنتی و غذاهای بومی منحصربه‌فرد این استان را در بخش‌های روبرو به تفکیک بررسی فرمایید.
+					</p>
+				</div>
 
-			<div class="widget card-box" style="background:#FFF; border:1px solid #E2E8F0; border-radius:12px; padding:20px; margin-bottom:25px;">
-				<h3 class="widget-title" style="font-size:16px; font-weight:bold; color:#2D3748; margin-bottom:12px; border-bottom:2px solid #EDF2F7; padding-bottom:8px;">🗺️ درباره استان <?php echo esc_html( $term->name ); ?></h3>
-				<p style="font-size:13.5px; line-height:1.8; color:#4A5568;" class="text-justify">
-					استان <?php echo esc_html( $term->name ); ?> یکی از مقاصد استراتژیک گردشگری ایران است که سالانه میزبان صدها هزار مسافر داخلی و گردشگر بین‌المللی می‌باشد. جاذبه‌های ثبت شده، هتل‌های سنتی و غذاهای بومی منحصربه‌فرد این استان را در بخش‌های روبرو به تفکیک بررسی فرمایید.
-				</p>
-			</div>
-
-			<?php if ( is_active_sidebar( 'main-sidebar' ) ) : ?>
-				<?php dynamic_sidebar( 'main-sidebar' ); ?>
+				<?php if ( is_active_sidebar( 'main-sidebar' ) ) : ?>
+					<?php dynamic_sidebar( 'main-sidebar' ); ?>
+				<?php endif; ?>
 			<?php endif; ?>
 
 			<!-- Cumulative Layout Shift Protected Ad Placeholder -->

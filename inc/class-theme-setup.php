@@ -89,6 +89,16 @@ class PPT_Theme_Setup {
 			'before_title'  => '<h3 class="widget-title">',
 			'after_title'   => '</h3>',
 		) );
+
+		register_sidebar( array(
+			'name'          => esc_html__( 'سایدبار آرشیوها و تاکسونومی‌ها (Taxonomy Sidebar)', 'premium-persian-tourism' ),
+			'id'            => 'taxonomy-sidebar',
+			'description'   => esc_html__( 'ابزارک‌های اختصاصی برای لندینگ‌ها و صفحات استان‌ها و موضوعات را اینجا قرار دهید.', 'premium-persian-tourism' ),
+			'before_widget' => '<section id="%1$s" class="widget %2$s card-box">',
+			'after_widget'  => '</section>',
+			'before_title'  => '<h3 class="widget-title">',
+			'after_title'   => '</h3>',
+		) );
 	}
 
 	/**

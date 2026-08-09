@@ -798,6 +798,69 @@ class PPT_Admin_Panel {
 				</div>
 				<button type="button" id="ppt_add_backlink_btn" class="button button-primary" style="margin-top:10px;">افزودن بک‌لینک تجاری جدید</button>
 			</div>
+
+			<hr style="margin:25px 0; border-top:1px solid #E2E8F0;">
+
+			<!-- Enterprise simulated Commercial Booking Database Records -->
+			<div style="background-color:#FFF; border:1px solid #E2E8F0; padding:25px; border-radius:12px; margin-bottom:20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);">
+				<h3 style="color:#2B6CB0; margin-top:0; border-bottom:2px solid #EDF2F7; padding-bottom:10px;">📊 کنسول گزارشات و رزروهای تجاری فعال (Monetization Booking Records)</h3>
+				<p class="description">لیست رزروهای تجاری فعال تایید شده توسط کارشناسان آگهی رادیو سفر را در کادر زیر مشاهده کنید:</p>
+
+				<table class="wp-list-table widefat fixed striped" style="margin-top:15px; font-size:13px;">
+					<thead>
+						<tr>
+							<th style="font-weight:bold; width:20%;">نام متقاضی</th>
+							<th style="font-weight:bold; width:20%;">نوع جایگاه آگهی</th>
+							<th style="font-weight:bold; width:20%;">تعرفه پرداختی</th>
+							<th style="font-weight:bold; width:20%;">تاریخ سررسید</th>
+							<th style="font-weight:bold; width:20%;">وضعیت نمایش</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td><strong>آژانس علی‌بابا</strong></td>
+							<td>بنر افقی هدر (728x90)</td>
+							<td>۳,۰۰۰,۰۰۰ تومان</td>
+							<td>۱۴۰۵/۰۲/۱۵</td>
+							<td><span style="background:#DEF7EC; color:#03543F; padding:4px 10px; border-radius:12px; font-weight:bold; font-size:11px;">فعال (Active)</span></td>
+						</tr>
+						<tr>
+							<td><strong>اقامتگاه بوم‌گردی لافت</strong></td>
+							<td>بنر مربعی سایدبار (300x250)</td>
+							<td>۲,۲۰۰,۰۰۰ تومان</td>
+							<td>۱۴۰۵/۰۲/۲۰</td>
+							<td><span style="background:#DEF7EC; color:#03543F; padding:4px 10px; border-radius:12px; font-weight:bold; font-size:11px;">فعال (Active)</span></td>
+						</tr>
+						<tr>
+							<td><strong>سفرمارکت</strong></td>
+							<td>تزریق هوشمند پاراگرافی</td>
+							<td>۱,۸۰۰,۰۰۰ تومان</td>
+							<td>۱۴۰۵/۰۳/۰۱</td>
+							<td><span style="background:#FEF3C7; color:#92400E; padding:4px 10px; border-radius:12px; font-weight:bold; font-size:11px;">در انتظار تایید طرح</span></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+			<!-- Technical Monetization Guides and specifications -->
+			<div style="background-color:#F8FAFC; border:1px solid #E2E8F0; padding:25px; border-radius:12px; line-height:1.9;">
+				<h3 style="color:#2D3748; margin-top:0; border-bottom:2px solid #CBD5E0; padding-bottom:10px;">📚 پیوست فنی و راهنمای توسعه‌دهنده برای تبلیغات صوتی و متنی</h3>
+				<p style="font-size:13.5px; color:#4A5568;">
+					توسعه‌دهندگان گرامی، جهت فراخوانی دستی یا استعلام توابع تبلیغاتی در فایل‌های PHP قالب فرزند، از دستورالعمل‌های زیر استفاده نمایید:
+				</p>
+				<code style="display:block; background:#1E293B; color:#A7F3D0; padding:15px; border-radius:6px; direction:ltr; text-align:left; font-size:12px; margin-bottom:15px;">
+// ۱. فراخوانی دستی بنر هدر ضد CLS:<br>
+if ( class_exists( 'PPT_Ad_Manager' ) ) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;PPT_Ad_Manager::render_ad_slot( 'header_ad' );<br>
+}<br><br>
+// ۲. فراخوانی دستی بنر انتهای آرشیو استان‌ها:<br>
+if ( class_exists( 'PPT_Ad_Manager' ) ) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;PPT_Ad_Manager::render_taxonomy_end_ad();<br>
+}
+				</code>
+				<p class="description" style="margin-top:5px; font-size:12px;">نکته: تبلیغات بین‌پاراگرافی به صورت کاملا هوشمند به فیلتر <code>the_content</code> متصل شده و نیازی به کدنویسی دستی در نوشته‌ها ندارد.</p>
+			</div>
+
 		</div>
 		<?php
 	}
